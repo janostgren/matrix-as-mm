@@ -8,7 +8,7 @@ services:
       - ./postgres/synapse.sql:/docker-entrypoint-initdb.d/02-synapse.sql
       - ./postgres/setup-bridge.sql:/docker-entrypoint-initdb.d/03-setup-bridge.sql
     environment:
-      # We create synapse database in 01-setup.sql
+      #We create synapse database in 01-setup.sql
       - POSTGRES_USER=mattermost
       - POSTGRES_DB=mattermost
       - POSTGRES_PASSWORD=hunter2
