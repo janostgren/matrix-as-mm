@@ -11,10 +11,10 @@ RUN apk add --no-cache curl libc6-compat \
 USER mattermost
 
 RUN curl https://releases.mattermost.com/$MM_VERSION/mattermost-team-$MM_VERSION-linux-amd64.tar.gz | tar -xvz \
-    --exclude="mattermost/client" \
-    --exclude="mattermost/prepackaged_plugins"\
-    --exclude="mattermost/bin/mmctl"\
-    --exclude="mattermost/bin/platform"\
+    # --exclude="mattermost/client" \
+    # --exclude="mattermost/prepackaged_plugins"\
+    # --exclude="mattermost/bin/mmctl"\
+    # --exclude="mattermost/bin/platform"\
     && rm -f /mattermost/config/config.json
 
 COPY --chown=mattermost ./config.json /mattermost/config/config.json
