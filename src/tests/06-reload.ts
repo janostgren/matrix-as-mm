@@ -13,7 +13,7 @@ test('reload log level', async t => {
     newConfig.logging = 'silent';
     await main().updateConfig(newConfig);
 
-    //t.equal(log.getLevel(), log.level.SILENT);
+    // t.equal(log.getLevel(), log.level.SILENT);
 
     newConfig.logging = 'debug';
     await main().updateConfig(newConfig);
