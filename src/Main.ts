@@ -9,9 +9,15 @@ import {
     RELOADABLE_CONFIG,
 } from './Config';
 import { isDeepStrictEqual } from 'util';
-import { notifySystemd, allSettled, loadYaml } from './utils/Functions';
+import {
+    notifySystemd,
+    allSettled,
+    loadYaml,
+    getPackageInfo,
+} from './utils/Functions';
 import { User } from './entities/User';
 import { Post } from './entities/Post';
+import * as log4js from 'log4js';
 import {
     MattermostMessage,
     MatrixClient,
@@ -25,6 +31,7 @@ import { joinMattermostChannel } from './mattermost/Utils';
 import Channel from './Channel';
 import EventQueue from './utils/EventQueue';
 import log from './Logging';
+import { getLogger } from './Logging';
 import { EventEmitter } from 'events';
 import { MattermostMainHandlers } from './mattermost/MattermostHandler';
 
@@ -35,6 +42,7 @@ export default class Main extends EventEmitter {
 
     private matrixQueue: EventQueue<MatrixEvent>;
     private mattermostQueue: EventQueue<MattermostMessage>;
+    private myLogger;
 
     public botClient: MatrixClient;
 
@@ -61,9 +69,12 @@ export default class Main extends EventEmitter {
         private readonly exitOnFail: boolean = true,
     ) {
         super();
+        const logConfigFile = `${__dirname}/../config/log4js.json`;
+        log4js.configure(logConfigFile);
+        this.myLogger = getLogger('Main');
 
         setConfig(config);
-        log.setLevel(config.logging);
+        //log.level=config.logging;
 
         this.registration = loadYaml(registrationPath);
 
@@ -164,6 +175,14 @@ export default class Main extends EventEmitter {
 
     public async init(): Promise<void> {
         log.time.info('Bridge initialized');
+        const packInfo = getPackageInfo();
+
+        this.myLogger.debug(
+            '%s(%s) started with %s',
+            packInfo.name,
+            packInfo.version,
+            process.argv,
+        );
 
         try {
             await this.botClient.registerRequest({
@@ -177,7 +196,7 @@ export default class Main extends EventEmitter {
         }
 
         const botProfile = this.updateBotProfile().catch(e =>
-            log.warn(`Error when updating bot profile\n${e.stack}`),
+            this.myLogger.warn(`Error when updating bot profile\n${e.stack}`),
         );
         const appservice = this.appService.listen(
             config().appservice.port,
@@ -192,7 +211,7 @@ export default class Main extends EventEmitter {
         await createConnection(db as ConnectionOptions);
 
         const onChannelError = async (e: Error, channel: Channel) => {
-            log.error(
+            this.myLogger.error(
                 `Error when syncing ${channel.matrixRoom} with ${channel.mattermostChannel}\n${e.stack}`,
             );
             if (config().forbid_bridge_failure) {
@@ -243,14 +262,18 @@ export default class Main extends EventEmitter {
         try {
             await this.leaveUnbridgedChannels();
         } catch (e) {
-            log.error(`Error when leaving unbridged channels\n${e.stack}`);
+            this.myLogger.error(
+                `Error when leaving unbridged channels\n${e.stack}`,
+            );
             if (config().forbid_bridge_failure) {
                 await this.killBridge(1);
             }
         }
 
         if (this.channelsByMattermost.size === 0) {
-            log.info('No channels bridged successfully. Shutting down bridge.');
+            this.myLogger.info(
+                'No channels bridged successfully. Shutting down bridge.',
+            );
             // If we exit before notifying systemd, it is considered a failure
             await notifySystemd();
             await this.killBridge(0);
@@ -375,7 +398,9 @@ export default class Main extends EventEmitter {
         ]);
         for (const result of results) {
             if (result.status === 'rejected') {
-                log.error(`Error when killing bridge: ${result.reason.stack}`);
+                this.myLogger.error(
+                    `Error when killing bridge: ${result.reason.stack}`,
+                );
                 exitCode = 1;
             }
         }
@@ -402,7 +427,7 @@ export default class Main extends EventEmitter {
                 throw new Error(`Cannot hot reload config ${key}`);
             }
         }
-        log.setLevel(newConfig.logging);
+        //log.setLevel(newConfig.logging);
         setConfig(newConfig, false);
     }
 
@@ -420,7 +445,7 @@ export default class Main extends EventEmitter {
     }
 
     private async onMattermostMessage(m: MattermostMessage): Promise<void> {
-        log.debug(`Mattermost message: ${JSON.stringify(m)}`);
+        this.myLogger.debug(`Mattermost message: ${JSON.stringify(m)}`);
         const handler = MattermostMainHandlers[m.event];
         if (handler !== undefined) {
             await handler.bind(this)(m);
@@ -432,19 +457,21 @@ export default class Main extends EventEmitter {
             if (channel !== undefined) {
                 await channel.onMattermostMessage(m);
             } else {
-                log.debug(
+                this.myLogger.debug(
                     `Message for unknown channel_id: ${m.broadcast.channel_id}`,
                 );
             }
         } else if (m.broadcast.team_id !== '') {
             const channels = this.channelsByTeam.get(m.broadcast.team_id);
             if (channels === undefined) {
-                log.debug(`Message for unknown team: ${m.broadcast.team_id}`);
+                this.myLogger.debug(
+                    `Message for unknown team: ${m.broadcast.team_id}`,
+                );
             } else {
                 await Promise.all(channels.map(c => c.onMattermostMessage(m)));
             }
         } else {
-            log.debug(`Unkown event type: ${m.event}`);
+            this.myLogger.debug(`Unkown event type: ${m.event}`);
         }
     }
 

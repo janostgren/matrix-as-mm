@@ -159,3 +159,24 @@ export async function allSettled(
 export function loadYaml(path: string): any {
     return load(readFileSync(path, 'utf8'));
 }
+
+export function readJsonFile(pathName: string, throwError = false) {
+    try {
+        const content = readFileSync(pathName);
+        return JSON.parse(content.toString());
+    } catch (error) {
+        if (throwError) {
+            throw error;
+        }
+        return {};
+    }
+}
+
+let packInfo: any;
+
+export function getPackageInfo() {
+    if (packInfo === undefined) {
+        packInfo = readJsonFile(`${__dirname}/../../package.json`);
+    }
+    return packInfo;
+}

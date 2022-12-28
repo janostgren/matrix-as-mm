@@ -66,3 +66,4 @@ app_service_config_files:
   - /etc/synapse/registration.yaml
 
 signing_key_path: '/etc/synapse/my.domain.name.signing.key'
+registration_shared_secret: '8^5:4zQl6J@LjJz~5JiW^=kI0_IO8c8B_8d&YEPp.NAbMa*&zw'

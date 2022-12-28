@@ -14,11 +14,15 @@ services:
       - POSTGRES_PASSWORD=hunter2
     ports:
       - '5432:5432'
+    networks:
+      - my_net
 
   mattermost:
     build: mattermost
     ports:
       - '8065:8065'
+    networks:
+      - my_net
 
   synapse:
     build: synapse
@@ -26,17 +30,28 @@ services:
       - '8008:8008'
     volumes:
       - ./synapse/registration.yaml:/etc/synapse/registration.yaml
+      - ./synapse/homeserver.yaml:/etc/synapse/homeserver.yaml
+
+    networks:
+      - my_net
 
   appservice:
     build: appservice
     ports:
       - '8022:22'
+    networks:
+      - my_net
 
   element:
     image: vectorim/element-web:latest
     restart: unless-stopped
     volumes:
       - ./element/element-config.json:/app/config.json
-    
     ports:
-      - '8080:80'    
+      - '8080:80'
+    networks:
+      - my_net
+
+networks:
+  my_net:
+    driver: bridge
