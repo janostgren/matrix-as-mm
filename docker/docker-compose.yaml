@@ -31,3 +31,12 @@ services:
     build: appservice
     ports:
       - '8022:22'
+
+  element:
+    image: vectorim/element-web:latest
+    restart: unless-stopped
+    volumes:
+      - ./element/element-config.json:/app/config.json
+    
+    ports:
+      - '8080:80'    
