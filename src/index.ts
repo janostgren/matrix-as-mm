@@ -15,7 +15,6 @@ log4js.configure(logConfigFile);
 
 const myLogger: log4js.Logger = getLogger('index.js');
 
-
 const argv = yargs
     .scriptName('matrix-appservice-mattermost')
     .help('help')

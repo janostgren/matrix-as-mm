@@ -5,7 +5,8 @@ import { spawnSync, spawn as spawnAsync } from 'child_process';
 import { MATTERMOST_PORT, SYNAPSE_PORT } from './utils/Data';
 
 const DOCKER_PATH = join(__dirname, '../../docker/docker-compose.yaml');
-const manualDocker:boolean= (process.env.INTEGRATION_MANUAL_DOCKER || 'false') =='true' ?true:false
+const manualDocker: boolean =
+    (process.env.INTEGRATION_MANUAL_DOCKER || 'false') == 'true' ? true : false;
 
 function query(port: number, resolve: () => void): void {
     get(`http://localhost:${port}/`, () => {
