@@ -6,3 +6,4 @@ docker/synapse/registration.yaml
 matrix-appservice-mattermost.tar.gz
 log
 *.log
+*.log.*
