@@ -70,8 +70,8 @@ export default class Main extends EventEmitter {
         super();
         setConfig(config);
 
-        const logConfigFile = `${__dirname}/../config/log4js.json`;
-        log4js.configure(logConfigFile);
+        //const logConfigFile = `${__dirname}/../config/log4js.json`;
+        //log4js.configure(logConfigFile);
         this.myLogger = getLogger('Main', config.logging);
 
         this.registration = loadYaml(registrationPath);

@@ -10,6 +10,9 @@ import { Registration } from './Interfaces';
 import Main from './Main';
 import log, { getLogger } from './Logging';
 console.time('Bridge loaded');
+const logConfigFile = `${__dirname}/../config/log4js.json`;
+log4js.configure(logConfigFile);
+
 const myLogger: log4js.Logger = getLogger('index.js');
 
 const argv = yargs
