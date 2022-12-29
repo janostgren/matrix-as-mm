@@ -1,6 +1,9 @@
+import * as log4js from 'log4js';
 import { startBridge, test, main } from './utils/Bridge';
 import { config } from '../Config';
-//import log from '../Logging';
+import { getLogger } from '../Logging';
+
+const myLogger: log4js.Logger = getLogger('tests.06-reload');
 
 test('Start bridge', async t => {
     await startBridge();
@@ -10,12 +13,14 @@ test('Start bridge', async t => {
 test('reload log level', async t => {
     // A shallow copy is fine because we are editing a top level property.
     const newConfig = Object.assign({}, config());
-    newConfig.logging = 'silent';
+    const oldLevel = newConfig.logging;
+    newConfig.logging = 'warn';
     await main().updateConfig(newConfig);
+    myLogger.level = 'warn';
 
-    // t.equal(log.getLevel(), log.level.SILENT);
+    t.equal(myLogger.level.toString().toLowerCase(), newConfig.logging);
 
-    newConfig.logging = 'debug';
+    newConfig.logging = oldLevel;
     await main().updateConfig(newConfig);
 
     t.end();

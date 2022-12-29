@@ -1,19 +1,27 @@
 import { Application, Request, Response } from 'express';
 import * as express from 'express';
+import * as log4js from 'log4js';
 import { promisify } from 'util';
 import { EventEmitter } from 'events';
 import { Server, createServer } from 'http';
 import { User } from '../entities/User';
 import Main from '../Main';
+import { getLogger } from '../Logging';
 
 export default class AppService extends EventEmitter {
     private app: Application;
     private server?: Server;
     private lastProcessedTxnId = '';
+    private myLogger: log4js.Logger;
 
     constructor(private main: Main) {
         super();
         this.app = express();
+        this.myLogger = getLogger('AppService');
+
+        this.app.use(
+            log4js.connectLogger(getLogger('http'), { level: 'auto' }),
+        );
 
         // This doesn't require a token, so is set before we add the
         // middleware
@@ -54,6 +62,8 @@ export default class AppService extends EventEmitter {
                 resolve();
             });
             this.server = serverApp.listen(port, hostname);
+
+            this.myLogger.info(`Start listen on port ${hostname}:${port}`);
         });
     }
 

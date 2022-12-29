@@ -1,5 +1,6 @@
+import * as log4js from 'log4js';
 import { MatrixEvent, MattermostMessage } from './Interfaces';
-import log from './Logging';
+import { getLogger } from './Logging';
 import Main from './Main';
 import MatrixHandlers from './matrix/MatrixHandler';
 import {
@@ -16,12 +17,15 @@ import { MattermostHandlers } from './mattermost/MattermostHandler';
 
 export default class Channel {
     private team?: string;
+    private myLogger: log4js.Logger;
 
     constructor(
         public readonly main: Main,
         public readonly matrixRoom: string,
         public readonly mattermostChannel: string,
-    ) {}
+    ) {
+        this.myLogger = getLogger('Channel');
+    }
 
     public async getTeam(): Promise<string> {
         if (this.team === undefined) {
@@ -96,7 +100,7 @@ export default class Channel {
     public async onMattermostMessage(m: MattermostMessage): Promise<void> {
         const handler = MattermostHandlers[m.event];
         if (handler === undefined) {
-            log.debug(`Unknown matermost message type: ${m.event}`);
+            this.myLogger.debug(`Unknown mattermost message type: ${m.event}`);
         } else {
             await handler.bind(this)(m);
         }
@@ -105,7 +109,7 @@ export default class Channel {
     public async onMatrixEvent(event: MatrixEvent): Promise<void> {
         const handler = MatrixHandlers[event.type];
         if (handler === undefined) {
-            log.debug(`Unknown matrix event type: ${event.type}`);
+            this.myLogger.debug(`Unknown matrix event type: ${event.type}`);
         } else {
             await handler.bind(this)(event);
         }

@@ -1,19 +1,22 @@
+import * as log4js from 'log4js';
 import { User } from '../entities/User';
 import Mutex from '../utils/Mutex';
 import Main from '../Main';
 import { localpart, sanitizeMattermostUsername } from '../utils/Functions';
 import { config } from '../Config';
 import { findFirstAvailable } from '../utils/Functions';
-import log from '../Logging';
+import { getLogger } from '../Logging';
 
 export default class MatrixUserStore {
     public readonly byMatrixUserId: Map<string, User>;
     public readonly byMattermostUserId: Map<string, User>;
     private readonly mutex: Mutex;
+    private myLogger: log4js.Logger;
     constructor(private readonly main: Main) {
         this.mutex = new Mutex();
         this.byMatrixUserId = new Map();
         this.byMattermostUserId = new Map();
+        this.myLogger = getLogger('MatrixUserStore');
     }
 
     public get(matrix_userid: string): User | undefined {
@@ -87,7 +90,7 @@ export default class MatrixUserStore {
                 username,
                 displayname,
             );
-            log.debug(
+            this.myLogger.debug(
                 `Creating mattermost puppet ${user.mattermost_userid} for ${matrix_userid}`,
             );
             this.mutex.unlock();
