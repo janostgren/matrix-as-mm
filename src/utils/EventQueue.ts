@@ -1,7 +1,7 @@
 import * as log4js from 'log4js';
 import { EventEmitter } from 'events';
 import Main from '../Main';
-import log, { getLogger } from '../Logging';
+import { getLogger } from '../Logging';
 
 /**
  * The purpose of the event queue is to take a stream of events, and run an
@@ -59,7 +59,9 @@ export default class EventQueue<T> {
         let data;
         while ((data = this.queue.shift())) {
             //log.time.debug(`Process ${this.opts.description} message queue`);
-            this.myLogger.debug(`Process ${this.opts.description} message queue`);
+            this.myLogger.debug(
+                `Process ${this.opts.description} message queue`,
+            );
             try {
                 if (await this.opts.filter(data)) {
                     this.myLogger.debug(
@@ -76,7 +78,9 @@ export default class EventQueue<T> {
                 );
             }
             //log.time.debug(`Process ${this.opts.description} message queue`);
-            this.myLogger.debug(`Process ${this.opts.description} message queue`);
+            this.myLogger.debug(
+                `Process ${this.opts.description} message queue`,
+            );
             this.opts.parent.emit(this.opts.description);
         }
         this.consuming = undefined;
