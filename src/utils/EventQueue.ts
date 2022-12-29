@@ -58,7 +58,8 @@ export default class EventQueue<T> {
         await new Promise(r => setTimeout(r, 0));
         let data;
         while ((data = this.queue.shift())) {
-            log.time.debug(`Process ${this.opts.description} message queue`);
+            //log.time.debug(`Process ${this.opts.description} message queue`);
+            this.myLogger.debug(`Process ${this.opts.description} message queue`);
             try {
                 if (await this.opts.filter(data)) {
                     this.myLogger.debug(
@@ -74,7 +75,8 @@ export default class EventQueue<T> {
                     `Error when processing ${this.opts.description} message \n${e.stack}`,
                 );
             }
-            log.time.debug(`Process ${this.opts.description} message queue`);
+            //log.time.debug(`Process ${this.opts.description} message queue`);
+            this.myLogger.debug(`Process ${this.opts.description} message queue`);
             this.opts.parent.emit(this.opts.description);
         }
         this.consuming = undefined;
