@@ -5,7 +5,7 @@ else
    mkdir $dumpdir
 fi
 echo Dumping databases to "$dumpdir."
-echo '\c' > $dumpdir/prefix.sql
+echo '\c synapse' > $dumpdir/prefix.sql
 
 pg_dump -U mattermost -d synapse > $dumpdir/synapse.tmp
 cat $dumpdir/prefix.sql  $dumpdir/synapse.tmp > $dumpdir/synapse.sql

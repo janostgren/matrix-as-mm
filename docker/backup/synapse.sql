@@ -1,4 +1,4 @@
-\c
+\c synapse
 --
 -- PostgreSQL database dump
 --
@@ -30,11 +30,8 @@ CREATE TABLE public.access_tokens (
     user_id text NOT NULL,
     device_id text,
     token text NOT NULL,
-    valid_until_ms bigint,
-    puppets_user_id text,
-    last_validated bigint,
-    refresh_token_id bigint,
-    used boolean
+    last_used bigint,
+    valid_until_ms bigint
 );
 
 
@@ -48,26 +45,24 @@ CREATE TABLE public.account_data (
     user_id text NOT NULL,
     account_data_type text NOT NULL,
     stream_id bigint NOT NULL,
-    content text NOT NULL,
-    instance_name text
+    content text NOT NULL
 );
 
 
 ALTER TABLE public.account_data OWNER TO synapse;
 
 --
--- Name: account_data_sequence; Type: SEQUENCE; Schema: public; Owner: synapse
+-- Name: account_data_max_stream_id; Type: TABLE; Schema: public; Owner: synapse
 --
 
-CREATE SEQUENCE public.account_data_sequence
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+CREATE TABLE public.account_data_max_stream_id (
+    lock character(1) DEFAULT 'X'::bpchar NOT NULL,
+    stream_id bigint NOT NULL,
+    CONSTRAINT private_user_data_max_stream_id_lock_check CHECK ((lock = 'X'::bpchar))
+);
 
 
-ALTER TABLE public.account_data_sequence OWNER TO synapse;
+ALTER TABLE public.account_data_max_stream_id OWNER TO synapse;
 
 --
 -- Name: account_validity; Type: TABLE; Schema: public; Owner: synapse
@@ -77,8 +72,7 @@ CREATE TABLE public.account_validity (
     user_id text NOT NULL,
     expiration_ts_ms bigint NOT NULL,
     email_sent boolean NOT NULL,
-    renewal_token text,
-    token_used_ts_ms bigint
+    renewal_token text
 );
 
 
@@ -91,9 +85,7 @@ ALTER TABLE public.account_validity OWNER TO synapse;
 CREATE TABLE public.application_services_state (
     as_id text NOT NULL,
     state character varying(5),
-    last_txn bigint,
-    read_receipt_stream_id bigint,
-    presence_stream_id bigint
+    last_txn integer
 );
 
 
@@ -105,7 +97,7 @@ ALTER TABLE public.application_services_state OWNER TO synapse;
 
 CREATE TABLE public.application_services_txns (
     as_id text NOT NULL,
-    txn_id bigint NOT NULL,
+    txn_id integer NOT NULL,
     event_ids text NOT NULL
 );
 
@@ -177,19 +169,6 @@ CREATE TABLE public.background_updates (
 ALTER TABLE public.background_updates OWNER TO synapse;
 
 --
--- Name: batch_events; Type: TABLE; Schema: public; Owner: synapse
---
-
-CREATE TABLE public.batch_events (
-    event_id text NOT NULL,
-    room_id text NOT NULL,
-    batch_id text NOT NULL
-);
-
-
-ALTER TABLE public.batch_events OWNER TO synapse;
-
---
 -- Name: blocked_rooms; Type: TABLE; Schema: public; Owner: synapse
 --
 
@@ -200,6 +179,20 @@ CREATE TABLE public.blocked_rooms (
 
 
 ALTER TABLE public.blocked_rooms OWNER TO synapse;
+
+--
+-- Name: cache_invalidation_stream; Type: TABLE; Schema: public; Owner: synapse
+--
+
+CREATE TABLE public.cache_invalidation_stream (
+    stream_id bigint,
+    cache_func text,
+    keys text[],
+    invalidation_ts bigint
+);
+
+
+ALTER TABLE public.cache_invalidation_stream OWNER TO synapse;
 
 --
 -- Name: cache_invalidation_stream_by_instance; Type: TABLE; Schema: public; Owner: synapse
@@ -240,8 +233,7 @@ CREATE TABLE public.current_state_delta_stream (
     type text NOT NULL,
     state_key text NOT NULL,
     event_id text,
-    prev_event_id text,
-    instance_name text
+    prev_event_id text
 );
 
 
@@ -263,19 +255,6 @@ CREATE TABLE public.current_state_events (
 ALTER TABLE public.current_state_events OWNER TO synapse;
 
 --
--- Name: dehydrated_devices; Type: TABLE; Schema: public; Owner: synapse
---
-
-CREATE TABLE public.dehydrated_devices (
-    user_id text NOT NULL,
-    device_id text NOT NULL,
-    device_data text NOT NULL
-);
-
-
-ALTER TABLE public.dehydrated_devices OWNER TO synapse;
-
---
 -- Name: deleted_pushers; Type: TABLE; Schema: public; Owner: synapse
 --
 
@@ -290,19 +269,6 @@ CREATE TABLE public.deleted_pushers (
 ALTER TABLE public.deleted_pushers OWNER TO synapse;
 
 --
--- Name: destination_rooms; Type: TABLE; Schema: public; Owner: synapse
---
-
-CREATE TABLE public.destination_rooms (
-    destination text NOT NULL,
-    room_id text NOT NULL,
-    stream_ordering bigint NOT NULL
-);
-
-
-ALTER TABLE public.destination_rooms OWNER TO synapse;
-
---
 -- Name: destinations; Type: TABLE; Schema: public; Owner: synapse
 --
 
@@ -310,8 +276,7 @@ CREATE TABLE public.destinations (
     destination text NOT NULL,
     retry_last_ts bigint,
     retry_interval bigint,
-    failure_ts bigint,
-    last_successful_stream_ordering bigint
+    failure_ts bigint
 );
 
 
@@ -324,8 +289,7 @@ ALTER TABLE public.destinations OWNER TO synapse;
 CREATE TABLE public.device_federation_inbox (
     origin text NOT NULL,
     message_id text NOT NULL,
-    received_ts bigint NOT NULL,
-    instance_name text
+    received_ts bigint NOT NULL
 );
 
 
@@ -339,8 +303,7 @@ CREATE TABLE public.device_federation_outbox (
     destination text NOT NULL,
     stream_id bigint NOT NULL,
     queued_ts bigint NOT NULL,
-    messages_json text NOT NULL,
-    instance_name text
+    messages_json text NOT NULL
 );
 
 
@@ -354,26 +317,11 @@ CREATE TABLE public.device_inbox (
     user_id text NOT NULL,
     device_id text NOT NULL,
     stream_id bigint NOT NULL,
-    message_json text NOT NULL,
-    instance_name text
+    message_json text NOT NULL
 );
 
 
 ALTER TABLE public.device_inbox OWNER TO synapse;
-
---
--- Name: device_inbox_sequence; Type: SEQUENCE; Schema: public; Owner: synapse
---
-
-CREATE SEQUENCE public.device_inbox_sequence
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.device_inbox_sequence OWNER TO synapse;
 
 --
 -- Name: device_lists_outbound_last_success; Type: TABLE; Schema: public; Owner: synapse
@@ -456,6 +404,17 @@ CREATE TABLE public.device_lists_stream (
 ALTER TABLE public.device_lists_stream OWNER TO synapse;
 
 --
+-- Name: device_max_stream_id; Type: TABLE; Schema: public; Owner: synapse
+--
+
+CREATE TABLE public.device_max_stream_id (
+    stream_id bigint NOT NULL
+);
+
+
+ALTER TABLE public.device_max_stream_id OWNER TO synapse;
+
+--
 -- Name: devices; Type: TABLE; Schema: public; Owner: synapse
 --
 
@@ -514,22 +473,6 @@ CREATE TABLE public.e2e_device_keys_json (
 
 
 ALTER TABLE public.e2e_device_keys_json OWNER TO synapse;
-
---
--- Name: e2e_fallback_keys_json; Type: TABLE; Schema: public; Owner: synapse
---
-
-CREATE TABLE public.e2e_fallback_keys_json (
-    user_id text NOT NULL,
-    device_id text NOT NULL,
-    algorithm text NOT NULL,
-    key_id text NOT NULL,
-    key_json text NOT NULL,
-    used boolean DEFAULT false NOT NULL
-);
-
-
-ALTER TABLE public.e2e_fallback_keys_json OWNER TO synapse;
 
 --
 -- Name: e2e_one_time_keys_json; Type: TABLE; Schema: public; Owner: synapse
@@ -604,61 +547,6 @@ CREATE TABLE public.event_auth (
 
 
 ALTER TABLE public.event_auth OWNER TO synapse;
-
---
--- Name: event_auth_chain_id; Type: SEQUENCE; Schema: public; Owner: synapse
---
-
-CREATE SEQUENCE public.event_auth_chain_id
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.event_auth_chain_id OWNER TO synapse;
-
---
--- Name: event_auth_chain_links; Type: TABLE; Schema: public; Owner: synapse
---
-
-CREATE TABLE public.event_auth_chain_links (
-    origin_chain_id bigint NOT NULL,
-    origin_sequence_number bigint NOT NULL,
-    target_chain_id bigint NOT NULL,
-    target_sequence_number bigint NOT NULL
-);
-
-
-ALTER TABLE public.event_auth_chain_links OWNER TO synapse;
-
---
--- Name: event_auth_chain_to_calculate; Type: TABLE; Schema: public; Owner: synapse
---
-
-CREATE TABLE public.event_auth_chain_to_calculate (
-    event_id text NOT NULL,
-    room_id text NOT NULL,
-    type text NOT NULL,
-    state_key text NOT NULL
-);
-
-
-ALTER TABLE public.event_auth_chain_to_calculate OWNER TO synapse;
-
---
--- Name: event_auth_chains; Type: TABLE; Schema: public; Owner: synapse
---
-
-CREATE TABLE public.event_auth_chains (
-    event_id text NOT NULL,
-    chain_id bigint NOT NULL,
-    sequence_number bigint NOT NULL
-);
-
-
-ALTER TABLE public.event_auth_chains OWNER TO synapse;
 
 --
 -- Name: event_backward_extremities; Type: TABLE; Schema: public; Owner: synapse
@@ -752,8 +640,7 @@ CREATE TABLE public.event_push_actions (
     topological_ordering bigint,
     stream_ordering bigint,
     notif smallint,
-    highlight smallint,
-    unread smallint
+    highlight smallint
 );
 
 
@@ -768,8 +655,7 @@ CREATE TABLE public.event_push_actions_staging (
     user_id text NOT NULL,
     actions text NOT NULL,
     notif smallint NOT NULL,
-    highlight smallint NOT NULL,
-    unread smallint
+    highlight smallint NOT NULL
 );
 
 
@@ -783,8 +669,7 @@ CREATE TABLE public.event_push_summary (
     user_id text NOT NULL,
     room_id text NOT NULL,
     notif_count bigint NOT NULL,
-    stream_ordering bigint NOT NULL,
-    unread_count bigint
+    stream_ordering bigint NOT NULL
 );
 
 
@@ -877,26 +762,11 @@ CREATE TABLE public.event_to_state_groups (
 ALTER TABLE public.event_to_state_groups OWNER TO synapse;
 
 --
--- Name: event_txn_id; Type: TABLE; Schema: public; Owner: synapse
---
-
-CREATE TABLE public.event_txn_id (
-    event_id text NOT NULL,
-    room_id text NOT NULL,
-    user_id text NOT NULL,
-    token_id bigint NOT NULL,
-    txn_id text NOT NULL,
-    inserted_ts bigint NOT NULL
-);
-
-
-ALTER TABLE public.event_txn_id OWNER TO synapse;
-
---
 -- Name: events; Type: TABLE; Schema: public; Owner: synapse
 --
 
 CREATE TABLE public.events (
+    stream_ordering integer NOT NULL,
     topological_ordering bigint NOT NULL,
     event_id text NOT NULL,
     type text NOT NULL,
@@ -909,41 +779,11 @@ CREATE TABLE public.events (
     origin_server_ts bigint,
     received_ts bigint,
     sender text,
-    contains_url boolean,
-    instance_name text,
-    stream_ordering bigint
+    contains_url boolean
 );
 
 
 ALTER TABLE public.events OWNER TO synapse;
-
---
--- Name: events_backfill_stream_seq; Type: SEQUENCE; Schema: public; Owner: synapse
---
-
-CREATE SEQUENCE public.events_backfill_stream_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.events_backfill_stream_seq OWNER TO synapse;
-
---
--- Name: events_stream_seq; Type: SEQUENCE; Schema: public; Owner: synapse
---
-
-CREATE SEQUENCE public.events_stream_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.events_stream_seq OWNER TO synapse;
 
 --
 -- Name: ex_outlier_stream; Type: TABLE; Schema: public; Owner: synapse
@@ -952,28 +792,11 @@ ALTER TABLE public.events_stream_seq OWNER TO synapse;
 CREATE TABLE public.ex_outlier_stream (
     event_stream_ordering bigint NOT NULL,
     event_id text NOT NULL,
-    state_group bigint NOT NULL,
-    instance_name text
+    state_group bigint NOT NULL
 );
 
 
 ALTER TABLE public.ex_outlier_stream OWNER TO synapse;
-
---
--- Name: federation_inbound_events_staging; Type: TABLE; Schema: public; Owner: synapse
---
-
-CREATE TABLE public.federation_inbound_events_staging (
-    origin text NOT NULL,
-    room_id text NOT NULL,
-    event_id text NOT NULL,
-    received_ts bigint NOT NULL,
-    event_json text NOT NULL,
-    internal_metadata text NOT NULL
-);
-
-
-ALTER TABLE public.federation_inbound_events_staging OWNER TO synapse;
 
 --
 -- Name: federation_stream_position; Type: TABLE; Schema: public; Owner: synapse
@@ -981,8 +804,7 @@ ALTER TABLE public.federation_inbound_events_staging OWNER TO synapse;
 
 CREATE TABLE public.federation_stream_position (
     type text NOT NULL,
-    stream_id bigint NOT NULL,
-    instance_name text DEFAULT 'master'::text NOT NULL
+    stream_id integer NOT NULL
 );
 
 
@@ -1159,90 +981,6 @@ CREATE TABLE public.groups (
 ALTER TABLE public.groups OWNER TO synapse;
 
 --
--- Name: ignored_users; Type: TABLE; Schema: public; Owner: synapse
---
-
-CREATE TABLE public.ignored_users (
-    ignorer_user_id text NOT NULL,
-    ignored_user_id text NOT NULL
-);
-
-
-ALTER TABLE public.ignored_users OWNER TO synapse;
-
---
--- Name: insertion_event_edges; Type: TABLE; Schema: public; Owner: synapse
---
-
-CREATE TABLE public.insertion_event_edges (
-    event_id text NOT NULL,
-    room_id text NOT NULL,
-    insertion_prev_event_id text NOT NULL
-);
-
-
-ALTER TABLE public.insertion_event_edges OWNER TO synapse;
-
---
--- Name: insertion_event_extremities; Type: TABLE; Schema: public; Owner: synapse
---
-
-CREATE TABLE public.insertion_event_extremities (
-    event_id text NOT NULL,
-    room_id text NOT NULL
-);
-
-
-ALTER TABLE public.insertion_event_extremities OWNER TO synapse;
-
---
--- Name: insertion_events; Type: TABLE; Schema: public; Owner: synapse
---
-
-CREATE TABLE public.insertion_events (
-    event_id text NOT NULL,
-    room_id text NOT NULL,
-    next_batch_id text NOT NULL
-);
-
-
-ALTER TABLE public.insertion_events OWNER TO synapse;
-
---
--- Name: instance_map; Type: TABLE; Schema: public; Owner: synapse
---
-
-CREATE TABLE public.instance_map (
-    instance_id integer NOT NULL,
-    instance_name text NOT NULL
-);
-
-
-ALTER TABLE public.instance_map OWNER TO synapse;
-
---
--- Name: instance_map_instance_id_seq; Type: SEQUENCE; Schema: public; Owner: synapse
---
-
-CREATE SEQUENCE public.instance_map_instance_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.instance_map_instance_id_seq OWNER TO synapse;
-
---
--- Name: instance_map_instance_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: synapse
---
-
-ALTER SEQUENCE public.instance_map_instance_id_seq OWNED BY public.instance_map.instance_id;
-
-
---
 -- Name: local_current_membership; Type: TABLE; Schema: public; Owner: synapse
 --
 
@@ -1288,6 +1026,23 @@ CREATE TABLE public.local_group_updates (
 ALTER TABLE public.local_group_updates OWNER TO synapse;
 
 --
+-- Name: local_invites; Type: TABLE; Schema: public; Owner: synapse
+--
+
+CREATE TABLE public.local_invites (
+    stream_id bigint NOT NULL,
+    inviter text NOT NULL,
+    invitee text NOT NULL,
+    event_id text NOT NULL,
+    room_id text NOT NULL,
+    locally_rejected text,
+    replaced_by text
+);
+
+
+ALTER TABLE public.local_invites OWNER TO synapse;
+
+--
 -- Name: local_media_repository; Type: TABLE; Schema: public; Owner: synapse
 --
 
@@ -1300,8 +1055,7 @@ CREATE TABLE public.local_media_repository (
     user_id text,
     quarantined_by text,
     url_cache text,
-    last_access_ts bigint,
-    safe_from_quarantine boolean DEFAULT false NOT NULL
+    last_access_ts bigint
 );
 
 
@@ -1380,6 +1134,18 @@ CREATE TABLE public.presence (
 ALTER TABLE public.presence OWNER TO synapse;
 
 --
+-- Name: presence_allow_inbound; Type: TABLE; Schema: public; Owner: synapse
+--
+
+CREATE TABLE public.presence_allow_inbound (
+    observed_user_id text NOT NULL,
+    observer_user_id text NOT NULL
+);
+
+
+ALTER TABLE public.presence_allow_inbound OWNER TO synapse;
+
+--
 -- Name: presence_stream; Type: TABLE; Schema: public; Owner: synapse
 --
 
@@ -1391,26 +1157,11 @@ CREATE TABLE public.presence_stream (
     last_federation_update_ts bigint,
     last_user_sync_ts bigint,
     status_msg text,
-    currently_active boolean,
-    instance_name text
+    currently_active boolean
 );
 
 
 ALTER TABLE public.presence_stream OWNER TO synapse;
-
---
--- Name: presence_stream_sequence; Type: SEQUENCE; Schema: public; Owner: synapse
---
-
-CREATE SEQUENCE public.presence_stream_sequence
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.presence_stream_sequence OWNER TO synapse;
 
 --
 -- Name: profiles; Type: TABLE; Schema: public; Owner: synapse
@@ -1521,7 +1272,7 @@ CREATE TABLE public.pushers (
     ts bigint NOT NULL,
     lang text,
     data text,
-    last_stream_ordering bigint,
+    last_stream_ordering integer,
     last_success bigint,
     failing_since bigint
 );
@@ -1567,26 +1318,11 @@ CREATE TABLE public.receipts_linearized (
     receipt_type text NOT NULL,
     user_id text NOT NULL,
     event_id text NOT NULL,
-    data text NOT NULL,
-    instance_name text
+    data text NOT NULL
 );
 
 
 ALTER TABLE public.receipts_linearized OWNER TO synapse;
-
---
--- Name: receipts_sequence; Type: SEQUENCE; Schema: public; Owner: synapse
---
-
-CREATE SEQUENCE public.receipts_sequence
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.receipts_sequence OWNER TO synapse;
 
 --
 -- Name: received_transactions; Type: TABLE; Schema: public; Owner: synapse
@@ -1617,36 +1353,6 @@ CREATE TABLE public.redactions (
 
 
 ALTER TABLE public.redactions OWNER TO synapse;
-
---
--- Name: refresh_tokens; Type: TABLE; Schema: public; Owner: synapse
---
-
-CREATE TABLE public.refresh_tokens (
-    id bigint NOT NULL,
-    user_id text NOT NULL,
-    device_id text NOT NULL,
-    token text NOT NULL,
-    next_token_id bigint
-);
-
-
-ALTER TABLE public.refresh_tokens OWNER TO synapse;
-
---
--- Name: registration_tokens; Type: TABLE; Schema: public; Owner: synapse
---
-
-CREATE TABLE public.registration_tokens (
-    token text NOT NULL,
-    uses_allowed integer,
-    pending integer NOT NULL,
-    completed integer NOT NULL,
-    expiry_time bigint
-);
-
-
-ALTER TABLE public.registration_tokens OWNER TO synapse;
 
 --
 -- Name: rejections; Type: TABLE; Schema: public; Owner: synapse
@@ -1721,8 +1427,7 @@ CREATE TABLE public.room_account_data (
     room_id text NOT NULL,
     account_data_type text NOT NULL,
     stream_id bigint NOT NULL,
-    content text NOT NULL,
-    instance_name text
+    content text NOT NULL
 );
 
 
@@ -1759,7 +1464,7 @@ ALTER TABLE public.room_aliases OWNER TO synapse;
 
 CREATE TABLE public.room_depth (
     room_id text NOT NULL,
-    min_depth bigint
+    min_depth integer NOT NULL
 );
 
 
@@ -1809,8 +1514,7 @@ CREATE TABLE public.room_stats_current (
     left_members integer NOT NULL,
     banned_members integer NOT NULL,
     local_users_in_room integer NOT NULL,
-    completed_delta_stream_id bigint NOT NULL,
-    knocked_members integer
+    completed_delta_stream_id bigint NOT NULL
 );
 
 
@@ -1843,8 +1547,7 @@ CREATE TABLE public.room_stats_historical (
     banned_members bigint NOT NULL,
     local_users_in_room bigint NOT NULL,
     total_events bigint NOT NULL,
-    total_event_bytes bigint NOT NULL,
-    knocked_members bigint
+    total_event_bytes bigint NOT NULL
 );
 
 
@@ -1891,8 +1594,7 @@ ALTER TABLE public.room_tags OWNER TO synapse;
 CREATE TABLE public.room_tags_revisions (
     user_id text NOT NULL,
     room_id text NOT NULL,
-    stream_id bigint NOT NULL,
-    instance_name text
+    stream_id bigint NOT NULL
 );
 
 
@@ -1906,25 +1608,11 @@ CREATE TABLE public.rooms (
     room_id text NOT NULL,
     is_public boolean,
     creator text,
-    room_version text,
-    has_auth_chain_index boolean
+    room_version text
 );
 
 
 ALTER TABLE public.rooms OWNER TO synapse;
-
---
--- Name: schema_compat_version; Type: TABLE; Schema: public; Owner: synapse
---
-
-CREATE TABLE public.schema_compat_version (
-    lock character(1) DEFAULT 'X'::bpchar NOT NULL,
-    compat_version integer NOT NULL,
-    CONSTRAINT schema_compat_version_lock_check CHECK ((lock = 'X'::bpchar))
-);
-
-
-ALTER TABLE public.schema_compat_version OWNER TO synapse;
 
 --
 -- Name: schema_version; Type: TABLE; Schema: public; Owner: synapse
@@ -1971,20 +1659,6 @@ CREATE TABLE public.server_signature_keys (
 
 
 ALTER TABLE public.server_signature_keys OWNER TO synapse;
-
---
--- Name: sessions; Type: TABLE; Schema: public; Owner: synapse
---
-
-CREATE TABLE public.sessions (
-    session_type text NOT NULL,
-    session_id text NOT NULL,
-    value text NOT NULL,
-    expiry_time_ms bigint NOT NULL
-);
-
-
-ALTER TABLE public.sessions OWNER TO synapse;
 
 --
 -- Name: state_events; Type: TABLE; Schema: public; Owner: synapse
@@ -2051,7 +1725,6 @@ CREATE TABLE public.state_groups_state (
     state_key text NOT NULL,
     event_id text NOT NULL
 );
-ALTER TABLE ONLY public.state_groups_state ALTER COLUMN state_group SET (n_distinct=-0.02);
 
 
 ALTER TABLE public.state_groups_state OWNER TO synapse;
@@ -2081,19 +1754,6 @@ CREATE TABLE public.stream_ordering_to_exterm (
 
 
 ALTER TABLE public.stream_ordering_to_exterm OWNER TO synapse;
-
---
--- Name: stream_positions; Type: TABLE; Schema: public; Owner: synapse
---
-
-CREATE TABLE public.stream_positions (
-    stream_name text NOT NULL,
-    instance_name text NOT NULL,
-    stream_id bigint NOT NULL
-);
-
-
-ALTER TABLE public.stream_positions OWNER TO synapse;
 
 --
 -- Name: threepid_guest_access_tokens; Type: TABLE; Schema: public; Owner: synapse
@@ -2170,27 +1830,13 @@ CREATE TABLE public.ui_auth_sessions_credentials (
 ALTER TABLE public.ui_auth_sessions_credentials OWNER TO synapse;
 
 --
--- Name: ui_auth_sessions_ips; Type: TABLE; Schema: public; Owner: synapse
---
-
-CREATE TABLE public.ui_auth_sessions_ips (
-    session_id text NOT NULL,
-    ip text NOT NULL,
-    user_agent text NOT NULL
-);
-
-
-ALTER TABLE public.ui_auth_sessions_ips OWNER TO synapse;
-
---
 -- Name: user_daily_visits; Type: TABLE; Schema: public; Owner: synapse
 --
 
 CREATE TABLE public.user_daily_visits (
     user_id text NOT NULL,
     device_id text,
-    "timestamp" bigint NOT NULL,
-    user_agent text
+    "timestamp" bigint NOT NULL
 );
 
 
@@ -2260,20 +1906,6 @@ CREATE TABLE public.user_filters (
 
 
 ALTER TABLE public.user_filters OWNER TO synapse;
-
---
--- Name: user_id_seq; Type: SEQUENCE; Schema: public; Owner: synapse
---
-
-CREATE SEQUENCE public.user_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.user_id_seq OWNER TO synapse;
 
 --
 -- Name: user_ips; Type: TABLE; Schema: public; Owner: synapse
@@ -2379,8 +2011,7 @@ CREATE TABLE public.users (
     consent_version text,
     consent_server_notice_sent text,
     user_type text,
-    deactivated smallint DEFAULT 0 NOT NULL,
-    shadow_banned boolean
+    deactivated smallint DEFAULT 0 NOT NULL
 );
 
 
@@ -2410,18 +2041,6 @@ CREATE TABLE public.users_pending_deactivation (
 ALTER TABLE public.users_pending_deactivation OWNER TO synapse;
 
 --
--- Name: users_to_send_full_presence_to; Type: TABLE; Schema: public; Owner: synapse
---
-
-CREATE TABLE public.users_to_send_full_presence_to (
-    user_id text NOT NULL,
-    presence_stream_id bigint
-);
-
-
-ALTER TABLE public.users_to_send_full_presence_to OWNER TO synapse;
-
---
 -- Name: users_who_share_private_rooms; Type: TABLE; Schema: public; Owner: synapse
 --
 
@@ -2435,36 +2054,14 @@ CREATE TABLE public.users_who_share_private_rooms (
 ALTER TABLE public.users_who_share_private_rooms OWNER TO synapse;
 
 --
--- Name: worker_locks; Type: TABLE; Schema: public; Owner: synapse
---
-
-CREATE TABLE public.worker_locks (
-    lock_name text NOT NULL,
-    lock_key text NOT NULL,
-    instance_name text NOT NULL,
-    token text NOT NULL,
-    last_renewed_ts bigint NOT NULL
-);
-
-
-ALTER TABLE public.worker_locks OWNER TO synapse;
-
---
--- Name: instance_map instance_id; Type: DEFAULT; Schema: public; Owner: synapse
---
-
-ALTER TABLE ONLY public.instance_map ALTER COLUMN instance_id SET DEFAULT nextval('public.instance_map_instance_id_seq'::regclass);
-
-
---
 -- Data for Name: access_tokens; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
-COPY public.access_tokens (id, user_id, device_id, token, valid_until_ms, puppets_user_id, last_validated, refresh_token_id, used) FROM stdin;
-2	@admin:localhost	WCSUBIGVWG	MDAxN2xvY2F0aW9uIGxvY2FsaG9zdAowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMjNjaWQgdXNlcl9pZCA9IEBhZG1pbjpsb2NhbGhvc3QKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSBXVU9yUTVRMFRnUkNjME1ACjAwMmZzaWduYXR1cmUgdYKA-yuTQ5JV5O0HWRak-48xavOYgA1MMc6A1V_Uw5kK	\N	\N	\N	\N	\N
-3	@matrix_a:localhost	TKAVEOGKHH	MDAxN2xvY2F0aW9uIGxvY2FsaG9zdAowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMjZjaWQgdXNlcl9pZCA9IEBtYXRyaXhfYTpsb2NhbGhvc3QKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSAwb3Y6eTZVdHojUk4jbFprCjAwMmZzaWduYXR1cmUgNNZKnOVRzj5svh9pEM0UUEqtXYnHjnj9XyNLJ1_uKoAK	\N	\N	\N	\N	\N
-4	@matrix_b:localhost	DJFHSWMXLW	MDAxN2xvY2F0aW9uIGxvY2FsaG9zdAowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMjZjaWQgdXNlcl9pZCA9IEBtYXRyaXhfYjpsb2NhbGhvc3QKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSBBYl9hbWthI0daSzgtfjdICjAwMmZzaWduYXR1cmUgOReBLkPURCMNtzORS9fpogQqVa3IWN9ZEu5gXW91QTMK	\N	\N	\N	\N	\N
-5	@ignored_user:localhost	IYEBBQEXHS	MDAxN2xvY2F0aW9uIGxvY2FsaG9zdAowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMmFjaWQgdXNlcl9pZCA9IEBpZ25vcmVkX3VzZXI6bG9jYWxob3N0CjAwMTZjaWQgdHlwZSA9IGFjY2VzcwowMDIxY2lkIG5vbmNlID0gZU5ta1BBMj1FNnVPRGtwdgowMDJmc2lnbmF0dXJlIHSt8jrFU836Ne3it2HY88EhPD1Aoustsm211bbFjcLcCg	\N	\N	\N	\N	\N
+COPY public.access_tokens (id, user_id, device_id, token, last_used, valid_until_ms) FROM stdin;
+2	@admin:localhost	WCSUBIGVWG	MDAxN2xvY2F0aW9uIGxvY2FsaG9zdAowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMjNjaWQgdXNlcl9pZCA9IEBhZG1pbjpsb2NhbGhvc3QKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSBXVU9yUTVRMFRnUkNjME1ACjAwMmZzaWduYXR1cmUgdYKA-yuTQ5JV5O0HWRak-48xavOYgA1MMc6A1V_Uw5kK	\N	\N
+3	@matrix_a:localhost	TKAVEOGKHH	MDAxN2xvY2F0aW9uIGxvY2FsaG9zdAowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMjZjaWQgdXNlcl9pZCA9IEBtYXRyaXhfYTpsb2NhbGhvc3QKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSAwb3Y6eTZVdHojUk4jbFprCjAwMmZzaWduYXR1cmUgNNZKnOVRzj5svh9pEM0UUEqtXYnHjnj9XyNLJ1_uKoAK	\N	\N
+4	@matrix_b:localhost	DJFHSWMXLW	MDAxN2xvY2F0aW9uIGxvY2FsaG9zdAowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMjZjaWQgdXNlcl9pZCA9IEBtYXRyaXhfYjpsb2NhbGhvc3QKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSBBYl9hbWthI0daSzgtfjdICjAwMmZzaWduYXR1cmUgOReBLkPURCMNtzORS9fpogQqVa3IWN9ZEu5gXW91QTMK	\N	\N
+5	@ignored_user:localhost	IYEBBQEXHS	MDAxN2xvY2F0aW9uIGxvY2FsaG9zdAowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMmFjaWQgdXNlcl9pZCA9IEBpZ25vcmVkX3VzZXI6bG9jYWxob3N0CjAwMTZjaWQgdHlwZSA9IGFjY2VzcwowMDIxY2lkIG5vbmNlID0gZU5ta1BBMj1FNnVPRGtwdgowMDJmc2lnbmF0dXJlIHSt8jrFU836Ne3it2HY88EhPD1Aoustsm211bbFjcLcCg	\N	\N
 \.
 
 
@@ -2472,7 +2069,15 @@ COPY public.access_tokens (id, user_id, device_id, token, valid_until_ms, puppet
 -- Data for Name: account_data; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
-COPY public.account_data (user_id, account_data_type, stream_id, content, instance_name) FROM stdin;
+COPY public.account_data (user_id, account_data_type, stream_id, content) FROM stdin;
+\.
+
+
+--
+-- Data for Name: account_data_max_stream_id; Type: TABLE DATA; Schema: public; Owner: synapse
+--
+
+COPY public.account_data_max_stream_id (lock, stream_id) FROM stdin;
 \.
 
 
@@ -2480,7 +2085,7 @@ COPY public.account_data (user_id, account_data_type, stream_id, content, instan
 -- Data for Name: account_validity; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
-COPY public.account_validity (user_id, expiration_ts_ms, email_sent, renewal_token, token_used_ts_ms) FROM stdin;
+COPY public.account_validity (user_id, expiration_ts_ms, email_sent, renewal_token) FROM stdin;
 \.
 
 
@@ -2488,7 +2093,7 @@ COPY public.account_validity (user_id, expiration_ts_ms, email_sent, renewal_tok
 -- Data for Name: application_services_state; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
-COPY public.application_services_state (as_id, state, last_txn, read_receipt_stream_id, presence_stream_id) FROM stdin;
+COPY public.application_services_state (as_id, state, last_txn) FROM stdin;
 \.
 
 
@@ -2559,82 +2164,6 @@ COPY public.applied_schema_deltas (version, file) FROM stdin;
 58	58/03persist_ui_auth.sql
 58	58/05cache_instance.sql.postgres
 58	58/06dlols_unique_idx.py
-58	58/07add_method_to_thumbnail_constraint.sql.postgres
-58	58/07persist_ui_auth_ips.sql
-58	58/08_media_safe_from_quarantine.sql.postgres
-58	58/09shadow_ban.sql
-58	58/10_pushrules_enabled_delete_obsolete.sql
-58	58/10drop_local_rejections_stream.sql
-58	58/10federation_pos_instance_name.sql
-58	58/11dehydration.sql
-58	58/11fallback.sql
-58	58/11user_id_seq.py
-58	58/12room_stats.sql
-58	58/13remove_presence_allow_inbound.sql
-58	58/14events_instance_name.sql
-58	58/14events_instance_name.sql.postgres
-58	58/15_catchup_destination_rooms.sql
-58	58/15unread_count.sql
-58	58/16populate_stats_process_rooms_fix.sql
-58	58/17_catchup_last_successful.sql
-58	58/18stream_positions.sql
-58	58/19instance_map.sql.postgres
-58	58/19txn_id.sql
-58	58/20instance_name_event_tables.sql
-58	58/20user_daily_visits.sql
-58	58/21as_device_stream.sql
-58	58/21drop_device_max_stream_id.sql
-58	58/22puppet_token.sql
-58	58/22users_have_local_media.sql
-58	58/23e2e_cross_signing_keys_idx.sql
-58	58/24drop_event_json_index.sql
-58	58/25user_external_ids_user_id_idx.sql
-58	58/26access_token_last_validated.sql
-58	58/27local_invites.sql
-58	58/28drop_last_used_column.sql.postgres
-59	59/01ignored_user.py
-59	59/02shard_send_to_device.sql
-59	59/03shard_send_to_device_sequence.sql.postgres
-59	59/04_event_auth_chains.sql
-59	59/04_event_auth_chains.sql.postgres
-59	59/04drop_account_data.sql
-59	59/05cache_invalidation.sql
-59	59/06chain_cover_index.sql
-59	59/06shard_account_data.sql
-59	59/06shard_account_data.sql.postgres
-59	59/07shard_account_data_fix.sql
-59	59/08delete_pushers_for_deactivated_accounts.sql
-59	59/08delete_stale_pushers.sql
-59	59/09rejected_events_metadata.sql
-59	59/10delete_purged_chain_cover.sql
-59	59/11add_knock_members_to_stats.sql
-59	59/11drop_thumbnail_constraint.sql.postgres
-59	59/12account_validity_token_used_ts_ms.sql
-59	59/12presence_stream_instance.sql
-59	59/12presence_stream_instance_seq.sql.postgres
-59	59/13users_to_send_full_presence_to.sql
-59	59/14refresh_tokens.sql
-59	59/15locks.sql
-59	59/16federation_inbound_staging.sql
-60	60/01recreate_stream_ordering.sql.postgres
-60	60/02change_stream_ordering_columns.sql.postgres
-61	61/01change_appservices_txns.sql.postgres
-61	61/01insertion_event_lookups.sql
-61	61/02drop_redundant_room_depth_index.sql
-61	61/02state_groups_state_n_distinct.sql.postgres
-61	61/03recreate_min_depth.py
-62	62/01insertion_event_extremities.sql
-63	63/01create_registration_tokens.sql
-63	63/02delete_unlinked_email_pushers.sql
-63	63/02populate-rooms-creator.sql
-63	63/03session_store.sql
-63	63/04add_presence_stream_not_offline_index.sql
-64	64/01msc2716_chunk_to_batch_rename.sql.postgres
-65	65/01msc2716_insertion_event_edges.sql
-65	65/02_thread_relations.sql
-65	65/03remove_hidden_devices_from_device_inbox.sql
-65	65/04_local_group_updates.sql
-65	65/06remove_deleted_devices_from_device_inbox.sql
 \.
 
 
@@ -2664,18 +2193,18 @@ COPY public.background_updates (update_name, progress_json, depends_on, ordering
 
 
 --
--- Data for Name: batch_events; Type: TABLE DATA; Schema: public; Owner: synapse
---
-
-COPY public.batch_events (event_id, room_id, batch_id) FROM stdin;
-\.
-
-
---
 -- Data for Name: blocked_rooms; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
 COPY public.blocked_rooms (room_id, user_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: cache_invalidation_stream; Type: TABLE DATA; Schema: public; Owner: synapse
+--
+
+COPY public.cache_invalidation_stream (stream_id, cache_func, keys, invalidation_ts) FROM stdin;
 \.
 
 
@@ -2710,8 +2239,6 @@ COPY public.cache_invalidation_stream_by_instance (stream_id, instance_name, cac
 24	master	cs_cache_fake	{!dKcbdDATuwwphjRPQP:localhost,@matrix_b:localhost}	1598686328549
 25	master	cs_cache_fake	{!kmbTYjjsDRDHGgVqUP:localhost,@ignored_user:localhost}	1598686328591
 26	master	cs_cache_fake	{!dKcbdDATuwwphjRPQP:localhost,@ignored_user:localhost}	1598686328631
-27	master	user_last_seen_monthly_active	\N	1672330039231
-28	master	get_monthly_active_count	{}	1672330039245
 \.
 
 
@@ -2719,25 +2246,25 @@ COPY public.cache_invalidation_stream_by_instance (stream_id, instance_name, cac
 -- Data for Name: current_state_delta_stream; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
-COPY public.current_state_delta_stream (stream_id, room_id, type, state_key, event_id, prev_event_id, instance_name) FROM stdin;
-2	!kmbTYjjsDRDHGgVqUP:localhost	m.room.create		$mBmRyyvP_Jc-LDi7_hiGD9QTu5XGVXqNMxZM4yDMQPU	\N	\N
-3	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@admin:localhost	$_oKaaOfL7rFtPsAsxDmHrCY9sAzFjslRwkJ_QHxHDTw	\N	\N
-4	!kmbTYjjsDRDHGgVqUP:localhost	m.room.power_levels		$BYyVCPyJh9PVJBsxDwm9NakGY19DlCJJ1GlCcYpTv8w	\N	\N
-5	!kmbTYjjsDRDHGgVqUP:localhost	m.room.canonical_alias		$X8tdoEsXAgBC6gobCepAn3rwO8CJoQU6i9NN9Rzhukg	\N	\N
-6	!kmbTYjjsDRDHGgVqUP:localhost	m.room.join_rules		$G_m59AjH2Y1FX4D11JDsmEETfHGAWoknTIdv-_XYW2o	\N	\N
-7	!kmbTYjjsDRDHGgVqUP:localhost	m.room.history_visibility		$O5iO4EII22igkDq5cMKHFB-SGIYD0KqJQXZohS2Dzc0	\N	\N
-8	!dKcbdDATuwwphjRPQP:localhost	m.room.create		$Rczn5GeJ1aYMBU_oXSIF8ppVk8WEruaYIBA3FE7Yq88	\N	\N
-9	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@admin:localhost	$PeAJ6BypXjJegHiUjcYe-I6Cf4NuCPICi_yUb-fyauA	\N	\N
-10	!dKcbdDATuwwphjRPQP:localhost	m.room.power_levels		$P98vptI_jrNYKKnTTDYouThgohgHqJkD5Rcj0gDgxII	\N	\N
-11	!dKcbdDATuwwphjRPQP:localhost	m.room.canonical_alias		$b__a7rX3L5YpX7nAZte73DAbjtXZK48JH8VKSnGOKKw	\N	\N
-12	!dKcbdDATuwwphjRPQP:localhost	m.room.join_rules		$hEtlt0NU16h0ix9xBX0MDJR0g54ATEZ4S96udYzYBqs	\N	\N
-13	!dKcbdDATuwwphjRPQP:localhost	m.room.history_visibility		$TVnvv0nGbLydCBtMmTTz-htMsoI4hmxCr3s9AHyFGHQ	\N	\N
-14	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@matrix_a:localhost	$N33GyONpuSa3zRNJk1CtLYdhqJbhXBwSpAlUUm-zmB8	\N	\N
-15	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@matrix_a:localhost	$wd-zBsOV9K_8HbhPARZ91kf5cfZwLKRi7yBBGGNUAb0	\N	\N
-16	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@matrix_b:localhost	$llCtN-sfVC1IOdDQXgskgx4jl97hQHfKnEH-IP-lyvk	\N	\N
-17	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@matrix_b:localhost	$4ZLf-3JRJMLLADbzome2n_5rZNEeHEFIo3w1xN4KKu0	\N	\N
-18	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@ignored_user:localhost	$hD2Z-BHkSscOTiftcJe1n-peOIsihQlQbtyjR2IkTmA	\N	\N
-19	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@ignored_user:localhost	$Svf91tyGyUuzelYH8bbzM6QXuI9Xcab-XMXjCrIgM5A	\N	\N
+COPY public.current_state_delta_stream (stream_id, room_id, type, state_key, event_id, prev_event_id) FROM stdin;
+2	!kmbTYjjsDRDHGgVqUP:localhost	m.room.create		$mBmRyyvP_Jc-LDi7_hiGD9QTu5XGVXqNMxZM4yDMQPU	\N
+3	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@admin:localhost	$_oKaaOfL7rFtPsAsxDmHrCY9sAzFjslRwkJ_QHxHDTw	\N
+4	!kmbTYjjsDRDHGgVqUP:localhost	m.room.power_levels		$BYyVCPyJh9PVJBsxDwm9NakGY19DlCJJ1GlCcYpTv8w	\N
+5	!kmbTYjjsDRDHGgVqUP:localhost	m.room.canonical_alias		$X8tdoEsXAgBC6gobCepAn3rwO8CJoQU6i9NN9Rzhukg	\N
+6	!kmbTYjjsDRDHGgVqUP:localhost	m.room.join_rules		$G_m59AjH2Y1FX4D11JDsmEETfHGAWoknTIdv-_XYW2o	\N
+7	!kmbTYjjsDRDHGgVqUP:localhost	m.room.history_visibility		$O5iO4EII22igkDq5cMKHFB-SGIYD0KqJQXZohS2Dzc0	\N
+8	!dKcbdDATuwwphjRPQP:localhost	m.room.create		$Rczn5GeJ1aYMBU_oXSIF8ppVk8WEruaYIBA3FE7Yq88	\N
+9	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@admin:localhost	$PeAJ6BypXjJegHiUjcYe-I6Cf4NuCPICi_yUb-fyauA	\N
+10	!dKcbdDATuwwphjRPQP:localhost	m.room.power_levels		$P98vptI_jrNYKKnTTDYouThgohgHqJkD5Rcj0gDgxII	\N
+11	!dKcbdDATuwwphjRPQP:localhost	m.room.canonical_alias		$b__a7rX3L5YpX7nAZte73DAbjtXZK48JH8VKSnGOKKw	\N
+12	!dKcbdDATuwwphjRPQP:localhost	m.room.join_rules		$hEtlt0NU16h0ix9xBX0MDJR0g54ATEZ4S96udYzYBqs	\N
+13	!dKcbdDATuwwphjRPQP:localhost	m.room.history_visibility		$TVnvv0nGbLydCBtMmTTz-htMsoI4hmxCr3s9AHyFGHQ	\N
+14	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@matrix_a:localhost	$N33GyONpuSa3zRNJk1CtLYdhqJbhXBwSpAlUUm-zmB8	\N
+15	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@matrix_a:localhost	$wd-zBsOV9K_8HbhPARZ91kf5cfZwLKRi7yBBGGNUAb0	\N
+16	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@matrix_b:localhost	$llCtN-sfVC1IOdDQXgskgx4jl97hQHfKnEH-IP-lyvk	\N
+17	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@matrix_b:localhost	$4ZLf-3JRJMLLADbzome2n_5rZNEeHEFIo3w1xN4KKu0	\N
+18	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@ignored_user:localhost	$hD2Z-BHkSscOTiftcJe1n-peOIsihQlQbtyjR2IkTmA	\N
+19	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@ignored_user:localhost	$Svf91tyGyUuzelYH8bbzM6QXuI9Xcab-XMXjCrIgM5A	\N
 \.
 
 
@@ -2768,14 +2295,6 @@ $Svf91tyGyUuzelYH8bbzM6QXuI9Xcab-XMXjCrIgM5A	!dKcbdDATuwwphjRPQP:localhost	m.roo
 
 
 --
--- Data for Name: dehydrated_devices; Type: TABLE DATA; Schema: public; Owner: synapse
---
-
-COPY public.dehydrated_devices (user_id, device_id, device_data) FROM stdin;
-\.
-
-
---
 -- Data for Name: deleted_pushers; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
@@ -2784,18 +2303,10 @@ COPY public.deleted_pushers (stream_id, app_id, pushkey, user_id) FROM stdin;
 
 
 --
--- Data for Name: destination_rooms; Type: TABLE DATA; Schema: public; Owner: synapse
---
-
-COPY public.destination_rooms (destination, room_id, stream_ordering) FROM stdin;
-\.
-
-
---
 -- Data for Name: destinations; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
-COPY public.destinations (destination, retry_last_ts, retry_interval, failure_ts, last_successful_stream_ordering) FROM stdin;
+COPY public.destinations (destination, retry_last_ts, retry_interval, failure_ts) FROM stdin;
 \.
 
 
@@ -2803,7 +2314,7 @@ COPY public.destinations (destination, retry_last_ts, retry_interval, failure_ts
 -- Data for Name: device_federation_inbox; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
-COPY public.device_federation_inbox (origin, message_id, received_ts, instance_name) FROM stdin;
+COPY public.device_federation_inbox (origin, message_id, received_ts) FROM stdin;
 \.
 
 
@@ -2811,7 +2322,7 @@ COPY public.device_federation_inbox (origin, message_id, received_ts, instance_n
 -- Data for Name: device_federation_outbox; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
-COPY public.device_federation_outbox (destination, stream_id, queued_ts, messages_json, instance_name) FROM stdin;
+COPY public.device_federation_outbox (destination, stream_id, queued_ts, messages_json) FROM stdin;
 \.
 
 
@@ -2819,7 +2330,7 @@ COPY public.device_federation_outbox (destination, stream_id, queued_ts, message
 -- Data for Name: device_inbox; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
-COPY public.device_inbox (user_id, device_id, stream_id, message_json, instance_name) FROM stdin;
+COPY public.device_inbox (user_id, device_id, stream_id, message_json) FROM stdin;
 \.
 
 
@@ -2876,6 +2387,15 @@ COPY public.device_lists_stream (stream_id, user_id, device_id) FROM stdin;
 
 
 --
+-- Data for Name: device_max_stream_id; Type: TABLE DATA; Schema: public; Owner: synapse
+--
+
+COPY public.device_max_stream_id (stream_id) FROM stdin;
+0
+\.
+
+
+--
 -- Data for Name: devices; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
@@ -2908,14 +2428,6 @@ COPY public.e2e_cross_signing_signatures (user_id, key_id, target_user_id, targe
 --
 
 COPY public.e2e_device_keys_json (user_id, device_id, ts_added_ms, key_json) FROM stdin;
-\.
-
-
---
--- Data for Name: e2e_fallback_keys_json; Type: TABLE DATA; Schema: public; Owner: synapse
---
-
-COPY public.e2e_fallback_keys_json (user_id, device_id, algorithm, key_id, key_json, used) FROM stdin;
 \.
 
 
@@ -2998,96 +2510,6 @@ $hD2Z-BHkSscOTiftcJe1n-peOIsihQlQbtyjR2IkTmA	$mBmRyyvP_Jc-LDi7_hiGD9QTu5XGVXqNMx
 $Svf91tyGyUuzelYH8bbzM6QXuI9Xcab-XMXjCrIgM5A	$P98vptI_jrNYKKnTTDYouThgohgHqJkD5Rcj0gDgxII	!dKcbdDATuwwphjRPQP:localhost
 $Svf91tyGyUuzelYH8bbzM6QXuI9Xcab-XMXjCrIgM5A	$hEtlt0NU16h0ix9xBX0MDJR0g54ATEZ4S96udYzYBqs	!dKcbdDATuwwphjRPQP:localhost
 $Svf91tyGyUuzelYH8bbzM6QXuI9Xcab-XMXjCrIgM5A	$Rczn5GeJ1aYMBU_oXSIF8ppVk8WEruaYIBA3FE7Yq88	!dKcbdDATuwwphjRPQP:localhost
-\.
-
-
---
--- Data for Name: event_auth_chain_links; Type: TABLE DATA; Schema: public; Owner: synapse
---
-
-COPY public.event_auth_chain_links (origin_chain_id, origin_sequence_number, target_chain_id, target_sequence_number) FROM stdin;
-12	1	16	1
-1	1	15	1
-16	1	15	1
-2	1	17	1
-14	1	18	1
-14	1	9	1
-1	1	17	1
-18	1	4	1
-13	1	4	1
-9	1	18	1
-18	1	6	1
-2	1	15	1
-13	1	6	1
-3	1	15	1
-8	1	18	1
-12	1	15	1
-11	1	18	1
-10	1	3	1
-10	1	16	1
-5	1	15	1
-5	1	17	1
-17	1	16	1
-3	1	17	1
-1	1	3	1
-12	1	17	1
-9	1	4	1
-2	1	16	1
-6	1	4	1
-7	1	18	1
-14	1	4	1
-11	1	4	1
-1	1	16	1
-14	1	6	1
-9	1	6	1
-8	1	4	1
-13	1	18	1
-7	1	9	1
-8	1	6	1
-11	1	6	1
-17	1	15	1
-3	1	16	1
-10	1	15	1
-7	1	4	1
-5	1	3	1
-10	1	17	1
-7	1	6	1
-13	1	9	1
-5	1	16	1
-\.
-
-
---
--- Data for Name: event_auth_chain_to_calculate; Type: TABLE DATA; Schema: public; Owner: synapse
---
-
-COPY public.event_auth_chain_to_calculate (event_id, room_id, type, state_key) FROM stdin;
-\.
-
-
---
--- Data for Name: event_auth_chains; Type: TABLE DATA; Schema: public; Owner: synapse
---
-
-COPY public.event_auth_chains (event_id, chain_id, sequence_number) FROM stdin;
-$Rczn5GeJ1aYMBU_oXSIF8ppVk8WEruaYIBA3FE7Yq88	15	1
-$PeAJ6BypXjJegHiUjcYe-I6Cf4NuCPICi_yUb-fyauA	16	1
-$P98vptI_jrNYKKnTTDYouThgohgHqJkD5Rcj0gDgxII	17	1
-$TVnvv0nGbLydCBtMmTTz-htMsoI4hmxCr3s9AHyFGHQ	12	1
-$b__a7rX3L5YpX7nAZte73DAbjtXZK48JH8VKSnGOKKw	2	1
-$hEtlt0NU16h0ix9xBX0MDJR0g54ATEZ4S96udYzYBqs	3	1
-$4ZLf-3JRJMLLADbzome2n_5rZNEeHEFIo3w1xN4KKu0	5	1
-$Svf91tyGyUuzelYH8bbzM6QXuI9Xcab-XMXjCrIgM5A	1	1
-$mBmRyyvP_Jc-LDi7_hiGD9QTu5XGVXqNMxZM4yDMQPU	4	1
-$_oKaaOfL7rFtPsAsxDmHrCY9sAzFjslRwkJ_QHxHDTw	6	1
-$BYyVCPyJh9PVJBsxDwm9NakGY19DlCJJ1GlCcYpTv8w	18	1
-$G_m59AjH2Y1FX4D11JDsmEETfHGAWoknTIdv-_XYW2o	9	1
-$N33GyONpuSa3zRNJk1CtLYdhqJbhXBwSpAlUUm-zmB8	13	1
-$O5iO4EII22igkDq5cMKHFB-SGIYD0KqJQXZohS2Dzc0	8	1
-$X8tdoEsXAgBC6gobCepAn3rwO8CJoQU6i9NN9Rzhukg	11	1
-$hD2Z-BHkSscOTiftcJe1n-peOIsihQlQbtyjR2IkTmA	7	1
-$llCtN-sfVC1IOdDQXgskgx4jl97hQHfKnEH-IP-lyvk	14	1
-$wd-zBsOV9K_8HbhPARZ91kf5cfZwLKRi7yBBGGNUAb0	10	1
 \.
 
 
@@ -3179,7 +2601,7 @@ COPY public.event_labels (event_id, label, room_id, topological_ordering) FROM s
 -- Data for Name: event_push_actions; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
-COPY public.event_push_actions (room_id, event_id, user_id, profile_tag, actions, topological_ordering, stream_ordering, notif, highlight, unread) FROM stdin;
+COPY public.event_push_actions (room_id, event_id, user_id, profile_tag, actions, topological_ordering, stream_ordering, notif, highlight) FROM stdin;
 \.
 
 
@@ -3187,7 +2609,7 @@ COPY public.event_push_actions (room_id, event_id, user_id, profile_tag, actions
 -- Data for Name: event_push_actions_staging; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
-COPY public.event_push_actions_staging (event_id, user_id, actions, notif, highlight, unread) FROM stdin;
+COPY public.event_push_actions_staging (event_id, user_id, actions, notif, highlight) FROM stdin;
 \.
 
 
@@ -3195,7 +2617,7 @@ COPY public.event_push_actions_staging (event_id, user_id, actions, notif, highl
 -- Data for Name: event_push_summary; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
-COPY public.event_push_summary (user_id, room_id, notif_count, stream_ordering, unread_count) FROM stdin;
+COPY public.event_push_summary (user_id, room_id, notif_count, stream_ordering) FROM stdin;
 \.
 
 
@@ -3285,36 +2707,28 @@ $Svf91tyGyUuzelYH8bbzM6QXuI9Xcab-XMXjCrIgM5A	20
 
 
 --
--- Data for Name: event_txn_id; Type: TABLE DATA; Schema: public; Owner: synapse
---
-
-COPY public.event_txn_id (event_id, room_id, user_id, token_id, txn_id, inserted_ts) FROM stdin;
-\.
-
-
---
 -- Data for Name: events; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
-COPY public.events (topological_ordering, event_id, type, room_id, content, unrecognized_keys, processed, outlier, depth, origin_server_ts, received_ts, sender, contains_url, instance_name, stream_ordering) FROM stdin;
-1	$mBmRyyvP_Jc-LDi7_hiGD9QTu5XGVXqNMxZM4yDMQPU	m.room.create	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	1	1598686327756	1598686327770	@admin:localhost	f	\N	2
-2	$_oKaaOfL7rFtPsAsxDmHrCY9sAzFjslRwkJ_QHxHDTw	m.room.member	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	2	1598686327803	1598686327820	@admin:localhost	f	\N	3
-3	$BYyVCPyJh9PVJBsxDwm9NakGY19DlCJJ1GlCcYpTv8w	m.room.power_levels	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	3	1598686327849	1598686327860	@admin:localhost	f	\N	4
-4	$X8tdoEsXAgBC6gobCepAn3rwO8CJoQU6i9NN9Rzhukg	m.room.canonical_alias	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	4	1598686327933	1598686327989	@admin:localhost	f	\N	5
-5	$G_m59AjH2Y1FX4D11JDsmEETfHGAWoknTIdv-_XYW2o	m.room.join_rules	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	5	1598686328055	1598686328083	@admin:localhost	f	\N	6
-6	$O5iO4EII22igkDq5cMKHFB-SGIYD0KqJQXZohS2Dzc0	m.room.history_visibility	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	6	1598686328127	1598686328156	@admin:localhost	f	\N	7
-1	$Rczn5GeJ1aYMBU_oXSIF8ppVk8WEruaYIBA3FE7Yq88	m.room.create	!dKcbdDATuwwphjRPQP:localhost	\N	\N	t	f	1	1598686328210	1598686328221	@admin:localhost	f	\N	8
-2	$PeAJ6BypXjJegHiUjcYe-I6Cf4NuCPICi_yUb-fyauA	m.room.member	!dKcbdDATuwwphjRPQP:localhost	\N	\N	t	f	2	1598686328245	1598686328258	@admin:localhost	f	\N	9
-3	$P98vptI_jrNYKKnTTDYouThgohgHqJkD5Rcj0gDgxII	m.room.power_levels	!dKcbdDATuwwphjRPQP:localhost	\N	\N	t	f	3	1598686328280	1598686328291	@admin:localhost	f	\N	10
-4	$b__a7rX3L5YpX7nAZte73DAbjtXZK48JH8VKSnGOKKw	m.room.canonical_alias	!dKcbdDATuwwphjRPQP:localhost	\N	\N	t	f	4	1598686328305	1598686328319	@admin:localhost	f	\N	11
-5	$hEtlt0NU16h0ix9xBX0MDJR0g54ATEZ4S96udYzYBqs	m.room.join_rules	!dKcbdDATuwwphjRPQP:localhost	\N	\N	t	f	5	1598686328338	1598686328349	@admin:localhost	f	\N	12
-6	$TVnvv0nGbLydCBtMmTTz-htMsoI4hmxCr3s9AHyFGHQ	m.room.history_visibility	!dKcbdDATuwwphjRPQP:localhost	\N	\N	t	f	6	1598686328366	1598686328379	@admin:localhost	f	\N	13
-7	$N33GyONpuSa3zRNJk1CtLYdhqJbhXBwSpAlUUm-zmB8	m.room.member	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	7	1598686328406	1598686328420	@matrix_a:localhost	f	\N	14
-7	$wd-zBsOV9K_8HbhPARZ91kf5cfZwLKRi7yBBGGNUAb0	m.room.member	!dKcbdDATuwwphjRPQP:localhost	\N	\N	t	f	7	1598686328450	1598686328461	@matrix_a:localhost	f	\N	15
-8	$llCtN-sfVC1IOdDQXgskgx4jl97hQHfKnEH-IP-lyvk	m.room.member	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	8	1598686328493	1598686328506	@matrix_b:localhost	f	\N	16
-8	$4ZLf-3JRJMLLADbzome2n_5rZNEeHEFIo3w1xN4KKu0	m.room.member	!dKcbdDATuwwphjRPQP:localhost	\N	\N	t	f	8	1598686328533	1598686328544	@matrix_b:localhost	f	\N	17
-9	$hD2Z-BHkSscOTiftcJe1n-peOIsihQlQbtyjR2IkTmA	m.room.member	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	9	1598686328575	1598686328587	@ignored_user:localhost	f	\N	18
-9	$Svf91tyGyUuzelYH8bbzM6QXuI9Xcab-XMXjCrIgM5A	m.room.member	!dKcbdDATuwwphjRPQP:localhost	\N	\N	t	f	9	1598686328616	1598686328628	@ignored_user:localhost	f	\N	19
+COPY public.events (stream_ordering, topological_ordering, event_id, type, room_id, content, unrecognized_keys, processed, outlier, depth, origin_server_ts, received_ts, sender, contains_url) FROM stdin;
+2	1	$mBmRyyvP_Jc-LDi7_hiGD9QTu5XGVXqNMxZM4yDMQPU	m.room.create	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	1	1598686327756	1598686327770	@admin:localhost	f
+3	2	$_oKaaOfL7rFtPsAsxDmHrCY9sAzFjslRwkJ_QHxHDTw	m.room.member	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	2	1598686327803	1598686327820	@admin:localhost	f
+4	3	$BYyVCPyJh9PVJBsxDwm9NakGY19DlCJJ1GlCcYpTv8w	m.room.power_levels	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	3	1598686327849	1598686327860	@admin:localhost	f
+5	4	$X8tdoEsXAgBC6gobCepAn3rwO8CJoQU6i9NN9Rzhukg	m.room.canonical_alias	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	4	1598686327933	1598686327989	@admin:localhost	f
+6	5	$G_m59AjH2Y1FX4D11JDsmEETfHGAWoknTIdv-_XYW2o	m.room.join_rules	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	5	1598686328055	1598686328083	@admin:localhost	f
+7	6	$O5iO4EII22igkDq5cMKHFB-SGIYD0KqJQXZohS2Dzc0	m.room.history_visibility	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	6	1598686328127	1598686328156	@admin:localhost	f
+8	1	$Rczn5GeJ1aYMBU_oXSIF8ppVk8WEruaYIBA3FE7Yq88	m.room.create	!dKcbdDATuwwphjRPQP:localhost	\N	\N	t	f	1	1598686328210	1598686328221	@admin:localhost	f
+9	2	$PeAJ6BypXjJegHiUjcYe-I6Cf4NuCPICi_yUb-fyauA	m.room.member	!dKcbdDATuwwphjRPQP:localhost	\N	\N	t	f	2	1598686328245	1598686328258	@admin:localhost	f
+10	3	$P98vptI_jrNYKKnTTDYouThgohgHqJkD5Rcj0gDgxII	m.room.power_levels	!dKcbdDATuwwphjRPQP:localhost	\N	\N	t	f	3	1598686328280	1598686328291	@admin:localhost	f
+11	4	$b__a7rX3L5YpX7nAZte73DAbjtXZK48JH8VKSnGOKKw	m.room.canonical_alias	!dKcbdDATuwwphjRPQP:localhost	\N	\N	t	f	4	1598686328305	1598686328319	@admin:localhost	f
+12	5	$hEtlt0NU16h0ix9xBX0MDJR0g54ATEZ4S96udYzYBqs	m.room.join_rules	!dKcbdDATuwwphjRPQP:localhost	\N	\N	t	f	5	1598686328338	1598686328349	@admin:localhost	f
+13	6	$TVnvv0nGbLydCBtMmTTz-htMsoI4hmxCr3s9AHyFGHQ	m.room.history_visibility	!dKcbdDATuwwphjRPQP:localhost	\N	\N	t	f	6	1598686328366	1598686328379	@admin:localhost	f
+14	7	$N33GyONpuSa3zRNJk1CtLYdhqJbhXBwSpAlUUm-zmB8	m.room.member	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	7	1598686328406	1598686328420	@matrix_a:localhost	f
+15	7	$wd-zBsOV9K_8HbhPARZ91kf5cfZwLKRi7yBBGGNUAb0	m.room.member	!dKcbdDATuwwphjRPQP:localhost	\N	\N	t	f	7	1598686328450	1598686328461	@matrix_a:localhost	f
+16	8	$llCtN-sfVC1IOdDQXgskgx4jl97hQHfKnEH-IP-lyvk	m.room.member	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	8	1598686328493	1598686328506	@matrix_b:localhost	f
+17	8	$4ZLf-3JRJMLLADbzome2n_5rZNEeHEFIo3w1xN4KKu0	m.room.member	!dKcbdDATuwwphjRPQP:localhost	\N	\N	t	f	8	1598686328533	1598686328544	@matrix_b:localhost	f
+18	9	$hD2Z-BHkSscOTiftcJe1n-peOIsihQlQbtyjR2IkTmA	m.room.member	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	9	1598686328575	1598686328587	@ignored_user:localhost	f
+19	9	$Svf91tyGyUuzelYH8bbzM6QXuI9Xcab-XMXjCrIgM5A	m.room.member	!dKcbdDATuwwphjRPQP:localhost	\N	\N	t	f	9	1598686328616	1598686328628	@ignored_user:localhost	f
 \.
 
 
@@ -3322,15 +2736,7 @@ COPY public.events (topological_ordering, event_id, type, room_id, content, unre
 -- Data for Name: ex_outlier_stream; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
-COPY public.ex_outlier_stream (event_stream_ordering, event_id, state_group, instance_name) FROM stdin;
-\.
-
-
---
--- Data for Name: federation_inbound_events_staging; Type: TABLE DATA; Schema: public; Owner: synapse
---
-
-COPY public.federation_inbound_events_staging (origin, room_id, event_id, received_ts, event_json, internal_metadata) FROM stdin;
+COPY public.ex_outlier_stream (event_stream_ordering, event_id, state_group) FROM stdin;
 \.
 
 
@@ -3338,9 +2744,9 @@ COPY public.federation_inbound_events_staging (origin, room_id, event_id, receiv
 -- Data for Name: federation_stream_position; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
-COPY public.federation_stream_position (type, stream_id, instance_name) FROM stdin;
-federation	-1	master
-events	19	master
+COPY public.federation_stream_position (type, stream_id) FROM stdin;
+federation	-1
+events	19
 \.
 
 
@@ -3441,46 +2847,6 @@ COPY public.groups (group_id, name, avatar_url, short_description, long_descript
 
 
 --
--- Data for Name: ignored_users; Type: TABLE DATA; Schema: public; Owner: synapse
---
-
-COPY public.ignored_users (ignorer_user_id, ignored_user_id) FROM stdin;
-\.
-
-
---
--- Data for Name: insertion_event_edges; Type: TABLE DATA; Schema: public; Owner: synapse
---
-
-COPY public.insertion_event_edges (event_id, room_id, insertion_prev_event_id) FROM stdin;
-\.
-
-
---
--- Data for Name: insertion_event_extremities; Type: TABLE DATA; Schema: public; Owner: synapse
---
-
-COPY public.insertion_event_extremities (event_id, room_id) FROM stdin;
-\.
-
-
---
--- Data for Name: insertion_events; Type: TABLE DATA; Schema: public; Owner: synapse
---
-
-COPY public.insertion_events (event_id, room_id, next_batch_id) FROM stdin;
-\.
-
-
---
--- Data for Name: instance_map; Type: TABLE DATA; Schema: public; Owner: synapse
---
-
-COPY public.instance_map (instance_id, instance_name) FROM stdin;
-\.
-
-
---
 -- Data for Name: local_current_membership; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
@@ -3513,10 +2879,18 @@ COPY public.local_group_updates (stream_id, group_id, user_id, type, content) FR
 
 
 --
+-- Data for Name: local_invites; Type: TABLE DATA; Schema: public; Owner: synapse
+--
+
+COPY public.local_invites (stream_id, inviter, invitee, event_id, room_id, locally_rejected, replaced_by) FROM stdin;
+\.
+
+
+--
 -- Data for Name: local_media_repository; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
-COPY public.local_media_repository (media_id, media_type, media_length, created_ts, upload_name, user_id, quarantined_by, url_cache, last_access_ts, safe_from_quarantine) FROM stdin;
+COPY public.local_media_repository (media_id, media_type, media_length, created_ts, upload_name, user_id, quarantined_by, url_cache, last_access_ts) FROM stdin;
 \.
 
 
@@ -3561,10 +2935,18 @@ COPY public.presence (user_id, state, status_msg, mtime) FROM stdin;
 
 
 --
+-- Data for Name: presence_allow_inbound; Type: TABLE DATA; Schema: public; Owner: synapse
+--
+
+COPY public.presence_allow_inbound (observed_user_id, observer_user_id) FROM stdin;
+\.
+
+
+--
 -- Data for Name: presence_stream; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
-COPY public.presence_stream (stream_id, user_id, state, last_active_ts, last_federation_update_ts, last_user_sync_ts, status_msg, currently_active, instance_name) FROM stdin;
+COPY public.presence_stream (stream_id, user_id, state, last_active_ts, last_federation_update_ts, last_user_sync_ts, status_msg, currently_active) FROM stdin;
 \.
 
 
@@ -3648,7 +3030,7 @@ COPY public.receipts_graph (room_id, receipt_type, user_id, event_ids, data) FRO
 -- Data for Name: receipts_linearized; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
-COPY public.receipts_linearized (stream_id, room_id, receipt_type, user_id, event_id, data, instance_name) FROM stdin;
+COPY public.receipts_linearized (stream_id, room_id, receipt_type, user_id, event_id, data) FROM stdin;
 \.
 
 
@@ -3665,22 +3047,6 @@ COPY public.received_transactions (transaction_id, origin, ts, response_code, re
 --
 
 COPY public.redactions (event_id, redacts, have_censored, received_ts) FROM stdin;
-\.
-
-
---
--- Data for Name: refresh_tokens; Type: TABLE DATA; Schema: public; Owner: synapse
---
-
-COPY public.refresh_tokens (id, user_id, device_id, token, next_token_id) FROM stdin;
-\.
-
-
---
--- Data for Name: registration_tokens; Type: TABLE DATA; Schema: public; Owner: synapse
---
-
-COPY public.registration_tokens (token, uses_allowed, pending, completed, expiry_time) FROM stdin;
 \.
 
 
@@ -3720,7 +3086,7 @@ COPY public.remote_profile_cache (user_id, displayname, avatar_url, last_check) 
 -- Data for Name: room_account_data; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
-COPY public.room_account_data (user_id, room_id, account_data_type, stream_id, content, instance_name) FROM stdin;
+COPY public.room_account_data (user_id, room_id, account_data_type, stream_id, content) FROM stdin;
 \.
 
 
@@ -3782,9 +3148,9 @@ COPY public.room_retention (room_id, event_id, min_lifetime, max_lifetime) FROM 
 -- Data for Name: room_stats_current; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
-COPY public.room_stats_current (room_id, current_state_events, joined_members, invited_members, left_members, banned_members, local_users_in_room, completed_delta_stream_id, knocked_members) FROM stdin;
-!dKcbdDATuwwphjRPQP:localhost	9	4	0	0	0	4	19	0
-!kmbTYjjsDRDHGgVqUP:localhost	9	4	0	0	0	4	19	0
+COPY public.room_stats_current (room_id, current_state_events, joined_members, invited_members, left_members, banned_members, local_users_in_room, completed_delta_stream_id) FROM stdin;
+!kmbTYjjsDRDHGgVqUP:localhost	9	4	0	0	0	4	18
+!dKcbdDATuwwphjRPQP:localhost	9	4	0	0	0	4	19
 \.
 
 
@@ -3800,9 +3166,9 @@ COPY public.room_stats_earliest_token (room_id, token) FROM stdin;
 -- Data for Name: room_stats_historical; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
-COPY public.room_stats_historical (room_id, end_ts, bucket_size, current_state_events, joined_members, invited_members, left_members, banned_members, local_users_in_room, total_events, total_event_bytes, knocked_members) FROM stdin;
-!kmbTYjjsDRDHGgVqUP:localhost	1598745600000	86400000	9	4	0	0	0	4	9	6709	\N
-!dKcbdDATuwwphjRPQP:localhost	1598745600000	86400000	9	4	0	0	0	4	9	6707	\N
+COPY public.room_stats_historical (room_id, end_ts, bucket_size, current_state_events, joined_members, invited_members, left_members, banned_members, local_users_in_room, total_events, total_event_bytes) FROM stdin;
+!kmbTYjjsDRDHGgVqUP:localhost	1598745600000	86400000	9	4	0	0	0	4	9	6709
+!dKcbdDATuwwphjRPQP:localhost	1598745600000	86400000	9	4	0	0	0	4	9	6707
 \.
 
 
@@ -3811,8 +3177,8 @@ COPY public.room_stats_historical (room_id, end_ts, bucket_size, current_state_e
 --
 
 COPY public.room_stats_state (room_id, name, canonical_alias, join_rules, history_visibility, encryption, avatar, guest_access, is_federatable, topic) FROM stdin;
-!dKcbdDATuwwphjRPQP:localhost	\N	#off-topic:localhost	public	shared	\N	\N	\N	t	\N
 !kmbTYjjsDRDHGgVqUP:localhost	\N	#town-square:localhost	public	shared	\N	\N	\N	t	\N
+!dKcbdDATuwwphjRPQP:localhost	\N	#off-topic:localhost	public	shared	\N	\N	\N	t	\N
 \.
 
 
@@ -3828,7 +3194,7 @@ COPY public.room_tags (user_id, room_id, tag, content) FROM stdin;
 -- Data for Name: room_tags_revisions; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
-COPY public.room_tags_revisions (user_id, room_id, stream_id, instance_name) FROM stdin;
+COPY public.room_tags_revisions (user_id, room_id, stream_id) FROM stdin;
 \.
 
 
@@ -3836,18 +3202,9 @@ COPY public.room_tags_revisions (user_id, room_id, stream_id, instance_name) FRO
 -- Data for Name: rooms; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
-COPY public.rooms (room_id, is_public, creator, room_version, has_auth_chain_index) FROM stdin;
-!dKcbdDATuwwphjRPQP:localhost	f	@admin:localhost	5	t
-!kmbTYjjsDRDHGgVqUP:localhost	f	@admin:localhost	5	t
-\.
-
-
---
--- Data for Name: schema_compat_version; Type: TABLE DATA; Schema: public; Owner: synapse
---
-
-COPY public.schema_compat_version (lock, compat_version) FROM stdin;
-X	60
+COPY public.rooms (room_id, is_public, creator, room_version) FROM stdin;
+!kmbTYjjsDRDHGgVqUP:localhost	f	@admin:localhost	5
+!dKcbdDATuwwphjRPQP:localhost	f	@admin:localhost	5
 \.
 
 
@@ -3856,7 +3213,7 @@ X	60
 --
 
 COPY public.schema_version (lock, version, upgraded) FROM stdin;
-X	65	t
+X	58	t
 \.
 
 
@@ -3873,14 +3230,6 @@ COPY public.server_keys_json (server_name, key_id, from_server, ts_added_ms, ts_
 --
 
 COPY public.server_signature_keys (server_name, key_id, from_server, ts_added_ms, verify_key, ts_valid_until_ms) FROM stdin;
-\.
-
-
---
--- Data for Name: sessions; Type: TABLE DATA; Schema: public; Owner: synapse
---
-
-COPY public.sessions (session_type, session_id, value, expiry_time_ms) FROM stdin;
 \.
 
 
@@ -4026,14 +3375,6 @@ COPY public.stream_ordering_to_exterm (stream_ordering, room_id, event_id) FROM 
 
 
 --
--- Data for Name: stream_positions; Type: TABLE DATA; Schema: public; Owner: synapse
---
-
-COPY public.stream_positions (stream_name, instance_name, stream_id) FROM stdin;
-\.
-
-
---
 -- Data for Name: threepid_guest_access_tokens; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
@@ -4082,18 +3423,10 @@ EGVIALjvHFLqBpLFKyGCObFZ	m.login.dummy	true
 
 
 --
--- Data for Name: ui_auth_sessions_ips; Type: TABLE DATA; Schema: public; Owner: synapse
---
-
-COPY public.ui_auth_sessions_ips (session_id, ip, user_agent) FROM stdin;
-\.
-
-
---
 -- Data for Name: user_daily_visits; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
-COPY public.user_daily_visits (user_id, device_id, "timestamp", user_agent) FROM stdin;
+COPY public.user_daily_visits (user_id, device_id, "timestamp") FROM stdin;
 \.
 
 
@@ -4151,6 +3484,10 @@ COPY public.user_filters (user_id, filter_id, filter_json) FROM stdin;
 --
 
 COPY public.user_ips (user_id, access_token, device_id, ip, user_agent, last_seen) FROM stdin;
+@admin:localhost	MDAxN2xvY2F0aW9uIGxvY2FsaG9zdAowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMjNjaWQgdXNlcl9pZCA9IEBhZG1pbjpsb2NhbGhvc3QKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSBXVU9yUTVRMFRnUkNjME1ACjAwMmZzaWduYXR1cmUgdYKA-yuTQ5JV5O0HWRak-48xavOYgA1MMc6A1V_Uw5kK	WCSUBIGVWG	172.21.0.1	curl/7.72.0	1598686327741
+@matrix_a:localhost	MDAxN2xvY2F0aW9uIGxvY2FsaG9zdAowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMjZjaWQgdXNlcl9pZCA9IEBtYXRyaXhfYTpsb2NhbGhvc3QKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSAwb3Y6eTZVdHojUk4jbFprCjAwMmZzaWduYXR1cmUgNNZKnOVRzj5svh9pEM0UUEqtXYnHjnj9XyNLJ1_uKoAK	TKAVEOGKHH	172.21.0.1	curl/7.72.0	1598686328398
+@matrix_b:localhost	MDAxN2xvY2F0aW9uIGxvY2FsaG9zdAowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMjZjaWQgdXNlcl9pZCA9IEBtYXRyaXhfYjpsb2NhbGhvc3QKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSBBYl9hbWthI0daSzgtfjdICjAwMmZzaWduYXR1cmUgOReBLkPURCMNtzORS9fpogQqVa3IWN9ZEu5gXW91QTMK	DJFHSWMXLW	172.21.0.1	curl/7.72.0	1598686328482
+@ignored_user:localhost	MDAxN2xvY2F0aW9uIGxvY2FsaG9zdAowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMmFjaWQgdXNlcl9pZCA9IEBpZ25vcmVkX3VzZXI6bG9jYWxob3N0CjAwMTZjaWQgdHlwZSA9IGFjY2VzcwowMDIxY2lkIG5vbmNlID0gZU5ta1BBMj1FNnVPRGtwdgowMDJmc2lnbmF0dXJlIHSt8jrFU836Ne3it2HY88EhPD1Aoustsm211bbFjcLcCg	IYEBBQEXHS	172.21.0.1	curl/7.72.0	1598686328565
 \.
 
 
@@ -4210,11 +3547,11 @@ COPY public.user_threepids (user_id, medium, address, validated_at, added_at) FR
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
-COPY public.users (name, password_hash, creation_ts, admin, upgrade_ts, is_guest, appservice_id, consent_version, consent_server_notice_sent, user_type, deactivated, shadow_banned) FROM stdin;
-@admin:localhost	$2b$12$y3lT6nJGWMTXBWF2kFRaRuUqALWaFe.dhbEEBKROoFnkoKBuDnLhK	1598686326	0	\N	0	\N	\N	\N	\N	0	\N
-@matrix_a:localhost	$2b$12$V8cOJ670WikSre/C66CGI.a1ANkbEvkgYEUW.M23dlUnekRcPr08O	1598686327	0	\N	0	\N	\N	\N	\N	0	\N
-@matrix_b:localhost	$2b$12$gnHJ1cdN/bfA2A2V61rPauepmeV2dLXr/pC70rCZy9qZoM9u2GKaq	1598686327	0	\N	0	\N	\N	\N	\N	0	\N
-@ignored_user:localhost	$2b$12$cDOaADzxfGcFFspSrfJNcueOwevhD2Ex0hu6oAJcpz3S/owrOeSsW	1598686327	0	\N	0	\N	\N	\N	\N	0	\N
+COPY public.users (name, password_hash, creation_ts, admin, upgrade_ts, is_guest, appservice_id, consent_version, consent_server_notice_sent, user_type, deactivated) FROM stdin;
+@admin:localhost	$2b$12$y3lT6nJGWMTXBWF2kFRaRuUqALWaFe.dhbEEBKROoFnkoKBuDnLhK	1598686326	0	\N	0	\N	\N	\N	\N	0
+@matrix_a:localhost	$2b$12$V8cOJ670WikSre/C66CGI.a1ANkbEvkgYEUW.M23dlUnekRcPr08O	1598686327	0	\N	0	\N	\N	\N	\N	0
+@matrix_b:localhost	$2b$12$gnHJ1cdN/bfA2A2V61rPauepmeV2dLXr/pC70rCZy9qZoM9u2GKaq	1598686327	0	\N	0	\N	\N	\N	\N	0
+@ignored_user:localhost	$2b$12$cDOaADzxfGcFFspSrfJNcueOwevhD2Ex0hu6oAJcpz3S/owrOeSsW	1598686327	0	\N	0	\N	\N	\N	\N	0
 \.
 
 
@@ -4243,14 +3580,6 @@ COPY public.users_pending_deactivation (user_id) FROM stdin;
 
 
 --
--- Data for Name: users_to_send_full_presence_to; Type: TABLE DATA; Schema: public; Owner: synapse
---
-
-COPY public.users_to_send_full_presence_to (user_id, presence_stream_id) FROM stdin;
-\.
-
-
---
 -- Data for Name: users_who_share_private_rooms; Type: TABLE DATA; Schema: public; Owner: synapse
 --
 
@@ -4259,74 +3588,10 @@ COPY public.users_who_share_private_rooms (user_id, other_user_id, room_id) FROM
 
 
 --
--- Data for Name: worker_locks; Type: TABLE DATA; Schema: public; Owner: synapse
---
-
-COPY public.worker_locks (lock_name, lock_key, instance_name, token, last_renewed_ts) FROM stdin;
-\.
-
-
---
--- Name: account_data_sequence; Type: SEQUENCE SET; Schema: public; Owner: synapse
---
-
-SELECT pg_catalog.setval('public.account_data_sequence', 1, true);
-
-
---
 -- Name: cache_invalidation_stream_seq; Type: SEQUENCE SET; Schema: public; Owner: synapse
 --
 
-SELECT pg_catalog.setval('public.cache_invalidation_stream_seq', 28, true);
-
-
---
--- Name: device_inbox_sequence; Type: SEQUENCE SET; Schema: public; Owner: synapse
---
-
-SELECT pg_catalog.setval('public.device_inbox_sequence', 1, true);
-
-
---
--- Name: event_auth_chain_id; Type: SEQUENCE SET; Schema: public; Owner: synapse
---
-
-SELECT pg_catalog.setval('public.event_auth_chain_id', 18, true);
-
-
---
--- Name: events_backfill_stream_seq; Type: SEQUENCE SET; Schema: public; Owner: synapse
---
-
-SELECT pg_catalog.setval('public.events_backfill_stream_seq', 1, true);
-
-
---
--- Name: events_stream_seq; Type: SEQUENCE SET; Schema: public; Owner: synapse
---
-
-SELECT pg_catalog.setval('public.events_stream_seq', 19, true);
-
-
---
--- Name: instance_map_instance_id_seq; Type: SEQUENCE SET; Schema: public; Owner: synapse
---
-
-SELECT pg_catalog.setval('public.instance_map_instance_id_seq', 1, false);
-
-
---
--- Name: presence_stream_sequence; Type: SEQUENCE SET; Schema: public; Owner: synapse
---
-
-SELECT pg_catalog.setval('public.presence_stream_sequence', 1, true);
-
-
---
--- Name: receipts_sequence; Type: SEQUENCE SET; Schema: public; Owner: synapse
---
-
-SELECT pg_catalog.setval('public.receipts_sequence', 1, true);
+SELECT pg_catalog.setval('public.cache_invalidation_stream_seq', 26, true);
 
 
 --
@@ -4334,13 +3599,6 @@ SELECT pg_catalog.setval('public.receipts_sequence', 1, true);
 --
 
 SELECT pg_catalog.setval('public.state_group_id_seq', 20, true);
-
-
---
--- Name: user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: synapse
---
-
-SELECT pg_catalog.setval('public.user_id_seq', 1, false);
 
 
 --
@@ -4440,22 +3698,6 @@ ALTER TABLE ONLY public.current_state_events
 
 
 --
--- Name: dehydrated_devices dehydrated_devices_pkey; Type: CONSTRAINT; Schema: public; Owner: synapse
---
-
-ALTER TABLE ONLY public.dehydrated_devices
-    ADD CONSTRAINT dehydrated_devices_pkey PRIMARY KEY (user_id);
-
-
---
--- Name: destination_rooms destination_rooms_pkey; Type: CONSTRAINT; Schema: public; Owner: synapse
---
-
-ALTER TABLE ONLY public.destination_rooms
-    ADD CONSTRAINT destination_rooms_pkey PRIMARY KEY (destination, room_id);
-
-
---
 -- Name: destinations destinations_pkey; Type: CONSTRAINT; Schema: public; Owner: synapse
 --
 
@@ -4480,35 +3722,11 @@ ALTER TABLE ONLY public.e2e_device_keys_json
 
 
 --
--- Name: e2e_fallback_keys_json e2e_fallback_keys_json_uniqueness; Type: CONSTRAINT; Schema: public; Owner: synapse
---
-
-ALTER TABLE ONLY public.e2e_fallback_keys_json
-    ADD CONSTRAINT e2e_fallback_keys_json_uniqueness UNIQUE (user_id, device_id, algorithm);
-
-
---
 -- Name: e2e_one_time_keys_json e2e_one_time_keys_json_uniqueness; Type: CONSTRAINT; Schema: public; Owner: synapse
 --
 
 ALTER TABLE ONLY public.e2e_one_time_keys_json
     ADD CONSTRAINT e2e_one_time_keys_json_uniqueness UNIQUE (user_id, device_id, algorithm, key_id);
-
-
---
--- Name: event_auth_chain_to_calculate event_auth_chain_to_calculate_pkey; Type: CONSTRAINT; Schema: public; Owner: synapse
---
-
-ALTER TABLE ONLY public.event_auth_chain_to_calculate
-    ADD CONSTRAINT event_auth_chain_to_calculate_pkey PRIMARY KEY (event_id);
-
-
---
--- Name: event_auth_chains event_auth_chains_pkey; Type: CONSTRAINT; Schema: public; Owner: synapse
---
-
-ALTER TABLE ONLY public.event_auth_chains
-    ADD CONSTRAINT event_auth_chains_pkey PRIMARY KEY (event_id);
 
 
 --
@@ -4608,6 +3826,14 @@ ALTER TABLE ONLY public.events
 
 
 --
+-- Name: events events_pkey; Type: CONSTRAINT; Schema: public; Owner: synapse
+--
+
+ALTER TABLE ONLY public.events
+    ADD CONSTRAINT events_pkey PRIMARY KEY (stream_ordering);
+
+
+--
 -- Name: ex_outlier_stream ex_outlier_stream_pkey; Type: CONSTRAINT; Schema: public; Owner: synapse
 --
 
@@ -4656,19 +3882,19 @@ ALTER TABLE ONLY public.group_summary_rooms
 
 
 --
--- Name: instance_map instance_map_pkey; Type: CONSTRAINT; Schema: public; Owner: synapse
---
-
-ALTER TABLE ONLY public.instance_map
-    ADD CONSTRAINT instance_map_pkey PRIMARY KEY (instance_id);
-
-
---
 -- Name: local_media_repository local_media_repository_media_id_key; Type: CONSTRAINT; Schema: public; Owner: synapse
 --
 
 ALTER TABLE ONLY public.local_media_repository
     ADD CONSTRAINT local_media_repository_media_id_key UNIQUE (media_id);
+
+
+--
+-- Name: local_media_repository_thumbnails local_media_repository_thumbn_media_id_thumbnail_width_thum_key; Type: CONSTRAINT; Schema: public; Owner: synapse
+--
+
+ALTER TABLE ONLY public.local_media_repository_thumbnails
+    ADD CONSTRAINT local_media_repository_thumbn_media_id_thumbnail_width_thum_key UNIQUE (media_id, thumbnail_width, thumbnail_height, thumbnail_type);
 
 
 --
@@ -4688,11 +3914,27 @@ ALTER TABLE ONLY public.open_id_tokens
 
 
 --
+-- Name: presence_allow_inbound presence_allow_inbound_observed_user_id_observer_user_id_key; Type: CONSTRAINT; Schema: public; Owner: synapse
+--
+
+ALTER TABLE ONLY public.presence_allow_inbound
+    ADD CONSTRAINT presence_allow_inbound_observed_user_id_observer_user_id_key UNIQUE (observed_user_id, observer_user_id);
+
+
+--
 -- Name: presence presence_user_id_key; Type: CONSTRAINT; Schema: public; Owner: synapse
 --
 
 ALTER TABLE ONLY public.presence
     ADD CONSTRAINT presence_user_id_key UNIQUE (user_id);
+
+
+--
+-- Name: account_data_max_stream_id private_user_data_max_stream_id_lock_key; Type: CONSTRAINT; Schema: public; Owner: synapse
+--
+
+ALTER TABLE ONLY public.account_data_max_stream_id
+    ADD CONSTRAINT private_user_data_max_stream_id_lock_key UNIQUE (lock);
 
 
 --
@@ -4792,30 +4034,6 @@ ALTER TABLE ONLY public.redactions
 
 
 --
--- Name: refresh_tokens refresh_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: synapse
---
-
-ALTER TABLE ONLY public.refresh_tokens
-    ADD CONSTRAINT refresh_tokens_pkey PRIMARY KEY (id);
-
-
---
--- Name: refresh_tokens refresh_tokens_token_key; Type: CONSTRAINT; Schema: public; Owner: synapse
---
-
-ALTER TABLE ONLY public.refresh_tokens
-    ADD CONSTRAINT refresh_tokens_token_key UNIQUE (token);
-
-
---
--- Name: registration_tokens registration_tokens_token_key; Type: CONSTRAINT; Schema: public; Owner: synapse
---
-
-ALTER TABLE ONLY public.registration_tokens
-    ADD CONSTRAINT registration_tokens_token_key UNIQUE (token);
-
-
---
 -- Name: rejections rejections_event_id_key; Type: CONSTRAINT; Schema: public; Owner: synapse
 --
 
@@ -4829,6 +4047,14 @@ ALTER TABLE ONLY public.rejections
 
 ALTER TABLE ONLY public.remote_media_cache
     ADD CONSTRAINT remote_media_cache_media_origin_media_id_key UNIQUE (media_origin, media_id);
+
+
+--
+-- Name: remote_media_cache_thumbnails remote_media_cache_thumbnails_media_origin_media_id_thumbna_key; Type: CONSTRAINT; Schema: public; Owner: synapse
+--
+
+ALTER TABLE ONLY public.remote_media_cache_thumbnails
+    ADD CONSTRAINT remote_media_cache_thumbnails_media_origin_media_id_thumbna_key UNIQUE (media_origin, media_id, thumbnail_width, thumbnail_height, thumbnail_type);
 
 
 --
@@ -4912,14 +4138,6 @@ ALTER TABLE ONLY public.rooms
 
 
 --
--- Name: schema_compat_version schema_compat_version_lock_key; Type: CONSTRAINT; Schema: public; Owner: synapse
---
-
-ALTER TABLE ONLY public.schema_compat_version
-    ADD CONSTRAINT schema_compat_version_lock_key UNIQUE (lock);
-
-
---
 -- Name: schema_version schema_version_lock_key; Type: CONSTRAINT; Schema: public; Owner: synapse
 --
 
@@ -4941,14 +4159,6 @@ ALTER TABLE ONLY public.server_keys_json
 
 ALTER TABLE ONLY public.server_signature_keys
     ADD CONSTRAINT server_signature_keys_server_name_key_id_key UNIQUE (server_name, key_id);
-
-
---
--- Name: sessions sessions_session_type_session_id_key; Type: CONSTRAINT; Schema: public; Owner: synapse
---
-
-ALTER TABLE ONLY public.sessions
-    ADD CONSTRAINT sessions_session_type_session_id_key UNIQUE (session_type, session_id);
 
 
 --
@@ -5000,14 +4210,6 @@ ALTER TABLE ONLY public.ui_auth_sessions_credentials
 
 
 --
--- Name: ui_auth_sessions_ips ui_auth_sessions_ips_session_id_ip_user_agent_key; Type: CONSTRAINT; Schema: public; Owner: synapse
---
-
-ALTER TABLE ONLY public.ui_auth_sessions_ips
-    ADD CONSTRAINT ui_auth_sessions_ips_session_id_ip_user_agent_key UNIQUE (session_id, ip, user_agent);
-
-
---
 -- Name: ui_auth_sessions ui_auth_sessions_session_id_key; Type: CONSTRAINT; Schema: public; Owner: synapse
 --
 
@@ -5056,14 +4258,6 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: users_to_send_full_presence_to users_to_send_full_presence_to_pkey; Type: CONSTRAINT; Schema: public; Owner: synapse
---
-
-ALTER TABLE ONLY public.users_to_send_full_presence_to
-    ADD CONSTRAINT users_to_send_full_presence_to_pkey PRIMARY KEY (user_id);
-
-
---
 -- Name: access_tokens_device_id; Type: INDEX; Schema: public; Owner: synapse
 --
 
@@ -5092,13 +4286,6 @@ CREATE UNIQUE INDEX appservice_room_list_idx ON public.appservice_room_list USIN
 
 
 --
--- Name: batch_events_batch_id; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE INDEX batch_events_batch_id ON public.batch_events USING btree (batch_id);
-
-
---
 -- Name: blocked_rooms_idx; Type: INDEX; Schema: public; Owner: synapse
 --
 
@@ -5113,10 +4300,10 @@ CREATE UNIQUE INDEX cache_invalidation_stream_by_instance_id ON public.cache_inv
 
 
 --
--- Name: chunk_events_event_id; Type: INDEX; Schema: public; Owner: synapse
+-- Name: cache_invalidation_stream_id; Type: INDEX; Schema: public; Owner: synapse
 --
 
-CREATE UNIQUE INDEX chunk_events_event_id ON public.batch_events USING btree (event_id);
+CREATE INDEX cache_invalidation_stream_id ON public.cache_invalidation_stream USING btree (stream_id);
 
 
 --
@@ -5138,13 +4325,6 @@ CREATE INDEX current_state_events_member_index ON public.current_state_events US
 --
 
 CREATE INDEX deleted_pushers_stream_id ON public.deleted_pushers USING btree (stream_id);
-
-
---
--- Name: destination_rooms_room_id; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE INDEX destination_rooms_room_id ON public.destination_rooms USING btree (room_id);
 
 
 --
@@ -5260,13 +4440,6 @@ CREATE UNIQUE INDEX e2e_cross_signing_keys_idx ON public.e2e_cross_signing_keys 
 
 
 --
--- Name: e2e_cross_signing_keys_stream_idx; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE UNIQUE INDEX e2e_cross_signing_keys_stream_idx ON public.e2e_cross_signing_keys USING btree (stream_id);
-
-
---
 -- Name: e2e_cross_signing_signatures2_idx; Type: INDEX; Schema: public; Owner: synapse
 --
 
@@ -5344,27 +4517,6 @@ CREATE INDEX evauth_edges_id ON public.event_auth USING btree (event_id);
 
 
 --
--- Name: event_auth_chain_links_idx; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE INDEX event_auth_chain_links_idx ON public.event_auth_chain_links USING btree (origin_chain_id, target_chain_id);
-
-
---
--- Name: event_auth_chain_to_calculate_rm_id; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE INDEX event_auth_chain_to_calculate_rm_id ON public.event_auth_chain_to_calculate USING btree (room_id);
-
-
---
--- Name: event_auth_chains_c_seq_index; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE UNIQUE INDEX event_auth_chains_c_seq_index ON public.event_auth_chains USING btree (chain_id, sequence_number);
-
-
---
 -- Name: event_contains_url_index; Type: INDEX; Schema: public; Owner: synapse
 --
 
@@ -5376,6 +4528,13 @@ CREATE INDEX event_contains_url_index ON public.events USING btree (room_id, top
 --
 
 CREATE INDEX event_expiry_expiry_ts_idx ON public.event_expiry USING btree (expiry_ts);
+
+
+--
+-- Name: event_json_room_id; Type: INDEX; Schema: public; Owner: synapse
+--
+
+CREATE INDEX event_json_room_id ON public.event_json USING btree (room_id);
 
 
 --
@@ -5484,27 +4643,6 @@ CREATE INDEX event_to_state_groups_sg_index ON public.event_to_state_groups USIN
 
 
 --
--- Name: event_txn_id_event_id; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE UNIQUE INDEX event_txn_id_event_id ON public.event_txn_id USING btree (event_id);
-
-
---
--- Name: event_txn_id_ts; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE INDEX event_txn_id_ts ON public.event_txn_id USING btree (inserted_ts);
-
-
---
--- Name: event_txn_id_txn_id; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE UNIQUE INDEX event_txn_id_txn_id ON public.event_txn_id USING btree (room_id, user_id, token_id, txn_id);
-
-
---
 -- Name: events_order_room; Type: INDEX; Schema: public; Owner: synapse
 --
 
@@ -5519,38 +4657,10 @@ CREATE INDEX events_room_stream ON public.events USING btree (room_id, stream_or
 
 
 --
--- Name: events_stream_ordering; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE UNIQUE INDEX events_stream_ordering ON public.events USING btree (stream_ordering);
-
-
---
 -- Name: events_ts; Type: INDEX; Schema: public; Owner: synapse
 --
 
 CREATE INDEX events_ts ON public.events USING btree (origin_server_ts, stream_ordering);
-
-
---
--- Name: federation_inbound_events_staging_instance_event; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE UNIQUE INDEX federation_inbound_events_staging_instance_event ON public.federation_inbound_events_staging USING btree (origin, event_id);
-
-
---
--- Name: federation_inbound_events_staging_room; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE INDEX federation_inbound_events_staging_room ON public.federation_inbound_events_staging USING btree (room_id, received_ts);
-
-
---
--- Name: federation_stream_position_instance; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE UNIQUE INDEX federation_stream_position_instance ON public.federation_stream_position USING btree (type, instance_name);
 
 
 --
@@ -5659,76 +4769,6 @@ CREATE UNIQUE INDEX groups_idx ON public.groups USING btree (group_id);
 
 
 --
--- Name: ignored_users_ignored_user_id; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE INDEX ignored_users_ignored_user_id ON public.ignored_users USING btree (ignored_user_id);
-
-
---
--- Name: ignored_users_uniqueness; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE UNIQUE INDEX ignored_users_uniqueness ON public.ignored_users USING btree (ignorer_user_id, ignored_user_id);
-
-
---
--- Name: insertion_event_edges_event_id; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE INDEX insertion_event_edges_event_id ON public.insertion_event_edges USING btree (event_id);
-
-
---
--- Name: insertion_event_edges_insertion_prev_event_id; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE INDEX insertion_event_edges_insertion_prev_event_id ON public.insertion_event_edges USING btree (insertion_prev_event_id);
-
-
---
--- Name: insertion_event_edges_insertion_room_id; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE INDEX insertion_event_edges_insertion_room_id ON public.insertion_event_edges USING btree (room_id);
-
-
---
--- Name: insertion_event_extremities_event_id; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE UNIQUE INDEX insertion_event_extremities_event_id ON public.insertion_event_extremities USING btree (event_id);
-
-
---
--- Name: insertion_event_extremities_room_id; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE INDEX insertion_event_extremities_room_id ON public.insertion_event_extremities USING btree (room_id);
-
-
---
--- Name: insertion_events_event_id; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE UNIQUE INDEX insertion_events_event_id ON public.insertion_events USING btree (event_id);
-
-
---
--- Name: insertion_events_next_batch_id; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE INDEX insertion_events_next_batch_id ON public.insertion_events USING btree (next_batch_id);
-
-
---
--- Name: instance_map_idx; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE UNIQUE INDEX instance_map_idx ON public.instance_map USING btree (instance_name);
-
-
---
 -- Name: local_current_membership_idx; Type: INDEX; Schema: public; Owner: synapse
 --
 
@@ -5757,17 +4797,17 @@ CREATE INDEX local_group_membership_u_idx ON public.local_group_membership USING
 
 
 --
--- Name: local_group_updates_stream_id_index; Type: INDEX; Schema: public; Owner: synapse
+-- Name: local_invites_for_user_idx; Type: INDEX; Schema: public; Owner: synapse
 --
 
-CREATE UNIQUE INDEX local_group_updates_stream_id_index ON public.local_group_updates USING btree (stream_id);
+CREATE INDEX local_invites_for_user_idx ON public.local_invites USING btree (invitee, locally_rejected, replaced_by, room_id);
 
 
 --
--- Name: local_media_repository_thumbn_media_id_width_height_method_key; Type: INDEX; Schema: public; Owner: synapse
+-- Name: local_invites_id; Type: INDEX; Schema: public; Owner: synapse
 --
 
-CREATE UNIQUE INDEX local_media_repository_thumbn_media_id_width_height_method_key ON public.local_media_repository_thumbnails USING btree (media_id, thumbnail_width, thumbnail_height, thumbnail_type, thumbnail_method);
+CREATE INDEX local_invites_id ON public.local_invites USING btree (stream_id);
 
 
 --
@@ -5831,13 +4871,6 @@ CREATE INDEX open_id_tokens_ts_valid_until_ms ON public.open_id_tokens USING btr
 --
 
 CREATE INDEX presence_stream_id ON public.presence_stream USING btree (stream_id, user_id);
-
-
---
--- Name: presence_stream_state_not_offline_idx; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE INDEX presence_stream_state_not_offline_idx ON public.presence_stream USING btree (state) WHERE (state <> 'offline'::text);
 
 
 --
@@ -5953,13 +4986,6 @@ CREATE INDEX redactions_redacts ON public.redactions USING btree (redacts);
 
 
 --
--- Name: remote_media_repository_thumbn_media_origin_id_width_height_met; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE UNIQUE INDEX remote_media_repository_thumbn_media_origin_id_width_height_met ON public.remote_media_cache_thumbnails USING btree (media_origin, media_id, thumbnail_width, thumbnail_height, thumbnail_type, thumbnail_method);
-
-
---
 -- Name: remote_profile_cache_time; Type: INDEX; Schema: public; Owner: synapse
 --
 
@@ -5992,6 +5018,13 @@ CREATE INDEX room_alias_servers_alias ON public.room_alias_servers USING btree (
 --
 
 CREATE INDEX room_aliases_id ON public.room_aliases USING btree (room_id);
+
+
+--
+-- Name: room_depth_room; Type: INDEX; Schema: public; Owner: synapse
+--
+
+CREATE INDEX room_depth_room ON public.room_depth USING btree (room_id);
 
 
 --
@@ -6086,13 +5119,6 @@ CREATE INDEX stream_ordering_to_exterm_rm_idx ON public.stream_ordering_to_exter
 
 
 --
--- Name: stream_positions_idx; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE UNIQUE INDEX stream_positions_idx ON public.stream_positions USING btree (stream_name, instance_name);
-
-
---
 -- Name: threepid_guest_access_tokens_index; Type: INDEX; Schema: public; Owner: synapse
 --
 
@@ -6146,13 +5172,6 @@ CREATE UNIQUE INDEX user_directory_search_user_idx ON public.user_directory_sear
 --
 
 CREATE UNIQUE INDEX user_directory_user_idx ON public.user_directory USING btree (user_id);
-
-
---
--- Name: user_external_ids_user_id_idx; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE INDEX user_external_ids_user_id_idx ON public.user_external_ids USING btree (user_id);
 
 
 --
@@ -6233,13 +5252,6 @@ CREATE INDEX users_creation_ts ON public.users USING btree (creation_ts);
 
 
 --
--- Name: users_have_local_media; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE INDEX users_have_local_media ON public.local_media_repository USING btree (user_id, created_ts);
-
-
---
 -- Name: users_in_public_rooms_r_idx; Type: INDEX; Schema: public; Owner: synapse
 --
 
@@ -6275,82 +5287,11 @@ CREATE UNIQUE INDEX users_who_share_private_rooms_u_idx ON public.users_who_shar
 
 
 --
--- Name: worker_locks_key; Type: INDEX; Schema: public; Owner: synapse
---
-
-CREATE UNIQUE INDEX worker_locks_key ON public.worker_locks USING btree (lock_name, lock_key);
-
-
---
--- Name: access_tokens access_tokens_refresh_token_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: synapse
---
-
-ALTER TABLE ONLY public.access_tokens
-    ADD CONSTRAINT access_tokens_refresh_token_id_fkey FOREIGN KEY (refresh_token_id) REFERENCES public.refresh_tokens(id) ON DELETE CASCADE;
-
-
---
--- Name: destination_rooms destination_rooms_destination_fkey; Type: FK CONSTRAINT; Schema: public; Owner: synapse
---
-
-ALTER TABLE ONLY public.destination_rooms
-    ADD CONSTRAINT destination_rooms_destination_fkey FOREIGN KEY (destination) REFERENCES public.destinations(destination);
-
-
---
--- Name: destination_rooms destination_rooms_room_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: synapse
---
-
-ALTER TABLE ONLY public.destination_rooms
-    ADD CONSTRAINT destination_rooms_room_id_fkey FOREIGN KEY (room_id) REFERENCES public.rooms(room_id);
-
-
---
--- Name: event_txn_id event_txn_id_event_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: synapse
---
-
-ALTER TABLE ONLY public.event_txn_id
-    ADD CONSTRAINT event_txn_id_event_id_fkey FOREIGN KEY (event_id) REFERENCES public.events(event_id) ON DELETE CASCADE;
-
-
---
--- Name: event_txn_id event_txn_id_token_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: synapse
---
-
-ALTER TABLE ONLY public.event_txn_id
-    ADD CONSTRAINT event_txn_id_token_id_fkey FOREIGN KEY (token_id) REFERENCES public.access_tokens(id) ON DELETE CASCADE;
-
-
---
--- Name: refresh_tokens refresh_tokens_next_token_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: synapse
---
-
-ALTER TABLE ONLY public.refresh_tokens
-    ADD CONSTRAINT refresh_tokens_next_token_id_fkey FOREIGN KEY (next_token_id) REFERENCES public.refresh_tokens(id) ON DELETE CASCADE;
-
-
---
 -- Name: ui_auth_sessions_credentials ui_auth_sessions_credentials_session_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: synapse
 --
 
 ALTER TABLE ONLY public.ui_auth_sessions_credentials
     ADD CONSTRAINT ui_auth_sessions_credentials_session_id_fkey FOREIGN KEY (session_id) REFERENCES public.ui_auth_sessions(session_id);
-
-
---
--- Name: ui_auth_sessions_ips ui_auth_sessions_ips_session_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: synapse
---
-
-ALTER TABLE ONLY public.ui_auth_sessions_ips
-    ADD CONSTRAINT ui_auth_sessions_ips_session_id_fkey FOREIGN KEY (session_id) REFERENCES public.ui_auth_sessions(session_id);
-
-
---
--- Name: users_to_send_full_presence_to users_to_send_full_presence_to_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: synapse
---
-
-ALTER TABLE ONLY public.users_to_send_full_presence_to
-    ADD CONSTRAINT users_to_send_full_presence_to_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(name);
 
 
 --
