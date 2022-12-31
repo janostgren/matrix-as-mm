@@ -1,3 +1,4 @@
+\c matrix-mattermost
 --
 -- PostgreSQL database dump
 --
@@ -15,6 +16,101 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: posts; Type: TABLE; Schema: public; Owner: matrix-mattermost
+--
+
+CREATE TABLE public.posts (
+    eventid text NOT NULL,
+    postid character(26) NOT NULL,
+    rootid character(26) NOT NULL
+);
+
+
+ALTER TABLE public.posts OWNER TO "matrix-mattermost";
+
+--
+-- Name: typeorm_metadata; Type: TABLE; Schema: public; Owner: matrix-mattermost
+--
+
+CREATE TABLE public.typeorm_metadata (
+    type character varying NOT NULL,
+    database character varying,
+    schema character varying,
+    "table" character varying,
+    name character varying,
+    value text
+);
+
+
+ALTER TABLE public.typeorm_metadata OWNER TO "matrix-mattermost";
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: matrix-mattermost
+--
+
+CREATE TABLE public.users (
+    matrix_userid text NOT NULL,
+    mattermost_userid character(26) NOT NULL,
+    access_token text NOT NULL,
+    is_matrix_user boolean NOT NULL,
+    mattermost_username text NOT NULL,
+    matrix_displayname text NOT NULL
+);
+
+
+ALTER TABLE public.users OWNER TO "matrix-mattermost";
+
+--
+-- Data for Name: posts; Type: TABLE DATA; Schema: public; Owner: matrix-mattermost
+--
+
+COPY public.posts (eventid, postid, rootid) FROM stdin;
+\.
+
+
+--
+-- Data for Name: typeorm_metadata; Type: TABLE DATA; Schema: public; Owner: matrix-mattermost
+--
+
+COPY public.typeorm_metadata (type, database, schema, "table", name, value) FROM stdin;
+\.
+
+
+--
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: matrix-mattermost
+--
+
+COPY public.users (matrix_userid, mattermost_userid, access_token, is_matrix_user, mattermost_username, matrix_displayname) FROM stdin;
+@matrix_b:localhost	8jx756z8z78figfywkuqb8996w	5591heuy5jn7dg3a3aghs1otdr	t	matrix_matrix_b_	matrix_b
+@matrix_a:localhost	zr66z9nhxpyxixtgkwq9xydjxa	h7f59iofwif6jnwu6sp68im86y	t	matrix_matrix_a_	Matrix UserA
+@mm_mattermost_a_:localhost	5bw66y36bff3umq1q57mfy4y5c		f	mattermost_a	MattermostUser A [mm]
+@mm_mattermost_b_:localhost	3zats68fztgu9mgu944a4t35so		f	mattermost_b	mattermost_b [mm]
+@mm_matrix_matrix_a:localhost	8ij6q13b67dhzko8cqha4rn1sa		f	matrix_matrix_a	Matrix UserA [mm]
+@mm_matrix_matrix_b:localhost	goynmto1ubrnucswajybh3o4kc		f	matrix_matrix_b	matrix_b [mm]
+\.
+
+
+--
+-- Name: posts PK_4c80ebd45fc8d2779b82a183713; Type: CONSTRAINT; Schema: public; Owner: matrix-mattermost
+--
+
+ALTER TABLE ONLY public.posts
+    ADD CONSTRAINT "PK_4c80ebd45fc8d2779b82a183713" PRIMARY KEY (eventid);
+
+
+--
+-- Name: users PK_a857f41bae47ffe29abb14bc31d; Type: CONSTRAINT; Schema: public; Owner: matrix-mattermost
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT "PK_a857f41bae47ffe29abb14bc31d" PRIMARY KEY (matrix_userid);
+
 
 --
 -- PostgreSQL database dump complete
