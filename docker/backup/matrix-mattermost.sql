@@ -87,12 +87,10 @@ COPY public.typeorm_metadata (type, database, schema, "table", name, value) FROM
 --
 
 COPY public.users (matrix_userid, mattermost_userid, access_token, is_matrix_user, mattermost_username, matrix_displayname) FROM stdin;
-@matrix_b:localhost	8jx756z8z78figfywkuqb8996w	5591heuy5jn7dg3a3aghs1otdr	t	matrix_matrix_b_	matrix_b
-@matrix_a:localhost	zr66z9nhxpyxixtgkwq9xydjxa	h7f59iofwif6jnwu6sp68im86y	t	matrix_matrix_a_	Matrix UserA
-@mm_mattermost_a_:localhost	5bw66y36bff3umq1q57mfy4y5c		f	mattermost_a	MattermostUser A [mm]
-@mm_mattermost_b_:localhost	3zats68fztgu9mgu944a4t35so		f	mattermost_b	mattermost_b [mm]
-@mm_matrix_matrix_a:localhost	8ij6q13b67dhzko8cqha4rn1sa		f	matrix_matrix_a	Matrix UserA [mm]
-@mm_matrix_matrix_b:localhost	goynmto1ubrnucswajybh3o4kc		f	matrix_matrix_b	matrix_b [mm]
+@matrix_b:localhost	4779owk5ebfpjk5wkzsimqttey	ujm91idc6jdc7fqhwx3w97dk4w	t	matrix_matrix_b	matrix_b
+@matrix_a:localhost	s8oi3emki3gjtn7n34tizfdsne	ecxpqaem8fdt9m4r7mhkcgde9o	t	matrix_matrix_a	Matrix UserA
+@mm_mattermost_b:localhost	3zats68fztgu9mgu944a4t35so		f	mattermost_b	mattermost_b [mm]
+@mm_mattermost_a:localhost	5bw66y36bff3umq1q57mfy4y5c		f	mattermost_a	MattermostUser A [mm]
 \.
 
 
