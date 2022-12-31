@@ -65,7 +65,7 @@ rc_joins:
 app_service_config_files:
   - /etc/synapse/registration.yaml
 trusted_key_servers:
-  - server_name: "matrix.org"
+  - server_name: 'matrix.org'
 
 signing_key_path: '/etc/synapse/my.domain.name.signing.key'
 registration_shared_secret: '8^5:4zQl6J@LjJz~5JiW^=kI0_IO8c8B_8d&YEPp.NAbMa*&zw'
