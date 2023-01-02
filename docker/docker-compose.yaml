@@ -9,6 +9,7 @@ services:
       # - ./postgres/synapse.sql:/docker-entrypoint-initdb.d/02-synapse.sql
       - ./backup/synapse.sql:/docker-entrypoint-initdb.d/02-synapse.sql
       - ./postgres/setup-bridge.sql:/docker-entrypoint-initdb.d/03-setup-bridge.sql
+      - ./backup/matrix-mattermost.sql:/docker-entrypoint-initdb.d/04-matrix-mattermost.sql
       - ./docker-scripts/dump_db.sh:/dump_db.sh
 
     environment:
