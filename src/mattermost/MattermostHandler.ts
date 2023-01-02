@@ -89,7 +89,7 @@ const MattermostPostHandlers = {
                 } else if (mimetype.startsWith('video/')) {
                     msgtype = 'm.video';
                 }
-                myLogger.debug(`Sending to Matrix ${msgtype} ${body} ${url}`)
+                myLogger.debug(`Sending to Matrix ${msgtype} ${body} ${url}`);
                 await sendMatrixMessage(
                     client,
                     this.matrixRoom,
