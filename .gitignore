@@ -7,3 +7,6 @@ matrix-appservice-mattermost.tar.gz
 log
 *.log
 *.log.*
+/test-results/
+/playwright-report/
+/playwright/.cache/
