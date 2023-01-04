@@ -28,7 +28,7 @@ test.describe.serial('Matrix - API testing', () => {
         xx = 1;
     });
 
-    test('Get Rooms', async ({}) => {
+    test('Get Public Rooms', async ({}) => {
         const rooms = await apiContext.get(
             `/_matrix/client/r0/publicRooms`,
             {},
@@ -36,6 +36,17 @@ test.describe.serial('Matrix - API testing', () => {
         let t = rooms.statusText();
         expect(rooms.ok()).toBeTruthy();
         let response = await rooms.json();
+        xx = 1;
+    });
+    test('Get The room', async ({}) => {
+        let path='/_matrix/client/r0/directory/room/'+encodeURIComponent("#town-square:localhost");
+        const room = await apiContext.get(
+            `${path}`,
+            {},
+        );
+
+        expect(room.ok()).toBeTruthy();
+        let response = await room.json();
         xx = 1;
     });
 });
