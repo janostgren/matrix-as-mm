@@ -2468,6 +2468,9 @@ COPY public.access_tokens (id, user_id, device_id, token, valid_until_ms, puppet
 2	@admin:localhost	WCSUBIGVWG	MDAxN2xvY2F0aW9uIGxvY2FsaG9zdAowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMjNjaWQgdXNlcl9pZCA9IEBhZG1pbjpsb2NhbGhvc3QKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSBXVU9yUTVRMFRnUkNjME1ACjAwMmZzaWduYXR1cmUgdYKA-yuTQ5JV5O0HWRak-48xavOYgA1MMc6A1V_Uw5kK	\N	\N	\N	\N	t
 3	@matrix_a:localhost	TKAVEOGKHH	MDAxN2xvY2F0aW9uIGxvY2FsaG9zdAowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMjZjaWQgdXNlcl9pZCA9IEBtYXRyaXhfYTpsb2NhbGhvc3QKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSAwb3Y6eTZVdHojUk4jbFprCjAwMmZzaWduYXR1cmUgNNZKnOVRzj5svh9pEM0UUEqtXYnHjnj9XyNLJ1_uKoAK	\N	\N	\N	\N	t
 4	@matrix_b:localhost	DJFHSWMXLW	MDAxN2xvY2F0aW9uIGxvY2FsaG9zdAowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMjZjaWQgdXNlcl9pZCA9IEBtYXRyaXhfYjpsb2NhbGhvc3QKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSBBYl9hbWthI0daSzgtfjdICjAwMmZzaWduYXR1cmUgOReBLkPURCMNtzORS9fpogQqVa3IWN9ZEu5gXW91QTMK	\N	\N	\N	\N	t
+9	@admin:localhost	\N	syt_dXNlcjE_zEkKYrbLQyATgolYFkza_3ANvNh	\N	@user1:localhost	1672918171780	\N	f
+11	@user1:localhost	NXIGVVVFXK	syt_dXNlcjE_dGiJSUmorpRoxHUDXRjR_0LCV3x	\N	\N	1672918476676	\N	t
+12	@mm_user1:localhost	SHXZHAGORF	syt_bW1fdXNlcjE_qazPfKDrjsKkOsrLqPrg_3EIMRj	\N	\N	1672922249217	\N	f
 \.
 
 
@@ -2476,6 +2479,12 @@ COPY public.access_tokens (id, user_id, device_id, token, valid_until_ms, puppet
 --
 
 COPY public.account_data (user_id, account_data_type, stream_id, content, instance_name) FROM stdin;
+@user1:localhost	org.matrix.msc3890.local_notification_settings.ZLJUJWPSRR	2	{"is_silenced":false}	\N
+@user1:localhost	im.vector.analytics	4	{"pseudonymousAnalyticsOptIn":false}	\N
+@user1:localhost	org.matrix.msc3890.local_notification_settings.NXIGVVVFXK	6	{"is_silenced":false}	\N
+@user1:localhost	im.vector.web.settings	9	{"SpotlightSearch.recentSearches":["!dKcbdDATuwwphjRPQP:localhost","!kmbTYjjsDRDHGgVqUP:localhost"]}	\N
+@user1:localhost	io.element.recent_emoji	24	{"recent_emoji":[["\\ud83e\\udd29",1]]}	\N
+@user1:localhost	im.vector.setting.breadcrumbs	27	{"recent_rooms":["!dKcbdDATuwwphjRPQP:localhost","!kmbTYjjsDRDHGgVqUP:localhost"]}	\N
 \.
 
 
@@ -2492,7 +2501,7 @@ COPY public.account_validity (user_id, expiration_ts_ms, email_sent, renewal_tok
 --
 
 COPY public.application_services_state (as_id, state, last_txn, read_receipt_stream_id, presence_stream_id) FROM stdin;
-xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	up	20	\N	\N
+xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	down	20	\N	\N
 \.
 
 
@@ -2501,6 +2510,25 @@ xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	up	20	\N	\N
 --
 
 COPY public.application_services_txns (as_id, txn_id, event_ids) FROM stdin;
+xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	21	["$kHkn3X5sgQZbnc7m1GNs3FoN729sUsLsqASYxvh3Jb8"]
+xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	22	["$cl-cBWQqCEUtQdjEqlQcE0PD7MCeX1R25oC5CKqb7oE"]
+xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	23	["$8a8OTFPqvfsx2aHJeu9IBu-xR3Gn7rdv9l_HZtPKkFg"]
+xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	24	["$BWMrEpKFpKKbBz5Ox9zTP3TvT5zyh6w3zhpl-epXhkk"]
+xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	25	["$r3Ho1IsdJmJB13pD9yX-Jkg_a5s28kBCqoNZ5EPWwqM"]
+xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	26	["$fQ28BQv7GUBcg_Ok7MCh8uTcQLoT2Tkr2BegUMhst1M"]
+xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	27	["$S7qfuHyVNKlnX8WQb78EyVSR_7_dnmagLA8asozsQtE"]
+xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	28	["$TOzcyxIV2S5U6CP15QCldRMJRaDz1Yaik15PorvZYGc"]
+xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	29	["$Sa-w9Co29Yd94wHfPbpfCOuSSlMlorQ7ssiGXYp8oh8"]
+xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	30	["$n6TBNMF739-W93vnPpWYiJ_zTj-UGsx8mCtkFUsmkrY"]
+xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	31	["$5auMphtCZ9zvRqrhyXpY0s-cZZl2AbvkyGNRbm2h2zc"]
+xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	32	["$Yb59onmhkHIpIJ_VnrP0V02pkFQEF1GwuJqZCNRTQeQ"]
+xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	33	["$j0CTOXXA4AtSOD0pk6kL2BNsa6j5w517GGfkTqmm9ZE"]
+xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	34	["$YgrzVCWDDxVv-dvf3HhpLD0QlN4nD5-CXg0T-gEX6iI"]
+xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	35	["$IaI_j1zJZ04lmJmCzJfvnr48U2umqKYG1xogY-r9UNY"]
+xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	36	["$TbIhAYsmySe2O7IaMBarYDokr6-UmyH4IYI3SpbhI-Q"]
+xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	37	["$YBt0yFQdKC_886W6aXe4LIv5A5BcBP7pXYeF8XLKhH0"]
+xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	38	["$-wkWlUVunP818RkFXsoACrEQ85-ybLTc-vWqiil50Vo"]
+xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	39	["$kQPpv66TuseXeTXJr41QlqLnJBWNpBA_zgzIaJMjpLc"]
 \.
 
 
@@ -2655,7 +2683,7 @@ COPY public.appservice_room_list (appservice_id, network_id, room_id) FROM stdin
 --
 
 COPY public.appservice_stream_position (lock, stream_ordering) FROM stdin;
-X	39
+X	58
 \.
 
 
@@ -2729,6 +2757,73 @@ COPY public.cache_invalidation_stream_by_instance (stream_id, instance_name, cac
 39	master	cs_cache_fake	{!kmbTYjjsDRDHGgVqUP:localhost,@mm_mattermost_b:localhost}	1672856705403
 40	master	cs_cache_fake	{!dKcbdDATuwwphjRPQP:localhost,@mm_mattermost_a:localhost}	1672856705498
 41	master	cs_cache_fake	{!kmbTYjjsDRDHGgVqUP:localhost,@mm_mattermost_a:localhost}	1672856705618
+42	master	user_last_seen_monthly_active	\N	1672871790969
+43	master	get_monthly_active_count	{}	1672871790975
+44	master	user_last_seen_monthly_active	\N	1672876490785
+45	master	get_monthly_active_count	{}	1672876490795
+46	master	user_last_seen_monthly_active	\N	1672879734358
+47	master	get_monthly_active_count	{}	1672879734369
+48	master	user_last_seen_monthly_active	\N	1672883390253
+49	master	get_monthly_active_count	{}	1672883390256
+50	master	user_last_seen_monthly_active	\N	1672887715288
+51	master	get_monthly_active_count	{}	1672887715291
+52	master	user_last_seen_monthly_active	\N	1672890172298
+53	master	get_monthly_active_count	{}	1672890172304
+54	master	user_last_seen_monthly_active	\N	1672893416286
+55	master	get_monthly_active_count	{}	1672893416295
+56	master	user_last_seen_monthly_active	\N	1672897967221
+57	master	get_monthly_active_count	{}	1672897967224
+58	master	user_last_seen_monthly_active	\N	1672901650324
+59	master	get_monthly_active_count	{}	1672901650333
+60	master	user_last_seen_monthly_active	\N	1672905017461
+61	master	get_monthly_active_count	{}	1672905017476
+62	master	user_last_seen_monthly_active	\N	1672908258295
+63	master	get_monthly_active_count	{}	1672908258298
+64	master	user_last_seen_monthly_active	\N	1672912478194
+65	master	get_monthly_active_count	{}	1672912478203
+66	master	user_last_seen_monthly_active	\N	1672916886701
+67	master	get_monthly_active_count	{}	1672916886997
+68	master	get_user_by_id	{@user1:localhost}	1672918078870
+69	master	count_e2e_one_time_keys	{@user1:localhost,ZLJUJWPSRR}	1672918201747
+70	master	get_e2e_unused_fallback_key_types	{@user1:localhost,ZLJUJWPSRR}	1672918201778
+71	master	count_e2e_one_time_keys	{@user1:localhost,ZLJUJWPSRR}	1672918201864
+72	master	get_e2e_unused_fallback_key_types	{@user1:localhost,ZLJUJWPSRR}	1672918201873
+73	master	count_e2e_one_time_keys	{@user1:localhost,ZLJUJWPSRR}	1672918201935
+74	master	count_e2e_one_time_keys	{@user1:localhost,ZLJUJWPSRR}	1672918201992
+83	master	count_e2e_one_time_keys	{@user1:localhost,ZLJUJWPSRR}	1672918202476
+93	master	count_e2e_one_time_keys	{@user1:localhost,NXIGVVVFXK}	1672918479094
+98	master	cs_cache_fake	{!kmbTYjjsDRDHGgVqUP:localhost,@user1:localhost}	1672918494236
+104	master	get_user_by_id	{@mm_user1:localhost}	1672922249191
+75	master	count_e2e_one_time_keys	{@user1:localhost,ZLJUJWPSRR}	1672918202054
+76	master	count_e2e_one_time_keys	{@user1:localhost,ZLJUJWPSRR}	1672918202117
+77	master	count_e2e_one_time_keys	{@user1:localhost,ZLJUJWPSRR}	1672918202177
+78	master	_get_bare_e2e_cross_signing_keys	{@user1:localhost}	1672918202194
+79	master	_get_bare_e2e_cross_signing_keys	{@user1:localhost}	1672918202201
+80	master	_get_bare_e2e_cross_signing_keys	{@user1:localhost}	1672918202211
+89	master	count_e2e_one_time_keys	{@user1:localhost,NXIGVVVFXK}	1672918478877
+90	master	count_e2e_one_time_keys	{@user1:localhost,NXIGVVVFXK}	1672918478929
+91	master	count_e2e_one_time_keys	{@user1:localhost,NXIGVVVFXK}	1672918478984
+94	master	count_e2e_one_time_keys	{@user1:localhost,NXIGVVVFXK}	1672918479151
+95	master	count_e2e_one_time_keys	{@user1:localhost,NXIGVVVFXK}	1672918479203
+96	master	count_e2e_one_time_keys	{@user1:localhost,NXIGVVVFXK}	1672918479265
+106	master	cs_cache_fake	{!dKcbdDATuwwphjRPQP:localhost,@mm_user1:localhost}	1672922249700
+81	master	count_e2e_one_time_keys	{@user1:localhost,ZLJUJWPSRR}	1672918202327
+82	master	count_e2e_one_time_keys	{@user1:localhost,ZLJUJWPSRR}	1672918202405
+84	master	get_user_by_access_token	{syt_dXNlcjE_vFGpLeZRPNVxPbNorgcL_2sVSJz}	1672918252762
+87	master	count_e2e_one_time_keys	{@user1:localhost,NXIGVVVFXK}	1672918478805
+92	master	count_e2e_one_time_keys	{@user1:localhost,NXIGVVVFXK}	1672918479038
+108	master	cs_cache_fake	{!dKcbdDATuwwphjRPQP:localhost,@mm_user1:localhost}	1672922250047
+85	master	count_e2e_one_time_keys	{@user1:localhost,ZLJUJWPSRR}	1672918252781
+86	master	get_e2e_unused_fallback_key_types	{@user1:localhost,ZLJUJWPSRR}	1672918252785
+88	master	get_e2e_unused_fallback_key_types	{@user1:localhost,NXIGVVVFXK}	1672918478825
+97	master	count_e2e_one_time_keys	{@user1:localhost,NXIGVVVFXK}	1672918479380
+99	master	cs_cache_fake	{!dKcbdDATuwwphjRPQP:localhost,@user1:localhost}	1672918508504
+100	master	user_last_seen_monthly_active	\N	1672918590856
+101	master	get_monthly_active_count	{}	1672918590858
+102	master	user_last_seen_monthly_active	\N	1672922190858
+103	master	get_monthly_active_count	{}	1672922190860
+105	master	cs_cache_fake	{!kmbTYjjsDRDHGgVqUP:localhost,@mm_user1:localhost}	1672922249483
+107	master	cs_cache_fake	{!kmbTYjjsDRDHGgVqUP:localhost,@mm_user1:localhost}	1672922249900
 \.
 
 
@@ -2765,6 +2860,12 @@ COPY public.current_state_delta_stream (stream_id, room_id, type, state_key, eve
 27	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@mm_mattermost_b:localhost	$t5n7gGV4l0pVzkJq8YJdQm4IFq3hTrEHABs9QiejsEA	$2KF1FxA50OygX8tA7bnhmld7ePb4eIDsQaPB5ssgUSc	master
 28	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@mm_mattermost_a:localhost	$CPrx1EOiKU0xFQBY1-CbMIp4Nx64vw33awql9URc-is	$g-ojtwk6OBH0sIWVdUrIlKfcesmKRj0kfU5E9ZjKlug	master
 29	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@mm_mattermost_a:localhost	$FiPh76BhP5tT1Hors997MJgDvrehT02uvfmqsY25ilk	$5zlbkFcwjX3ScF4jwQP_koQvnG_-hWrIYwwn4RhXMGs	master
+40	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@user1:localhost	$kHkn3X5sgQZbnc7m1GNs3FoN729sUsLsqASYxvh3Jb8	\N	master
+41	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@user1:localhost	$cl-cBWQqCEUtQdjEqlQcE0PD7MCeX1R25oC5CKqb7oE	\N	master
+46	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@mm_user1:localhost	$S7qfuHyVNKlnX8WQb78EyVSR_7_dnmagLA8asozsQtE	\N	master
+47	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@mm_user1:localhost	$TOzcyxIV2S5U6CP15QCldRMJRaDz1Yaik15PorvZYGc	\N	master
+48	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@mm_user1:localhost	$Sa-w9Co29Yd94wHfPbpfCOuSSlMlorQ7ssiGXYp8oh8	$S7qfuHyVNKlnX8WQb78EyVSR_7_dnmagLA8asozsQtE	master
+49	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@mm_user1:localhost	$n6TBNMF739-W93vnPpWYiJ_zTj-UGsx8mCtkFUsmkrY	$TOzcyxIV2S5U6CP15QCldRMJRaDz1Yaik15PorvZYGc	master
 \.
 
 
@@ -2797,6 +2898,10 @@ $PSZPiF2_GHeawUZsuFzgg_JuCtoOyaf_11-uLulGF0c	!dKcbdDATuwwphjRPQP:localhost	m.roo
 $t5n7gGV4l0pVzkJq8YJdQm4IFq3hTrEHABs9QiejsEA	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@mm_mattermost_b:localhost	join
 $CPrx1EOiKU0xFQBY1-CbMIp4Nx64vw33awql9URc-is	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@mm_mattermost_a:localhost	join
 $FiPh76BhP5tT1Hors997MJgDvrehT02uvfmqsY25ilk	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@mm_mattermost_a:localhost	join
+$kHkn3X5sgQZbnc7m1GNs3FoN729sUsLsqASYxvh3Jb8	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@user1:localhost	join
+$cl-cBWQqCEUtQdjEqlQcE0PD7MCeX1R25oC5CKqb7oE	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@user1:localhost	join
+$Sa-w9Co29Yd94wHfPbpfCOuSSlMlorQ7ssiGXYp8oh8	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@mm_user1:localhost	join
+$n6TBNMF739-W93vnPpWYiJ_zTj-UGsx8mCtkFUsmkrY	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@mm_user1:localhost	join
 \.
 
 
@@ -2908,6 +3013,11 @@ COPY public.device_lists_stream (stream_id, user_id, device_id) FROM stdin;
 6	@matterbot:localhost	OKGPMGNNEY
 7	@mm_mattermost_b:localhost	ZESISTJYYM
 8	@mm_mattermost_a:localhost	CWUORKDCEH
+12	@user1:localhost	58pTnmZrmfrb2oYvQzQ3gqD+pVVgFJzSKS5rGmhc64I
+13	@user1:localhost	pdBCJJeCaBQUwJbb5/uPHNNL9DLS6KDonsWdP5TfCW0
+14	@user1:localhost	ZLJUJWPSRR
+16	@user1:localhost	NXIGVVVFXK
+17	@mm_user1:localhost	SHXZHAGORF
 \.
 
 
@@ -2920,9 +3030,14 @@ COPY public.devices (user_id, device_id, display_name, last_seen, ip, user_agent
 @matterbot:localhost	OKGPMGNNEY	\N	\N	\N	\N	f
 @mm_mattermost_b:localhost	ZESISTJYYM	\N	\N	\N	\N	f
 @mm_mattermost_a:localhost	CWUORKDCEH	\N	\N	\N	\N	f
-@admin:localhost	WCSUBIGVWG	\N	1672856705983	172.16.238.1		f
 @matrix_a:localhost	TKAVEOGKHH	\N	1672856706252	172.16.238.1		f
-@matrix_b:localhost	DJFHSWMXLW	\N	1672856706787	172.16.238.1		f
+@user1:localhost	NXIGVVVFXK	Element Skrivbord: macOS	1672923608226	172.16.238.1	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Element/1.11.17 Chrome/108.0.5359.62 Electron/22.0.0 Safari/537.36	f
+@user1:localhost	58pTnmZrmfrb2oYvQzQ3gqD+pVVgFJzSKS5rGmhc64I	master signing key	\N	\N	\N	t
+@user1:localhost	pdBCJJeCaBQUwJbb5/uPHNNL9DLS6KDonsWdP5TfCW0	self_signing signing key	\N	\N	\N	t
+@user1:localhost	8VwxF1XcfucbvnEe3tmKLZBRBD5vxbOIg2RNVH0Ndyg	user_signing signing key	\N	\N	\N	t
+@mm_user1:localhost	SHXZHAGORF	\N	\N	\N	\N	f
+@admin:localhost	WCSUBIGVWG	\N	1672920816777	172.16.238.1	PostmanRuntime/7.30.0	f
+@matrix_b:localhost	DJFHSWMXLW	\N	1672923397269	172.16.238.1	Playwright/1.29.1 (x64; macOS 12.6) node/18.2	f
 \.
 
 
@@ -2931,6 +3046,9 @@ COPY public.devices (user_id, device_id, display_name, last_seen, ip, user_agent
 --
 
 COPY public.e2e_cross_signing_keys (user_id, keytype, keydata, stream_id) FROM stdin;
+@user1:localhost	master	{"user_id":"@user1:localhost","usage":["master"],"keys":{"ed25519:58pTnmZrmfrb2oYvQzQ3gqD+pVVgFJzSKS5rGmhc64I":"58pTnmZrmfrb2oYvQzQ3gqD+pVVgFJzSKS5rGmhc64I"},"signatures":{"@user1:localhost":{"ed25519:ZLJUJWPSRR":"yBESboDwQNBEOXMduanqiGoLXTF4gKvF7N4LP5ovnEoMFi8kAbAQjbpnVX0YLH2MvpuzesgQ+bxC7p7VkQ6fBQ"}}}	2
+@user1:localhost	self_signing	{"user_id":"@user1:localhost","usage":["self_signing"],"keys":{"ed25519:pdBCJJeCaBQUwJbb5/uPHNNL9DLS6KDonsWdP5TfCW0":"pdBCJJeCaBQUwJbb5/uPHNNL9DLS6KDonsWdP5TfCW0"},"signatures":{"@user1:localhost":{"ed25519:58pTnmZrmfrb2oYvQzQ3gqD+pVVgFJzSKS5rGmhc64I":"O1vPD1mJiCrfD4q0awkAK2iLx4aOmzEayu9GwW2zLZmZ44nzOsQQ4krEwKKtuXAHl1uaHgLPIknBSMgWsdkGBQ"}}}	3
+@user1:localhost	user_signing	{"user_id":"@user1:localhost","usage":["user_signing"],"keys":{"ed25519:8VwxF1XcfucbvnEe3tmKLZBRBD5vxbOIg2RNVH0Ndyg":"8VwxF1XcfucbvnEe3tmKLZBRBD5vxbOIg2RNVH0Ndyg"},"signatures":{"@user1:localhost":{"ed25519:58pTnmZrmfrb2oYvQzQ3gqD+pVVgFJzSKS5rGmhc64I":"MnzzIPIWi1oUBte11VVm2XtrdKv32Zg3NXY+YMa9SZrMg6O7k9Kew1GvvfmN49wndN4Aq1V6JvCuHZSFDZjSAg"}}}	4
 \.
 
 
@@ -2947,6 +3065,7 @@ COPY public.e2e_cross_signing_signatures (user_id, key_id, target_user_id, targe
 --
 
 COPY public.e2e_device_keys_json (user_id, device_id, ts_added_ms, key_json) FROM stdin;
+@user1:localhost	NXIGVVVFXK	1672918478446	{"algorithms":["m.olm.v1.curve25519-aes-sha2","m.megolm.v1.aes-sha2"],"device_id":"NXIGVVVFXK","keys":{"curve25519:NXIGVVVFXK":"MqZhn3VyBlIughTTayzvflgJ5XWCsW7N/YOm/2ZflDs","ed25519:NXIGVVVFXK":"xfMCq2hkMJafspMXnN8HPZW9dZZe43MCFqsFSphwgS0"},"signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"HQGwmN/CPgbkyEbngyze2ka7kD2/rOJgoav3eb1CoFvMYQfQDtIHVXcLdqTodVKaAtkYJ72T8iU1U/uISGvjAg"}},"user_id":"@user1:localhost"}
 \.
 
 
@@ -2955,6 +3074,7 @@ COPY public.e2e_device_keys_json (user_id, device_id, ts_added_ms, key_json) FRO
 --
 
 COPY public.e2e_fallback_keys_json (user_id, device_id, algorithm, key_id, key_json, used) FROM stdin;
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAABg	{"key":"OEe0zmG0CAAzXfScXp42n3D8hvPMBjLVg1Q1MSoWgwQ","fallback":true,"signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"Bjr28Z5qudGMxv0/bCgcHmQLMI3xOk/8eibIjdCalPNzUib8aosdJK8AL3YG/+MBsquvKY1PeypcJGzbN+wQDg"}}}	f
 \.
 
 
@@ -2963,6 +3083,56 @@ COPY public.e2e_fallback_keys_json (user_id, device_id, algorithm, key_id, key_j
 --
 
 COPY public.e2e_one_time_keys_json (user_id, device_id, algorithm, key_id, ts_added_ms, key_json) FROM stdin;
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAABQ	1672918478791	{"key":"YvUPHRiWAX82+TKRbB/gOPLl3nr84VOQWRlIyoi3sFU","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"IvDmeu9j8Czw5CUJ3DU3Q8csAIWSEb1stZQc1cphWG4tlHsnUO2CX8fzJKfW0DLwCtZPJbKKg83tvLNLRFLUAg"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAABA	1672918478791	{"key":"QDmSMb4IuVFsR6MPtN1gIBazPlN7X8NYD4xmWzTr9AU","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"7KkUx2YyH9YgqcfGi+1fWBF0L0+QjqnULdjjb4lQw0w177Yc9vWLNl2ke0Uq6mFvHXpw2zYv3L5D8VWz8G3RCQ"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAAw	1672918478791	{"key":"8ePAEwpUwmtP9mb4gTPH1TlhGgsgagCAhmzfObYzhnU","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"RyN9tm41YvVhLQWTBbYU1t14RWKjAItA44WyXEeV9eHLcxlc0ZKdgppQV0BYAsdQNMQ6T7DBAJ30Y+TJNB3dBw"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAAg	1672918478791	{"key":"r9klhS404hwatIZT3a9tay4N/xiSR6Ya5oWuD8Ad1WA","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"QXnXzHC4me+gJulkHK+f8Z8Ej36ac1AMBpMlFgV7M8e7+El/pHUKrpKK8CQ56fk8xjIimbg39rKOYm11JbnLAg"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAAQ	1672918478791	{"key":"7eE2izGIsWKPBP9ZqyXvmcvK46A09AG8evpCt2L+URA","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"nrPY2iXj4eOH78A4b6ErUnaPzFcbQQ6li6xzxihon2JOcgl/MtSpcFrQxi1+ZLxFIOICtr5/gaNm2lVoUcPLBQ"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAACw	1672918478873	{"key":"pBdvTyOTOErbDbQ18Vi/DKrjAF3yQcV+tow5Cm+eOUM","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"ujf4kDJ/aAPIVBhM8ShwJmkO3DDZVjzf839mm/bG9KPpA8lN2xQkaiNkyP7qHtI5RIKkDMHrGieH2LDFrvHcAQ"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAACg	1672918478873	{"key":"9cUT40vxdcdybq8IbU3bDxfYmWp+ZqSYzDPESBk6w2w","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"1S4z8FjOlNbjik1npYnvPJWUCLVsVn+UXg3iDeFfKM8GZ5c3y/sBuo88zDmVNu+s1cCBOj/jUEkzkVkRjwsfAw"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAACQ	1672918478873	{"key":"69h0LxgyitqMIrqwvvJl3FQCcryxjwB1DcqLKUMHEUM","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"I7KgEbtJT66SCOqswMJwqU5fvszcWMx48wTnlJJ3jV1iyDkox4siFVBdy4Qmtoky7Z1joCSJs7tjYuQHbFJ6CA"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAACA	1672918478873	{"key":"jE2iy0DHb1zg2kz5F1JH4wb2SR24A9Kfc3Pv1C21YWs","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"4Oh4wk8XxPFEovHfKgt4fqxn31UcqFnTb0lPMrtS5sxcTfkz0254wDv8o4bnSAI0SXQ1TioA9WU6dmyPrSJVBQ"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAABw	1672918478873	{"key":"PSFb2Lki1g5IwsMXmlLYz4SmTBWVYIT4mjMbRvfOui4","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"+Q7m5RVjW7QBHmW7okTQZZZNiIAoQOhjC63oO+6yQC0NeXkULa0JmyjPSfR/iCIqqP4MgZMv9trQ2F2aCDuADA"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAEA	1672918478925	{"key":"Cj2jutgjgehWQtT1UBJoUEinYCd/9pw6VoVXmK2rczY","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"VrJ7M0kYslNJesyQh5LmZvDtBlDNV/zBUw1Pqo2IxaL85yevZzsh2cjiINfiY8B+bm2gyhXaXohtC7jIiSYNAw"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAADw	1672918478925	{"key":"BPOSBhqhRj1dyUnblDgwpNIloF7Qy6ebCMPMWXCC2TI","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"4Cf3kj0GNtOE91nDhgmxNZgx/raN678gauNvxXtO7vNC9EtI8AxlOf8dNp/wzcWVEMimsOEpDgujCnMztaQ/Cw"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAADg	1672918478925	{"key":"Czdp3Shff3JuJoqwv66q8X89w4LNUkqioXfU0Z9+Aic","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"nEaCRpSF7h5q7lbDORDABAy6Qvu+Dbi9SNtAJ/YaPUoRFaTzk4gel0Kfnxxxa0qUrzqwFpZAxxTrw5E6X1GqBQ"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAADQ	1672918478925	{"key":"j2L69DhHc9760G1SPpwBTj8CweHgBz0qp128vIH6n3U","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"m2V5M4e1DLP6LNCnT3BuIeYu5Rc6qHX6MDSRZalrUtDGgbLFuj1DZCb9NDU/mj+wlsAKCh24IelAzz8HqDmvCA"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAADA	1672918478925	{"key":"L6eD0QPLCuCM862VY//V6/odvmCMYgkUQbonH+6MmDM","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"nYbwYnBukoGxXbbZzuTgRcsJhPdyJjZlsr26sFTr3//coCauQJBPY4hCDkezLWYuC6+KFCQDpvEtD99o5v4LBg"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAFQ	1672918478979	{"key":"CzQgsbqAxVXzrAwuvOrl+Yt+gKB1UvgMgj/QQNSmcCA","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"6gDzE6dfzhhjrtwKP1JAbwmPcrcFGCN/t8lrwAST+tuvXoE4eCfiy4tiiX7OngHgV0Fzhb8juEocPwC77o8gCQ"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAFA	1672918478979	{"key":"unKd20Zy2UuJ6bTELG23Ffma0T2K2dmb2990ojrsIzs","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"njTMh+LnPDrk1TCW4d/5HWQZ4scxlAebDO9WFIFPwe4fG5bzUFvYcJ+eYiiuEEE1zsR8fK6Gqt9tT3WI6B+0Dg"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAEw	1672918478979	{"key":"Sft2OuCD/g1QZfbdQeDHOheRg/GBzKf/Zi7HLEun/is","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"VqnDY4nQvwlXor5vucrBn78fbwpWU/2UOPgs6+5SJBiO52jr8vxW3lqRREJmfxWc5xRq+Fn6DVa1oYI14sYABQ"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAEg	1672918478979	{"key":"UQDegw6gKgz/pq0hKcyl2f0WUH5RMIzN512DJnNd6mQ","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"QIuZfscn6PsMKEaN4nflZexXxzTX8pvALV9XBu1Uv8v2y3zT5wKPVKWyqQdjR+xrJLH8iLZwkgRjiK2QYxvKCQ"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAEQ	1672918478979	{"key":"aRz7UgKt/Zsr1+fQUSst4y1QsyrZoOLlrBgqPP7f42U","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"XzO4a31zZlgg1h0CllDldfzjSOIHDqLvUf1t40LzG3kvqmDd3F5jweZJ0/4rT12J/pCSFLOqUY67zpD7GfZnBg"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAGg	1672918479031	{"key":"lyP/bGrZVyRANnFPnrkEDO8q+mzsxcHap7uLsZ2dFxk","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"7v/cmoqsnfN/8H463r4hdlhlCEugnKza8h39JRsS2C+/KK69NNVc34IprH85hd67llm3XqPsj6B2tj6dshZ3DA"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAGQ	1672918479031	{"key":"ULbHaK+/yk2hfm3zJ737jnPryAxPIMvuTd/wjjhpoDs","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"bi8KIInQlccgRSZMGuotbPjt7ILiyG1Rl1RWxYnlgpVY73E+YWlcGuSTuHo3ESr55Q5UvRHN4EYMvneLUA31Aw"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAGA	1672918479031	{"key":"crojx6fPf6O9fyNiOJYKDmlF/95K7NdqahmoSUyh+jo","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"PdwOCjqG+jUJfxDzkd+BaUX6MdUpFf9PNQxauSrZcoBtFyu3uiDrI5yEzL5gC4z7785xTy6Tpp26QOjYl2LABg"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAFw	1672918479031	{"key":"V3X1Cwa+On/YykW8ThXjrZCK0x4T1wuhLXLa7VgqRSY","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"0c4KgQ4c/dmFy5XkwcZcMwvCwb1eGoI2LvwOu1IjaoA1mI7kCenix0NrUSr51vCbWwjDefGSear2KHwhyc+5BA"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAFg	1672918479031	{"key":"XsB26ciApPiM5nE885CdGQQ7CvgJQxFN+NTleSqxlk0","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"iVwNGMVPuyanc0HiwgD1WzPqdivQU7Z+tXBMNQioYfrqqHbnOFuuX2wZwRHCIrXnGw4+USZqVnBFpqBW/uiNDQ"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAHw	1672918479089	{"key":"3yLGVgEDeuBAvEmIOZ6KdxJmQAaZ8ruTzOxhI2E9IjM","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"7hICnuX0fB1HKU5KkEhIZD3B4BNsV/A8b8wXVNqIuIFYS4erVZGlVuLxlM8RmMbBpMJlYIp1aii0De0axTV7DA"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAHg	1672918479089	{"key":"G1xUe8deJ/V5LGU60rIf3XvOOZLVjuLGZfjXTc0jGnI","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"pT42lDS/uHhHAXQNsedJqkR9II4R3DK5xfnUr7vXDWsFhsXHQoKdY37sJxQ/yaW/IZp4tPZMHTPXkkNDyeE9CQ"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAHQ	1672918479089	{"key":"kM1R7EQ2JzT5VxWW8G5hODDovycc67qkpxP+fExrg1A","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"xpAC+2w2IdPQIbcNdcfrZtDRLmjFfumf6LDjVqpBl/D6inQrM+lNrmW3t9nGdy4TT/Afyw6fNZH2pduVx/TWCg"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAHA	1672918479089	{"key":"xZbCms9FedM0rQZgWMBJDtdY9yxINqQfnTBM6ctRRDM","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"CvwBA36w/3Nu6Tiw6jsMykNzbeG098zdb5Ax49+SET/chG3RUeEb1p+gLrpP+qdGsvH527MgUQLzQe4FAV25DA"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAGw	1672918479089	{"key":"CL2tubapjOxpBhyZV5d+miIaL84IKY63YDTGi9ZlQ1g","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"WEl0P1NqeurWCTDxSbmcWQDrqSb5wQNgiqtR0ElE3DU1Tr7j+WrldjDC5qNgaNdYsVfDMuHMFsTmF+LYJinUAA"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAJA	1672918479144	{"key":"1F/4TTDhSI1r1yn2u6K2zQ2OvYEk8M71UpC4b+E+zSo","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"G8EGwvYwZ0lPUfcOFYwhWGqJkNHuE3f2YDe4QJZIll3yyz0rrh4No0DPekQEA2BFsSlpucJL5+q8QSniwDcBBg"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAIw	1672918479144	{"key":"TFdbL4P5wplT7DTo1TkLapLewq7Mm0S7lnAzqIBGRlo","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"5WRvQ9i/BWHPMp1sIde3gcCxsqkrKq0cP91xs8ijx/UFldcanNMFcvHkQnDFu2HlpwbTM1bVDxYayC7n6+5ODQ"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAIg	1672918479144	{"key":"GVKUDQ+ycy+OD9tIRNjF05ZD3AbOA+7wKQTxqmLH7Rk","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"T+y+YAYke43gNP3sUGYOAxnZbBMAfe1GEQzfxt6oLZEc7YiaewldP7Le/VEKxGLSA4w09UPPET+qsaiPZD+gAA"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAIQ	1672918479144	{"key":"lbk92Kxe3XngVM0XYwjjXIfVxosbpA1rEjTdXY3CZ1Q","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"D95f1cSHryUb+97mMMesrGOztvW/nQjcObnUYsho7cDx+OtPvo3+9SrSYX3WpoqECmCbjzkllrL5/0EnytlGCQ"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAIA	1672918479144	{"key":"U0acYoQJSuRjekV1QoOSUmel7zQL7EDGm2JT5i+jr1o","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"bWuls9abAIIxrfKK9sv9IWEO5gfXoXORyBjV8SqnOLCGl3s42qK01ksMJAloJ5ERq5/5k45CbOFJ+3LFm47mBg"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAKQ	1672918479199	{"key":"lKau7hnr/w5n6Ka66m9RCNqUipVwFCNbgVxBM8XNsVk","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"wedN1uaamTR7jCvkzji32oIfkPdiH5HP7j0lT8ov7kVgcfJUqMZHuIL4zZ0nkNhngUjj2EuntAITPC7Pu9OwAw"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAKA	1672918479199	{"key":"X2TNBuJ6pMdfQN5MtRGaGghZbxXEgEdqzafo9MKLVAA","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"GwxKq2NlA/Wp1GshoHV7GoiM78AxARGNdpHXUxwfmK0x6+9YbgKhOf5+1WHf8ehEdSMtvoq/XyxkZkXfHtc4Dg"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAJw	1672918479199	{"key":"sebnlt+sr9Md/FO02VFcKA7EbRna0sSo0FhdrCR9eXI","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"64jw4z3wRQMGaA8Ifpn0+kT9ssYZkdwiXChlVh7X40/d9D+MsmID2/fK7sZKQkKBqWhzKePgJLKlxKnIJwGHBA"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAJg	1672918479199	{"key":"95bxnqA4rUlDE8w5+7VjtYmwCbl2AC28Dm9fdgyxLlo","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"GZrQnWKUTp+JPPO5d28+mKEIKElPTc2YWcpI+6ELfjCmZmPud8BlTxDh2T83J1US1ixOm6FrcC3lab4yoZyWAQ"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAJQ	1672918479199	{"key":"3bTcCQ5OnPBO+vuBl1zMJZWf6O8J7hHDkkT8BFN1E2g","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"IGwSp3KfkER8MIQ0SDBiQIiDKphsvvkx1zVBrR8Qydr5lDWj+VAj3jPpQNl/RHKd72Qcis+IO/QGOBzGDWrICw"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAALg	1672918479261	{"key":"Z4qknlhPKAR2u4gv6PmQNckaVxXaJja3z94JXsPCJlk","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"Me9XNLTiW+oAajFkp6mB/Wixsy1RGEzRUl3Lw4ZAkKAYJDPxpZ5sxYhREmtf2MNFAeYNLWLk2Ix9ecoIh3SOCw"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAALQ	1672918479261	{"key":"DJr1mwQOfqi1NN2TINsmpRzzAQpqlXcWGlOqAzditQo","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"IhaGyDBR0a6kReYwnnKNAHikMHtkPysStyxwmjP9AF4nDuXGrD+xv7lLgzIt1x5DVZkyYN7J+00+3SCksayCCg"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAALA	1672918479261	{"key":"TDFYVtcBCw6CE8WkCmyX81+Apjwb7S+g39y1oH5AnBM","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"o5I0jrOxu9zTLWDqBZ9vCz4iy+m3WgOcC2owBCYPYzdTsFmTXZQxzXJ+kY2JQdoQW27AaATZoM18HSp3S/U0Ag"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAKw	1672918479261	{"key":"CPMDSpownss60hMx9/EHnuzHe4tSbbbiNISCdjH86l8","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"t4CGELW8mO4epZ/UikI9IEfGXFDw1Xy9jHoDXbOgjSQNhWqCkhCbCan0/Ma2lJD1eZyQV9HTbiJrxHRnGFLbAQ"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAKg	1672918479261	{"key":"KrFvVwYZ5De+jtAe+8O7Iu89HnqjOMivspUNEofVslE","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"rhTvvGaVrBifwD51mwAW+dwgNhJhxG2rExzzOfu/ji04JfdY22Jni5W5/bAYJoAg4gY2dG61N7uuVQk3f2mnDg"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAMw	1672918479373	{"key":"2yLATstFvnZrYkxatZoW8SWz3WWvqtIqSLyNd/TW0Qo","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"WexblGb70rzgFWLrIxj8Hz1lfWiwBKTrpy7PD+wm54Fpx02juBn6OmkYkTd5iea7F4d5FRT6xG5nnto+DzeJBA"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAMg	1672918479373	{"key":"C7mv9dozC2LtCp3HSGtHbTXWw7rWjF7kBUAskaBIOy8","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"scN3VFrwO/rmOvhMlypDWTlDD3qw4OPKEy/r/ZiUvmrLSHlSdCdKkl62zZQ/BnWqN0pEL3hzohCeQzuQ5mWqAw"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAMQ	1672918479373	{"key":"FIlyhJ2TMJTruZEgHfTbg+Rwnsi5WgktA4ZDGXJ2zmg","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"yVRP45klc2nXqg4Djoh3H5k/67gcQ27XDvuZJYNrl8QtZf8WJZvoqLDZPFqxNseCP4ceX9wN2DBDl5yAhfsIDw"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAAMA	1672918479373	{"key":"p46mMjsMf8asjFPFBjdbVDk+Kr6HcwiQN3lsUFvhuV4","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"vV67sB3sth/3UEZ6c4S73srzYV4JdYqae53CdJa1yIsgE2OH5wwVZhlfYVdu1BVa1vsh4GzybrEQlfB1ziePCg"}}}
+@user1:localhost	NXIGVVVFXK	signed_curve25519	AAAALw	1672918479373	{"key":"odBLrWFml43beoZ/jBvZ0lNz7GrCFzPri5KwXyquvEo","signatures":{"@user1:localhost":{"ed25519:NXIGVVVFXK":"ViojYcOhLmNhzddWH4nO23gyYcrgvwbhKLpw9gmaXUJDXTjFDaRybpcoVBxbfpjQEgNP0bSq6FOePCNj0szqAQ"}}}
 \.
 
 
@@ -3075,6 +3245,28 @@ $FiPh76BhP5tT1Hors997MJgDvrehT02uvfmqsY25ilk	$5zlbkFcwjX3ScF4jwQP_koQvnG_-hWrIYw
 $FiPh76BhP5tT1Hors997MJgDvrehT02uvfmqsY25ilk	$mBmRyyvP_Jc-LDi7_hiGD9QTu5XGVXqNMxZM4yDMQPU	!kmbTYjjsDRDHGgVqUP:localhost
 $FiPh76BhP5tT1Hors997MJgDvrehT02uvfmqsY25ilk	$G_m59AjH2Y1FX4D11JDsmEETfHGAWoknTIdv-_XYW2o	!kmbTYjjsDRDHGgVqUP:localhost
 $FiPh76BhP5tT1Hors997MJgDvrehT02uvfmqsY25ilk	$BYyVCPyJh9PVJBsxDwm9NakGY19DlCJJ1GlCcYpTv8w	!kmbTYjjsDRDHGgVqUP:localhost
+$kHkn3X5sgQZbnc7m1GNs3FoN729sUsLsqASYxvh3Jb8	$mBmRyyvP_Jc-LDi7_hiGD9QTu5XGVXqNMxZM4yDMQPU	!kmbTYjjsDRDHGgVqUP:localhost
+$kHkn3X5sgQZbnc7m1GNs3FoN729sUsLsqASYxvh3Jb8	$BYyVCPyJh9PVJBsxDwm9NakGY19DlCJJ1GlCcYpTv8w	!kmbTYjjsDRDHGgVqUP:localhost
+$kHkn3X5sgQZbnc7m1GNs3FoN729sUsLsqASYxvh3Jb8	$G_m59AjH2Y1FX4D11JDsmEETfHGAWoknTIdv-_XYW2o	!kmbTYjjsDRDHGgVqUP:localhost
+$cl-cBWQqCEUtQdjEqlQcE0PD7MCeX1R25oC5CKqb7oE	$Rczn5GeJ1aYMBU_oXSIF8ppVk8WEruaYIBA3FE7Yq88	!dKcbdDATuwwphjRPQP:localhost
+$cl-cBWQqCEUtQdjEqlQcE0PD7MCeX1R25oC5CKqb7oE	$P98vptI_jrNYKKnTTDYouThgohgHqJkD5Rcj0gDgxII	!dKcbdDATuwwphjRPQP:localhost
+$cl-cBWQqCEUtQdjEqlQcE0PD7MCeX1R25oC5CKqb7oE	$hEtlt0NU16h0ix9xBX0MDJR0g54ATEZ4S96udYzYBqs	!dKcbdDATuwwphjRPQP:localhost
+$S7qfuHyVNKlnX8WQb78EyVSR_7_dnmagLA8asozsQtE	$666ybhBdzZc96KCxYMslNrmlLRi8w6uUusi8J4BUVNM	!kmbTYjjsDRDHGgVqUP:localhost
+$S7qfuHyVNKlnX8WQb78EyVSR_7_dnmagLA8asozsQtE	$G_m59AjH2Y1FX4D11JDsmEETfHGAWoknTIdv-_XYW2o	!kmbTYjjsDRDHGgVqUP:localhost
+$S7qfuHyVNKlnX8WQb78EyVSR_7_dnmagLA8asozsQtE	$BYyVCPyJh9PVJBsxDwm9NakGY19DlCJJ1GlCcYpTv8w	!kmbTYjjsDRDHGgVqUP:localhost
+$S7qfuHyVNKlnX8WQb78EyVSR_7_dnmagLA8asozsQtE	$mBmRyyvP_Jc-LDi7_hiGD9QTu5XGVXqNMxZM4yDMQPU	!kmbTYjjsDRDHGgVqUP:localhost
+$TOzcyxIV2S5U6CP15QCldRMJRaDz1Yaik15PorvZYGc	$mGK5pQEzegKFhAPXc0TX7drNl2qyJL8ajxnJRmA3kN8	!dKcbdDATuwwphjRPQP:localhost
+$TOzcyxIV2S5U6CP15QCldRMJRaDz1Yaik15PorvZYGc	$hEtlt0NU16h0ix9xBX0MDJR0g54ATEZ4S96udYzYBqs	!dKcbdDATuwwphjRPQP:localhost
+$TOzcyxIV2S5U6CP15QCldRMJRaDz1Yaik15PorvZYGc	$P98vptI_jrNYKKnTTDYouThgohgHqJkD5Rcj0gDgxII	!dKcbdDATuwwphjRPQP:localhost
+$TOzcyxIV2S5U6CP15QCldRMJRaDz1Yaik15PorvZYGc	$Rczn5GeJ1aYMBU_oXSIF8ppVk8WEruaYIBA3FE7Yq88	!dKcbdDATuwwphjRPQP:localhost
+$Sa-w9Co29Yd94wHfPbpfCOuSSlMlorQ7ssiGXYp8oh8	$mBmRyyvP_Jc-LDi7_hiGD9QTu5XGVXqNMxZM4yDMQPU	!kmbTYjjsDRDHGgVqUP:localhost
+$Sa-w9Co29Yd94wHfPbpfCOuSSlMlorQ7ssiGXYp8oh8	$BYyVCPyJh9PVJBsxDwm9NakGY19DlCJJ1GlCcYpTv8w	!kmbTYjjsDRDHGgVqUP:localhost
+$Sa-w9Co29Yd94wHfPbpfCOuSSlMlorQ7ssiGXYp8oh8	$G_m59AjH2Y1FX4D11JDsmEETfHGAWoknTIdv-_XYW2o	!kmbTYjjsDRDHGgVqUP:localhost
+$Sa-w9Co29Yd94wHfPbpfCOuSSlMlorQ7ssiGXYp8oh8	$S7qfuHyVNKlnX8WQb78EyVSR_7_dnmagLA8asozsQtE	!kmbTYjjsDRDHGgVqUP:localhost
+$n6TBNMF739-W93vnPpWYiJ_zTj-UGsx8mCtkFUsmkrY	$Rczn5GeJ1aYMBU_oXSIF8ppVk8WEruaYIBA3FE7Yq88	!dKcbdDATuwwphjRPQP:localhost
+$n6TBNMF739-W93vnPpWYiJ_zTj-UGsx8mCtkFUsmkrY	$P98vptI_jrNYKKnTTDYouThgohgHqJkD5Rcj0gDgxII	!dKcbdDATuwwphjRPQP:localhost
+$n6TBNMF739-W93vnPpWYiJ_zTj-UGsx8mCtkFUsmkrY	$hEtlt0NU16h0ix9xBX0MDJR0g54ATEZ4S96udYzYBqs	!dKcbdDATuwwphjRPQP:localhost
+$n6TBNMF739-W93vnPpWYiJ_zTj-UGsx8mCtkFUsmkrY	$TOzcyxIV2S5U6CP15QCldRMJRaDz1Yaik15PorvZYGc	!dKcbdDATuwwphjRPQP:localhost
 \.
 
 
@@ -3159,6 +3351,24 @@ COPY public.event_auth_chain_links (origin_chain_id, origin_sequence_number, tar
 24	1	3	1
 24	1	9	1
 24	1	20	1
+25	1	9	1
+25	1	18	1
+25	1	16	1
+25	1	3	1
+26	1	7	1
+26	1	10	1
+26	1	8	1
+26	1	1	1
+27	1	16	1
+27	1	3	1
+27	1	9	1
+27	1	20	1
+27	1	18	1
+28	1	19	1
+28	1	8	1
+28	1	10	1
+28	1	1	1
+28	1	7	1
 \.
 
 
@@ -3203,6 +3413,12 @@ $PSZPiF2_GHeawUZsuFzgg_JuCtoOyaf_11-uLulGF0c	21	2
 $t5n7gGV4l0pVzkJq8YJdQm4IFq3hTrEHABs9QiejsEA	22	2
 $CPrx1EOiKU0xFQBY1-CbMIp4Nx64vw33awql9URc-is	23	2
 $FiPh76BhP5tT1Hors997MJgDvrehT02uvfmqsY25ilk	24	2
+$kHkn3X5sgQZbnc7m1GNs3FoN729sUsLsqASYxvh3Jb8	25	1
+$cl-cBWQqCEUtQdjEqlQcE0PD7MCeX1R25oC5CKqb7oE	26	1
+$S7qfuHyVNKlnX8WQb78EyVSR_7_dnmagLA8asozsQtE	27	1
+$TOzcyxIV2S5U6CP15QCldRMJRaDz1Yaik15PorvZYGc	28	1
+$Sa-w9Co29Yd94wHfPbpfCOuSSlMlorQ7ssiGXYp8oh8	27	2
+$n6TBNMF739-W93vnPpWYiJ_zTj-UGsx8mCtkFUsmkrY	28	2
 \.
 
 
@@ -3255,6 +3471,25 @@ $Z5cKxfveccJ3nnCMqKA-jwkRw9hbVrCMv6R68J8oPVg	$QM2BSnrrZmMuXPjs3AMnJ7zVsHHdXmGmCF
 $G1fvwCN2g1XjFzNmxLnkU_pe19oYNSqJMKqzj8kfXCk	$Z5cKxfveccJ3nnCMqKA-jwkRw9hbVrCMv6R68J8oPVg	!dKcbdDATuwwphjRPQP:localhost	f
 $Jt6sBZkF1u2z9OovN4zzqiZfS0rQPS2vVpynSjt9ypI	$_OchgUntbLcDcJV42YEeAhH2t22AW-wlAxjRPO0SYfU	!kmbTYjjsDRDHGgVqUP:localhost	f
 $xRdCRWLb62a-YRgcfBkJSxc7lUVFkdZnQfSIvcKWw88	$G1fvwCN2g1XjFzNmxLnkU_pe19oYNSqJMKqzj8kfXCk	!dKcbdDATuwwphjRPQP:localhost	f
+$kHkn3X5sgQZbnc7m1GNs3FoN729sUsLsqASYxvh3Jb8	$Jt6sBZkF1u2z9OovN4zzqiZfS0rQPS2vVpynSjt9ypI	!kmbTYjjsDRDHGgVqUP:localhost	f
+$cl-cBWQqCEUtQdjEqlQcE0PD7MCeX1R25oC5CKqb7oE	$xRdCRWLb62a-YRgcfBkJSxc7lUVFkdZnQfSIvcKWw88	!dKcbdDATuwwphjRPQP:localhost	f
+$8a8OTFPqvfsx2aHJeu9IBu-xR3Gn7rdv9l_HZtPKkFg	$cl-cBWQqCEUtQdjEqlQcE0PD7MCeX1R25oC5CKqb7oE	!dKcbdDATuwwphjRPQP:localhost	f
+$BWMrEpKFpKKbBz5Ox9zTP3TvT5zyh6w3zhpl-epXhkk	$kHkn3X5sgQZbnc7m1GNs3FoN729sUsLsqASYxvh3Jb8	!kmbTYjjsDRDHGgVqUP:localhost	f
+$r3Ho1IsdJmJB13pD9yX-Jkg_a5s28kBCqoNZ5EPWwqM	$BWMrEpKFpKKbBz5Ox9zTP3TvT5zyh6w3zhpl-epXhkk	!kmbTYjjsDRDHGgVqUP:localhost	f
+$fQ28BQv7GUBcg_Ok7MCh8uTcQLoT2Tkr2BegUMhst1M	$r3Ho1IsdJmJB13pD9yX-Jkg_a5s28kBCqoNZ5EPWwqM	!kmbTYjjsDRDHGgVqUP:localhost	f
+$S7qfuHyVNKlnX8WQb78EyVSR_7_dnmagLA8asozsQtE	$fQ28BQv7GUBcg_Ok7MCh8uTcQLoT2Tkr2BegUMhst1M	!kmbTYjjsDRDHGgVqUP:localhost	f
+$TOzcyxIV2S5U6CP15QCldRMJRaDz1Yaik15PorvZYGc	$8a8OTFPqvfsx2aHJeu9IBu-xR3Gn7rdv9l_HZtPKkFg	!dKcbdDATuwwphjRPQP:localhost	f
+$Sa-w9Co29Yd94wHfPbpfCOuSSlMlorQ7ssiGXYp8oh8	$S7qfuHyVNKlnX8WQb78EyVSR_7_dnmagLA8asozsQtE	!kmbTYjjsDRDHGgVqUP:localhost	f
+$n6TBNMF739-W93vnPpWYiJ_zTj-UGsx8mCtkFUsmkrY	$TOzcyxIV2S5U6CP15QCldRMJRaDz1Yaik15PorvZYGc	!dKcbdDATuwwphjRPQP:localhost	f
+$5auMphtCZ9zvRqrhyXpY0s-cZZl2AbvkyGNRbm2h2zc	$Sa-w9Co29Yd94wHfPbpfCOuSSlMlorQ7ssiGXYp8oh8	!kmbTYjjsDRDHGgVqUP:localhost	f
+$Yb59onmhkHIpIJ_VnrP0V02pkFQEF1GwuJqZCNRTQeQ	$5auMphtCZ9zvRqrhyXpY0s-cZZl2AbvkyGNRbm2h2zc	!kmbTYjjsDRDHGgVqUP:localhost	f
+$j0CTOXXA4AtSOD0pk6kL2BNsa6j5w517GGfkTqmm9ZE	$Yb59onmhkHIpIJ_VnrP0V02pkFQEF1GwuJqZCNRTQeQ	!kmbTYjjsDRDHGgVqUP:localhost	f
+$YgrzVCWDDxVv-dvf3HhpLD0QlN4nD5-CXg0T-gEX6iI	$j0CTOXXA4AtSOD0pk6kL2BNsa6j5w517GGfkTqmm9ZE	!kmbTYjjsDRDHGgVqUP:localhost	f
+$IaI_j1zJZ04lmJmCzJfvnr48U2umqKYG1xogY-r9UNY	$YgrzVCWDDxVv-dvf3HhpLD0QlN4nD5-CXg0T-gEX6iI	!kmbTYjjsDRDHGgVqUP:localhost	f
+$TbIhAYsmySe2O7IaMBarYDokr6-UmyH4IYI3SpbhI-Q	$n6TBNMF739-W93vnPpWYiJ_zTj-UGsx8mCtkFUsmkrY	!dKcbdDATuwwphjRPQP:localhost	f
+$YBt0yFQdKC_886W6aXe4LIv5A5BcBP7pXYeF8XLKhH0	$TbIhAYsmySe2O7IaMBarYDokr6-UmyH4IYI3SpbhI-Q	!dKcbdDATuwwphjRPQP:localhost	f
+$-wkWlUVunP818RkFXsoACrEQ85-ybLTc-vWqiil50Vo	$YBt0yFQdKC_886W6aXe4LIv5A5BcBP7pXYeF8XLKhH0	!dKcbdDATuwwphjRPQP:localhost	f
+$kQPpv66TuseXeTXJr41QlqLnJBWNpBA_zgzIaJMjpLc	$IaI_j1zJZ04lmJmCzJfvnr48U2umqKYG1xogY-r9UNY	!kmbTYjjsDRDHGgVqUP:localhost	f
 \.
 
 
@@ -3271,8 +3506,8 @@ COPY public.event_expiry (event_id, expiry_ts) FROM stdin;
 --
 
 COPY public.event_forward_extremities (event_id, room_id) FROM stdin;
-$Jt6sBZkF1u2z9OovN4zzqiZfS0rQPS2vVpynSjt9ypI	!kmbTYjjsDRDHGgVqUP:localhost
-$xRdCRWLb62a-YRgcfBkJSxc7lUVFkdZnQfSIvcKWw88	!dKcbdDATuwwphjRPQP:localhost
+$-wkWlUVunP818RkFXsoACrEQ85-ybLTc-vWqiil50Vo	!dKcbdDATuwwphjRPQP:localhost
+$kQPpv66TuseXeTXJr41QlqLnJBWNpBA_zgzIaJMjpLc	!kmbTYjjsDRDHGgVqUP:localhost
 \.
 
 
@@ -3319,6 +3554,25 @@ $hr9BoL0M0CcPevs38ww5_bA24p8HFiP4e9dlGuPrGWs	!kmbTYjjsDRDHGgVqUP:localhost	{"tok
 $Z5cKxfveccJ3nnCMqKA-jwkRw9hbVrCMv6R68J8oPVg	!dKcbdDATuwwphjRPQP:localhost	{"txn_id":"m1672856707534.0","historical":false}	{"auth_events":["$Rczn5GeJ1aYMBU_oXSIF8ppVk8WEruaYIBA3FE7Yq88","$PSZPiF2_GHeawUZsuFzgg_JuCtoOyaf_11-uLulGF0c","$P98vptI_jrNYKKnTTDYouThgohgHqJkD5Rcj0gDgxII"],"prev_events":["$QM2BSnrrZmMuXPjs3AMnJ7zVsHHdXmGmCFPjoGqBlaQ"],"type":"m.room.message","room_id":"!dKcbdDATuwwphjRPQP:localhost","sender":"@mm_mattermost_b:localhost","content":{"msgtype":"m.text","body":"filename"},"depth":16,"prev_state":[],"origin":"localhost","origin_server_ts":1672856707574,"hashes":{"sha256":"XzjnascxcOisdZvK9HILaisShW7MUYaSehy/VW3VazM"},"signatures":{"localhost":{"ed25519:a_CHdg":"FOOZPqr8pCXxwBnYPTcNYiAKeKIB0OvZ2+ZwLaqCQumMqraOwDb1SiMXohKv5DDOfZIkJ7W/iC3nTvH2zZvICQ"}},"unsigned":{"age_ts":1672856707574}}	3
 $G1fvwCN2g1XjFzNmxLnkU_pe19oYNSqJMKqzj8kfXCk	!dKcbdDATuwwphjRPQP:localhost	{"txn_id":"m1672856707691.1","historical":false}	{"auth_events":["$Rczn5GeJ1aYMBU_oXSIF8ppVk8WEruaYIBA3FE7Yq88","$PSZPiF2_GHeawUZsuFzgg_JuCtoOyaf_11-uLulGF0c","$P98vptI_jrNYKKnTTDYouThgohgHqJkD5Rcj0gDgxII"],"prev_events":["$Z5cKxfveccJ3nnCMqKA-jwkRw9hbVrCMv6R68J8oPVg"],"type":"m.room.message","room_id":"!dKcbdDATuwwphjRPQP:localhost","sender":"@mm_mattermost_b:localhost","content":{"msgtype":"m.file","body":"filename","url":"mxc://localhost/fndsNAAjXPUHvtbKurhIoDum","info":{"mimetype":"","size":11}},"depth":17,"prev_state":[],"origin":"localhost","origin_server_ts":1672856707732,"hashes":{"sha256":"pOdSpZCLq/gwKKygtFcuHyrVBmkvm3qGbk8k1zj0nH0"},"signatures":{"localhost":{"ed25519:a_CHdg":"WUBOfNXA0TIV5k0dstIzggAFsp+ozG0raqHv3AnVOy2RaXxGMW9GCeUjXFdtxmUp4fNgqPQmvH3rePWKid8nBQ"}},"unsigned":{"age_ts":1672856707732}}	3
 $Jt6sBZkF1u2z9OovN4zzqiZfS0rQPS2vVpynSjt9ypI	!kmbTYjjsDRDHGgVqUP:localhost	{"token_id":3,"txn_id":"m1672856707957.0","historical":false}	{"auth_events":["$N33GyONpuSa3zRNJk1CtLYdhqJbhXBwSpAlUUm-zmB8","$mBmRyyvP_Jc-LDi7_hiGD9QTu5XGVXqNMxZM4yDMQPU","$BYyVCPyJh9PVJBsxDwm9NakGY19DlCJJ1GlCcYpTv8w"],"prev_events":["$_OchgUntbLcDcJV42YEeAhH2t22AW-wlAxjRPO0SYfU"],"type":"m.room.message","room_id":"!kmbTYjjsDRDHGgVqUP:localhost","sender":"@matrix_a:localhost","content":{"msgtype":"m.file","body":"mydata","url":"mxc://localhost/uVWXteoIJOgvlXENjBgBOUcc","info":{"mimetype":"text/plain"}},"depth":20,"prev_state":[],"origin":"localhost","origin_server_ts":1672856707997,"hashes":{"sha256":"CoKaGs/tOT/54EU6PuKxxHAnfLf3PNnIE+DzhDusCcM"},"signatures":{"localhost":{"ed25519:a_CHdg":"UfYzOfA2HYiI21VzS4bTh9eTagwn2L/wf2jbC0mhcFBA68f1j89B9JcUn4EzlaM96DLMxFPB9tyhukeq9yQAAQ"}},"unsigned":{"age_ts":1672856707997}}	3
+$kHkn3X5sgQZbnc7m1GNs3FoN729sUsLsqASYxvh3Jb8	!kmbTYjjsDRDHGgVqUP:localhost	{"token_id":11,"historical":false}	{"auth_events":["$mBmRyyvP_Jc-LDi7_hiGD9QTu5XGVXqNMxZM4yDMQPU","$BYyVCPyJh9PVJBsxDwm9NakGY19DlCJJ1GlCcYpTv8w","$G_m59AjH2Y1FX4D11JDsmEETfHGAWoknTIdv-_XYW2o"],"prev_events":["$Jt6sBZkF1u2z9OovN4zzqiZfS0rQPS2vVpynSjt9ypI"],"type":"m.room.member","room_id":"!kmbTYjjsDRDHGgVqUP:localhost","sender":"@user1:localhost","content":{"membership":"join","displayname":"User 1"},"depth":21,"prev_state":[],"state_key":"@user1:localhost","origin":"localhost","origin_server_ts":1672918494139,"hashes":{"sha256":"VJ9KoASvERbwI3F9r4aUDElMVg/+Uw1x3panoh5xFFQ"},"signatures":{"localhost":{"ed25519:a_CHdg":"jwQKbHrzeWqJcwZOwN6OBwoD8POzdKt8Z5kEOYcCuCLQav/sfnhieFXKBrBVKZ6CnN+tNjVEZRns6r3Fj+jZAA"}},"unsigned":{"age_ts":1672918494139}}	3
+$cl-cBWQqCEUtQdjEqlQcE0PD7MCeX1R25oC5CKqb7oE	!dKcbdDATuwwphjRPQP:localhost	{"token_id":11,"historical":false}	{"auth_events":["$Rczn5GeJ1aYMBU_oXSIF8ppVk8WEruaYIBA3FE7Yq88","$P98vptI_jrNYKKnTTDYouThgohgHqJkD5Rcj0gDgxII","$hEtlt0NU16h0ix9xBX0MDJR0g54ATEZ4S96udYzYBqs"],"prev_events":["$xRdCRWLb62a-YRgcfBkJSxc7lUVFkdZnQfSIvcKWw88"],"type":"m.room.member","room_id":"!dKcbdDATuwwphjRPQP:localhost","sender":"@user1:localhost","content":{"membership":"join","displayname":"User 1"},"depth":19,"prev_state":[],"state_key":"@user1:localhost","origin":"localhost","origin_server_ts":1672918508427,"hashes":{"sha256":"wqN5F/BXSzPY9qS5OIBFvcz/MSqUsna/dqa28PIf+zw"},"signatures":{"localhost":{"ed25519:a_CHdg":"6F8Jmyl+FyF7UhX9fBjCreSoTD+CohjFEccu1WaHKB88rgyeAAj6DgTQjYcpqMhJlPZ8TgjFAvgT4KvTK96VAA"}},"unsigned":{"age_ts":1672918508427}}	3
+$8a8OTFPqvfsx2aHJeu9IBu-xR3Gn7rdv9l_HZtPKkFg	!dKcbdDATuwwphjRPQP:localhost	{"token_id":2,"txn_id":"1672920683","historical":false}	{"auth_events":["$Rczn5GeJ1aYMBU_oXSIF8ppVk8WEruaYIBA3FE7Yq88","$P98vptI_jrNYKKnTTDYouThgohgHqJkD5Rcj0gDgxII","$PeAJ6BypXjJegHiUjcYe-I6Cf4NuCPICi_yUb-fyauA"],"prev_events":["$cl-cBWQqCEUtQdjEqlQcE0PD7MCeX1R25oC5CKqb7oE"],"type":"m.room.message","room_id":"!dKcbdDATuwwphjRPQP:localhost","sender":"@admin:localhost","content":{"body":"My text","msgtype":"m.text"},"depth":20,"prev_state":[],"origin":"localhost","origin_server_ts":1672920683485,"hashes":{"sha256":"EAXdSYKMjM6wLQTHQWxPBsEMPbnS49Y1H0bqnXmeqXA"},"signatures":{"localhost":{"ed25519:a_CHdg":"ud5yW+/OefODbUcT8iKlzA3LB0ysbUvsje5YKSeUnLHqiNKf4TAhJwaz5+6ZOgHO4ZwHtWASQFozRscYju4nBQ"}},"unsigned":{"age_ts":1672920683485}}	3
+$BWMrEpKFpKKbBz5Ox9zTP3TvT5zyh6w3zhpl-epXhkk	!kmbTYjjsDRDHGgVqUP:localhost	{"token_id":2,"txn_id":"1672920817","historical":false}	{"auth_events":["$mBmRyyvP_Jc-LDi7_hiGD9QTu5XGVXqNMxZM4yDMQPU","$BYyVCPyJh9PVJBsxDwm9NakGY19DlCJJ1GlCcYpTv8w","$_oKaaOfL7rFtPsAsxDmHrCY9sAzFjslRwkJ_QHxHDTw"],"prev_events":["$kHkn3X5sgQZbnc7m1GNs3FoN729sUsLsqASYxvh3Jb8"],"type":"m.room.message","room_id":"!kmbTYjjsDRDHGgVqUP:localhost","sender":"@admin:localhost","content":{"body":"My text","msgtype":"m.text"},"depth":22,"prev_state":[],"origin":"localhost","origin_server_ts":1672920816788,"hashes":{"sha256":"x4sO4BLkKa7nGynS8gRg+04wuLwVtlfVHwa3Ax4FLbw"},"signatures":{"localhost":{"ed25519:a_CHdg":"JFp9CoawnCQZneO3OM75BKQt9zFIr/yInJlZmnRdnd/qpLHGxj1E1tFu0MYkeCQG3lYZYf5o3ZiwJuxmnF2CDQ"}},"unsigned":{"age_ts":1672920816788}}	3
+$r3Ho1IsdJmJB13pD9yX-Jkg_a5s28kBCqoNZ5EPWwqM	!kmbTYjjsDRDHGgVqUP:localhost	{"token_id":4,"txn_id":"1672921550668","historical":false}	{"auth_events":["$mBmRyyvP_Jc-LDi7_hiGD9QTu5XGVXqNMxZM4yDMQPU","$llCtN-sfVC1IOdDQXgskgx4jl97hQHfKnEH-IP-lyvk","$BYyVCPyJh9PVJBsxDwm9NakGY19DlCJJ1GlCcYpTv8w"],"prev_events":["$BWMrEpKFpKKbBz5Ox9zTP3TvT5zyh6w3zhpl-epXhkk"],"type":"m.room.message","room_id":"!kmbTYjjsDRDHGgVqUP:localhost","sender":"@matrix_b:localhost","content":{"body":"My Text","msgtype":"m.text"},"depth":23,"prev_state":[],"origin":"localhost","origin_server_ts":1672921550713,"hashes":{"sha256":"ImKbJpqhhImN1IFLRCIidezKZbjV8X/WRA+751jEV8I"},"signatures":{"localhost":{"ed25519:a_CHdg":"vqtNrws4z1hE4NM+MJnwS1xjglzODHS8yeo0Ryvt8pEOKrYOtveCNQ5CPTyYrz0HKOMAz2FpNAPDg+uqvmCODg"}},"unsigned":{"age_ts":1672921550713}}	3
+$fQ28BQv7GUBcg_Ok7MCh8uTcQLoT2Tkr2BegUMhst1M	!kmbTYjjsDRDHGgVqUP:localhost	{"token_id":4,"txn_id":"1672921603086","historical":false}	{"auth_events":["$mBmRyyvP_Jc-LDi7_hiGD9QTu5XGVXqNMxZM4yDMQPU","$llCtN-sfVC1IOdDQXgskgx4jl97hQHfKnEH-IP-lyvk","$BYyVCPyJh9PVJBsxDwm9NakGY19DlCJJ1GlCcYpTv8w"],"prev_events":["$r3Ho1IsdJmJB13pD9yX-Jkg_a5s28kBCqoNZ5EPWwqM"],"type":"m.room.message","room_id":"!kmbTYjjsDRDHGgVqUP:localhost","sender":"@matrix_b:localhost","content":{"body":"I'll copy the solid state DRAM transmitter, that should capacitor the USB pixel!","msgtype":"m.text"},"depth":24,"prev_state":[],"origin":"localhost","origin_server_ts":1672921603138,"hashes":{"sha256":"Cu3PzUy4HM+3l9yrnIjmsaqlzn1CShyFKwJtWDNyTpg"},"signatures":{"localhost":{"ed25519:a_CHdg":"yWV/pejCEtbJTCBZpRI1aI7tdm433/w7cMJYn9cUXgekujnoEzoXHX+7w6/NtCwlfjAfgsNSkRe2FAB7p4RnAw"}},"unsigned":{"age_ts":1672921603138}}	3
+$n6TBNMF739-W93vnPpWYiJ_zTj-UGsx8mCtkFUsmkrY	!dKcbdDATuwwphjRPQP:localhost	{"historical":false}	{"auth_events":["$Rczn5GeJ1aYMBU_oXSIF8ppVk8WEruaYIBA3FE7Yq88","$P98vptI_jrNYKKnTTDYouThgohgHqJkD5Rcj0gDgxII","$hEtlt0NU16h0ix9xBX0MDJR0g54ATEZ4S96udYzYBqs","$TOzcyxIV2S5U6CP15QCldRMJRaDz1Yaik15PorvZYGc"],"prev_events":["$TOzcyxIV2S5U6CP15QCldRMJRaDz1Yaik15PorvZYGc"],"type":"m.room.member","room_id":"!dKcbdDATuwwphjRPQP:localhost","sender":"@mm_user1:localhost","content":{"membership":"join","displayname":"user1 [mm]"},"depth":22,"prev_state":[],"state_key":"@mm_user1:localhost","origin":"localhost","origin_server_ts":1672922249928,"hashes":{"sha256":"P4zYInipysNjupSphKZP+repv7suvoIpIHTa0c5l/Yw"},"signatures":{"localhost":{"ed25519:a_CHdg":"y0EYiCgbBwQbPrcSEGeqmpxCJazO0YcIphttu6wYl3VvF6lIe57FzKTEPLAokOz9ceMjvXM2o542tbGlYAjfAQ"}},"unsigned":{"age_ts":1672922249928,"replaces_state":"$TOzcyxIV2S5U6CP15QCldRMJRaDz1Yaik15PorvZYGc"}}	3
+$S7qfuHyVNKlnX8WQb78EyVSR_7_dnmagLA8asozsQtE	!kmbTYjjsDRDHGgVqUP:localhost	{"historical":false}	{"auth_events":["$666ybhBdzZc96KCxYMslNrmlLRi8w6uUusi8J4BUVNM","$G_m59AjH2Y1FX4D11JDsmEETfHGAWoknTIdv-_XYW2o","$BYyVCPyJh9PVJBsxDwm9NakGY19DlCJJ1GlCcYpTv8w","$mBmRyyvP_Jc-LDi7_hiGD9QTu5XGVXqNMxZM4yDMQPU"],"prev_events":["$fQ28BQv7GUBcg_Ok7MCh8uTcQLoT2Tkr2BegUMhst1M"],"type":"m.room.member","room_id":"!kmbTYjjsDRDHGgVqUP:localhost","sender":"@matterbot:localhost","content":{"membership":"invite","displayname":"user1 [mm]"},"depth":25,"prev_state":[],"state_key":"@mm_user1:localhost","origin":"localhost","origin_server_ts":1672922249364,"hashes":{"sha256":"lvMafb10jsetq8V7JBN43ObMf4mOqSbTecJYnSLym6w"},"signatures":{"localhost":{"ed25519:a_CHdg":"YqU0aSM9f4xdZTbGgTf0NR1gcNL0BTm5MFWBc1FowElMSmNQB+sAbMRxR8iXk5er+od19XmEWeFnOoWHgwPSBA"}},"unsigned":{"age_ts":1672922249364,"invite_room_state":[{"type":"m.room.canonical_alias","state_key":"","content":{"alias":"#town-square:localhost"},"sender":"@admin:localhost"},{"type":"m.room.create","state_key":"","content":{"room_version":"5","creator":"@admin:localhost"},"sender":"@admin:localhost"},{"type":"m.room.join_rules","state_key":"","content":{"join_rule":"public"},"sender":"@admin:localhost"},{"type":"m.room.member","state_key":"@matterbot:localhost","content":{"membership":"join","displayname":"Mattermost Bridge"},"sender":"@matterbot:localhost"}]}}	3
+$TOzcyxIV2S5U6CP15QCldRMJRaDz1Yaik15PorvZYGc	!dKcbdDATuwwphjRPQP:localhost	{"historical":false}	{"auth_events":["$mGK5pQEzegKFhAPXc0TX7drNl2qyJL8ajxnJRmA3kN8","$hEtlt0NU16h0ix9xBX0MDJR0g54ATEZ4S96udYzYBqs","$P98vptI_jrNYKKnTTDYouThgohgHqJkD5Rcj0gDgxII","$Rczn5GeJ1aYMBU_oXSIF8ppVk8WEruaYIBA3FE7Yq88"],"prev_events":["$8a8OTFPqvfsx2aHJeu9IBu-xR3Gn7rdv9l_HZtPKkFg"],"type":"m.room.member","room_id":"!dKcbdDATuwwphjRPQP:localhost","sender":"@matterbot:localhost","content":{"membership":"invite","displayname":"user1 [mm]"},"depth":21,"prev_state":[],"state_key":"@mm_user1:localhost","origin":"localhost","origin_server_ts":1672922249479,"hashes":{"sha256":"IO3ui3pw9FdXgbTHpl71L4LdQOC68LVLmWdryXVD6X0"},"signatures":{"localhost":{"ed25519:a_CHdg":"rcGa5pW7vv7+6gwNTzaD5lyqFsquTkXiT59drmSDZjFC5vD9dbu5Q3w71usLVpPy+4Rpysf3aL1/VhxAEoeuCA"}},"unsigned":{"age_ts":1672922249479,"invite_room_state":[{"type":"m.room.canonical_alias","state_key":"","content":{"alias":"#off-topic:localhost"},"sender":"@admin:localhost"},{"type":"m.room.create","state_key":"","content":{"room_version":"5","creator":"@admin:localhost"},"sender":"@admin:localhost"},{"type":"m.room.join_rules","state_key":"","content":{"join_rule":"public"},"sender":"@admin:localhost"},{"type":"m.room.member","state_key":"@matterbot:localhost","content":{"membership":"join","displayname":"Mattermost Bridge"},"sender":"@matterbot:localhost"}]}}	3
+$Sa-w9Co29Yd94wHfPbpfCOuSSlMlorQ7ssiGXYp8oh8	!kmbTYjjsDRDHGgVqUP:localhost	{"historical":false}	{"auth_events":["$mBmRyyvP_Jc-LDi7_hiGD9QTu5XGVXqNMxZM4yDMQPU","$BYyVCPyJh9PVJBsxDwm9NakGY19DlCJJ1GlCcYpTv8w","$G_m59AjH2Y1FX4D11JDsmEETfHGAWoknTIdv-_XYW2o","$S7qfuHyVNKlnX8WQb78EyVSR_7_dnmagLA8asozsQtE"],"prev_events":["$S7qfuHyVNKlnX8WQb78EyVSR_7_dnmagLA8asozsQtE"],"type":"m.room.member","room_id":"!kmbTYjjsDRDHGgVqUP:localhost","sender":"@mm_user1:localhost","content":{"membership":"join","displayname":"user1 [mm]"},"depth":26,"prev_state":[],"state_key":"@mm_user1:localhost","origin":"localhost","origin_server_ts":1672922249759,"hashes":{"sha256":"/jdZM3cEwbg6DEChR7SlTpVdQtkWnBIjIhmVmoATiEk"},"signatures":{"localhost":{"ed25519:a_CHdg":"XPM7q/5Knz3fgXGBwW9oOoOnJFTOFPBtNfAmFdkD545gFubxprzXjwYxX9XFB990a/3UXVPjE5ZMMe6rc1ghBA"}},"unsigned":{"age_ts":1672922249759,"replaces_state":"$S7qfuHyVNKlnX8WQb78EyVSR_7_dnmagLA8asozsQtE"}}	3
+$5auMphtCZ9zvRqrhyXpY0s-cZZl2AbvkyGNRbm2h2zc	!kmbTYjjsDRDHGgVqUP:localhost	{"txn_id":"m1672922287732.0","historical":false}	{"auth_events":["$mBmRyyvP_Jc-LDi7_hiGD9QTu5XGVXqNMxZM4yDMQPU","$BYyVCPyJh9PVJBsxDwm9NakGY19DlCJJ1GlCcYpTv8w","$Sa-w9Co29Yd94wHfPbpfCOuSSlMlorQ7ssiGXYp8oh8"],"prev_events":["$Sa-w9Co29Yd94wHfPbpfCOuSSlMlorQ7ssiGXYp8oh8"],"type":"m.room.message","room_id":"!kmbTYjjsDRDHGgVqUP:localhost","sender":"@mm_user1:localhost","content":{"msgtype":"m.text","body":"Like this channel"},"depth":27,"prev_state":[],"origin":"localhost","origin_server_ts":1672922287761,"hashes":{"sha256":"uSJSsp3YW1gVLkxxCZEVz4QZuCxYaopbJwPY8MgamTE"},"signatures":{"localhost":{"ed25519:a_CHdg":"HzdDZVIlSDiRqZSFxZwZVYAqM/Nd0ymEmtjR5x53YtOrzrxTqy5GLIOJVYroW63aJN7WE+MUjwQKG9Ux23gdDw"}},"unsigned":{"age_ts":1672922287761}}	3
+$Yb59onmhkHIpIJ_VnrP0V02pkFQEF1GwuJqZCNRTQeQ	!kmbTYjjsDRDHGgVqUP:localhost	{"token_id":4,"txn_id":"1672922412231","historical":false}	{"auth_events":["$mBmRyyvP_Jc-LDi7_hiGD9QTu5XGVXqNMxZM4yDMQPU","$llCtN-sfVC1IOdDQXgskgx4jl97hQHfKnEH-IP-lyvk","$BYyVCPyJh9PVJBsxDwm9NakGY19DlCJJ1GlCcYpTv8w"],"prev_events":["$5auMphtCZ9zvRqrhyXpY0s-cZZl2AbvkyGNRbm2h2zc"],"type":"m.room.message","room_id":"!kmbTYjjsDRDHGgVqUP:localhost","sender":"@matrix_b:localhost","content":{"body":"Use the digital THX hard drive, then you can parse the solid state alarm!","msgtype":"m.text"},"depth":28,"prev_state":[],"origin":"localhost","origin_server_ts":1672922412287,"hashes":{"sha256":"1a995mFuc2OYRb4F/kEoEfBlMZU2wVjAVxnEjzionuE"},"signatures":{"localhost":{"ed25519:a_CHdg":"i6CP1400RgF6aBSwuFFNmBVC9bw5l0Vs1MfqdtM+mah2mKtVtFXGCOWdrg9kYN9LY/hNI9mz1Xuf3J6c44Z/DA"}},"unsigned":{"age_ts":1672922412287}}	3
+$j0CTOXXA4AtSOD0pk6kL2BNsa6j5w517GGfkTqmm9ZE	!kmbTYjjsDRDHGgVqUP:localhost	{"txn_id":"m1672922547553.1","historical":false}	{"auth_events":["$mBmRyyvP_Jc-LDi7_hiGD9QTu5XGVXqNMxZM4yDMQPU","$BYyVCPyJh9PVJBsxDwm9NakGY19DlCJJ1GlCcYpTv8w","$Sa-w9Co29Yd94wHfPbpfCOuSSlMlorQ7ssiGXYp8oh8"],"prev_events":["$Yb59onmhkHIpIJ_VnrP0V02pkFQEF1GwuJqZCNRTQeQ"],"type":"m.room.message","room_id":"!kmbTYjjsDRDHGgVqUP:localhost","sender":"@mm_user1:localhost","content":{"msgtype":"m.text","body":"Are you online User 1 ?","format":"org.matrix.custom.html","formatted_body":"Are you online <a href='https://matrix.to/#/@user1:localhost'>User 1</a> ?"},"depth":29,"prev_state":[],"origin":"localhost","origin_server_ts":1672922547588,"hashes":{"sha256":"55C77g7UQ1YGE1SRmB9r7wBpIphhmCovMQGhb/P4Jvs"},"signatures":{"localhost":{"ed25519:a_CHdg":"1BbsunImqgvrDouw/kPpJXKSbNGa//WDwLebTo/8lHnX71YvYfmJOgu5GmFCu1SE7FFMt9Z2VGawJbaD/E/oAg"}},"unsigned":{"age_ts":1672922547588}}	3
+$YgrzVCWDDxVv-dvf3HhpLD0QlN4nD5-CXg0T-gEX6iI	!kmbTYjjsDRDHGgVqUP:localhost	{"token_id":11,"txn_id":"m1672922566753.0","historical":false}	{"auth_events":["$mBmRyyvP_Jc-LDi7_hiGD9QTu5XGVXqNMxZM4yDMQPU","$BYyVCPyJh9PVJBsxDwm9NakGY19DlCJJ1GlCcYpTv8w","$kHkn3X5sgQZbnc7m1GNs3FoN729sUsLsqASYxvh3Jb8"],"prev_events":["$j0CTOXXA4AtSOD0pk6kL2BNsa6j5w517GGfkTqmm9ZE"],"type":"m.reaction","room_id":"!kmbTYjjsDRDHGgVqUP:localhost","sender":"@user1:localhost","content":{"m.relates_to":{"rel_type":"m.annotation","event_id":"$j0CTOXXA4AtSOD0pk6kL2BNsa6j5w517GGfkTqmm9ZE","key":"\\ud83e\\udd29"}},"depth":30,"prev_state":[],"origin":"localhost","origin_server_ts":1672922566841,"hashes":{"sha256":"WEJXzwaafGnDk29PErCnidxuPVWErIrpPpgo53cUxtg"},"signatures":{"localhost":{"ed25519:a_CHdg":"9kajk4mdklAiXeuZVofdPg0xjle0oPPZn1w92WFAcLnuEXZ4vqjjT174PWZiip8GhnXLOJC9z8xw4zjgfFWjBw"}},"unsigned":{"age_ts":1672922566841}}	3
+$IaI_j1zJZ04lmJmCzJfvnr48U2umqKYG1xogY-r9UNY	!kmbTYjjsDRDHGgVqUP:localhost	{"token_id":11,"txn_id":"m1672922600510.1","historical":false}	{"auth_events":["$mBmRyyvP_Jc-LDi7_hiGD9QTu5XGVXqNMxZM4yDMQPU","$BYyVCPyJh9PVJBsxDwm9NakGY19DlCJJ1GlCcYpTv8w","$kHkn3X5sgQZbnc7m1GNs3FoN729sUsLsqASYxvh3Jb8"],"prev_events":["$YgrzVCWDDxVv-dvf3HhpLD0QlN4nD5-CXg0T-gEX6iI"],"type":"m.room.message","room_id":"!kmbTYjjsDRDHGgVqUP:localhost","sender":"@user1:localhost","content":{"org.matrix.msc1767.text":"OK","body":"OK","msgtype":"m.text"},"depth":31,"prev_state":[],"origin":"localhost","origin_server_ts":1672922600605,"hashes":{"sha256":"ScGq08z4OGBiRDDrl+Ir61LjBWpeDYojjszsICaLl2E"},"signatures":{"localhost":{"ed25519:a_CHdg":"RyS4yrod+c4LRVnC6gfUmCTG4tiBmzaxe37LUAP0TmWqyz+jlwcCddRBV4FcCM9risx06Qqczx1jMyyv6rOZCQ"}},"unsigned":{"age_ts":1672922600605}}	3
+$TbIhAYsmySe2O7IaMBarYDokr6-UmyH4IYI3SpbhI-Q	!dKcbdDATuwwphjRPQP:localhost	{"txn_id":"m1672922654468.2","historical":false}	{"auth_events":["$Rczn5GeJ1aYMBU_oXSIF8ppVk8WEruaYIBA3FE7Yq88","$P98vptI_jrNYKKnTTDYouThgohgHqJkD5Rcj0gDgxII","$n6TBNMF739-W93vnPpWYiJ_zTj-UGsx8mCtkFUsmkrY"],"prev_events":["$n6TBNMF739-W93vnPpWYiJ_zTj-UGsx8mCtkFUsmkrY"],"type":"m.room.message","room_id":"!dKcbdDATuwwphjRPQP:localhost","sender":"@mm_user1:localhost","content":{"msgtype":"m.text","body":"A program"},"depth":23,"prev_state":[],"origin":"localhost","origin_server_ts":1672922654500,"hashes":{"sha256":"DUbVsqi9njrQIEIrWYSQwmESUX2dkPbmeMshrcYra1s"},"signatures":{"localhost":{"ed25519:a_CHdg":"gXfIG0/co4DgNun1Rsm+thP30lW/Q1eiZ5BBwfHPwj11AAH6C07wfwl5W1kGU7gDa4o1nBgICcqkwo3iOX/mAw"}},"unsigned":{"age_ts":1672922654500}}	3
+$YBt0yFQdKC_886W6aXe4LIv5A5BcBP7pXYeF8XLKhH0	!dKcbdDATuwwphjRPQP:localhost	{"txn_id":"m1672922655068.3","historical":false}	{"auth_events":["$Rczn5GeJ1aYMBU_oXSIF8ppVk8WEruaYIBA3FE7Yq88","$P98vptI_jrNYKKnTTDYouThgohgHqJkD5Rcj0gDgxII","$n6TBNMF739-W93vnPpWYiJ_zTj-UGsx8mCtkFUsmkrY"],"prev_events":["$TbIhAYsmySe2O7IaMBarYDokr6-UmyH4IYI3SpbhI-Q"],"type":"m.room.message","room_id":"!dKcbdDATuwwphjRPQP:localhost","sender":"@mm_user1:localhost","content":{"msgtype":"m.image","body":"Testing_in_VS_Code.png","url":"mxc://localhost/riXoaRqUQVaJbMHbhxJcKwHB","info":{"mimetype":"image/png","size":172914}},"depth":24,"prev_state":[],"origin":"localhost","origin_server_ts":1672922655109,"hashes":{"sha256":"oLCIF3PeaxZksNQeObEDLIQVwlbXPU38EzQw+dU+1nM"},"signatures":{"localhost":{"ed25519:a_CHdg":"8sHBxFEsCDLQXGqdKKr0Wx4bf0Zrzyb/HrO9e29fLdGJHpG3oVT1KFlHeJ9GUaTejNwyu2qEQrQ1JkADvEOnCA"}},"unsigned":{"age_ts":1672922655109}}	3
+$-wkWlUVunP818RkFXsoACrEQ85-ybLTc-vWqiil50Vo	!dKcbdDATuwwphjRPQP:localhost	{"txn_id":"m1672923027733.0","historical":false}	{"auth_events":["$Rczn5GeJ1aYMBU_oXSIF8ppVk8WEruaYIBA3FE7Yq88","$CPrx1EOiKU0xFQBY1-CbMIp4Nx64vw33awql9URc-is","$P98vptI_jrNYKKnTTDYouThgohgHqJkD5Rcj0gDgxII"],"prev_events":["$YBt0yFQdKC_886W6aXe4LIv5A5BcBP7pXYeF8XLKhH0"],"type":"m.room.message","room_id":"!dKcbdDATuwwphjRPQP:localhost","sender":"@mm_mattermost_a:localhost","content":{"msgtype":"m.text","body":"Nice"},"depth":25,"prev_state":[],"origin":"localhost","origin_server_ts":1672923027781,"hashes":{"sha256":"GLUpVwO2HmluqFgEMW9jVQ6IRq3IS7cg5kDhT54JThY"},"signatures":{"localhost":{"ed25519:a_CHdg":"7oFwUUDaiDl+TfaVkp0FYg5DzvYEYZPlnJHKJIAAJ4vw6dqF0UZXdQWsIIMl2OsLwfM+a7W90LWIWV0SktVlAg"}},"unsigned":{"age_ts":1672923027781}}	3
+$kQPpv66TuseXeTXJr41QlqLnJBWNpBA_zgzIaJMjpLc	!kmbTYjjsDRDHGgVqUP:localhost	{"token_id":4,"txn_id":"1672923221882","historical":false}	{"auth_events":["$mBmRyyvP_Jc-LDi7_hiGD9QTu5XGVXqNMxZM4yDMQPU","$llCtN-sfVC1IOdDQXgskgx4jl97hQHfKnEH-IP-lyvk","$BYyVCPyJh9PVJBsxDwm9NakGY19DlCJJ1GlCcYpTv8w"],"prev_events":["$IaI_j1zJZ04lmJmCzJfvnr48U2umqKYG1xogY-r9UNY"],"type":"m.room.message","room_id":"!kmbTYjjsDRDHGgVqUP:localhost","sender":"@matrix_b:localhost","content":{"body":"You can't hack the circuit without indexing the back-end IP bus!","msgtype":"m.text"},"depth":32,"prev_state":[],"origin":"localhost","origin_server_ts":1672923221916,"hashes":{"sha256":"IhDbHsE07WyR0U94GolwjLcAJXqCuBGJECmSjUbiIAU"},"signatures":{"localhost":{"ed25519:a_CHdg":"//rWkPKzzwr/9GCvUvhL9WaxSSsq3r4gVIzxWY5jPhVNgOhnniUyYx6gpnXUTEoV3X1++six+s3x3ZivhD/hCg"}},"unsigned":{"age_ts":1672923221916}}	3
 \.
 
 
@@ -3380,6 +3634,62 @@ COPY public.event_push_actions (room_id, event_id, user_id, profile_tag, actions
 !dKcbdDATuwwphjRPQP:localhost	$xRdCRWLb62a-YRgcfBkJSxc7lUVFkdZnQfSIvcKWw88	@admin:localhost	\N		18	39	1	0	1
 !dKcbdDATuwwphjRPQP:localhost	$xRdCRWLb62a-YRgcfBkJSxc7lUVFkdZnQfSIvcKWw88	@matrix_b:localhost	\N		18	39	1	0	1
 !dKcbdDATuwwphjRPQP:localhost	$xRdCRWLb62a-YRgcfBkJSxc7lUVFkdZnQfSIvcKWw88	@ignored_user:localhost	\N		18	39	1	0	1
+!dKcbdDATuwwphjRPQP:localhost	$8a8OTFPqvfsx2aHJeu9IBu-xR3Gn7rdv9l_HZtPKkFg	@matrix_b:localhost	\N		20	42	1	0	1
+!dKcbdDATuwwphjRPQP:localhost	$8a8OTFPqvfsx2aHJeu9IBu-xR3Gn7rdv9l_HZtPKkFg	@matterbot:localhost	\N		20	42	1	0	1
+!dKcbdDATuwwphjRPQP:localhost	$8a8OTFPqvfsx2aHJeu9IBu-xR3Gn7rdv9l_HZtPKkFg	@matrix_a:localhost	\N		20	42	1	0	1
+!dKcbdDATuwwphjRPQP:localhost	$8a8OTFPqvfsx2aHJeu9IBu-xR3Gn7rdv9l_HZtPKkFg	@ignored_user:localhost	\N		20	42	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$BWMrEpKFpKKbBz5Ox9zTP3TvT5zyh6w3zhpl-epXhkk	@matrix_b:localhost	\N		22	43	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$BWMrEpKFpKKbBz5Ox9zTP3TvT5zyh6w3zhpl-epXhkk	@matterbot:localhost	\N		22	43	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$BWMrEpKFpKKbBz5Ox9zTP3TvT5zyh6w3zhpl-epXhkk	@matrix_a:localhost	\N		22	43	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$BWMrEpKFpKKbBz5Ox9zTP3TvT5zyh6w3zhpl-epXhkk	@ignored_user:localhost	\N		22	43	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$r3Ho1IsdJmJB13pD9yX-Jkg_a5s28kBCqoNZ5EPWwqM	@matterbot:localhost	\N		23	44	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$r3Ho1IsdJmJB13pD9yX-Jkg_a5s28kBCqoNZ5EPWwqM	@matrix_a:localhost	\N		23	44	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$r3Ho1IsdJmJB13pD9yX-Jkg_a5s28kBCqoNZ5EPWwqM	@ignored_user:localhost	\N		23	44	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$r3Ho1IsdJmJB13pD9yX-Jkg_a5s28kBCqoNZ5EPWwqM	@admin:localhost	\N		23	44	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$fQ28BQv7GUBcg_Ok7MCh8uTcQLoT2Tkr2BegUMhst1M	@matterbot:localhost	\N		24	45	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$fQ28BQv7GUBcg_Ok7MCh8uTcQLoT2Tkr2BegUMhst1M	@matrix_a:localhost	\N		24	45	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$fQ28BQv7GUBcg_Ok7MCh8uTcQLoT2Tkr2BegUMhst1M	@ignored_user:localhost	\N		24	45	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$fQ28BQv7GUBcg_Ok7MCh8uTcQLoT2Tkr2BegUMhst1M	@admin:localhost	\N		24	45	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$5auMphtCZ9zvRqrhyXpY0s-cZZl2AbvkyGNRbm2h2zc	@matrix_b:localhost	\N		27	50	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$5auMphtCZ9zvRqrhyXpY0s-cZZl2AbvkyGNRbm2h2zc	@matterbot:localhost	\N		27	50	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$5auMphtCZ9zvRqrhyXpY0s-cZZl2AbvkyGNRbm2h2zc	@matrix_a:localhost	\N		27	50	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$5auMphtCZ9zvRqrhyXpY0s-cZZl2AbvkyGNRbm2h2zc	@ignored_user:localhost	\N		27	50	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$5auMphtCZ9zvRqrhyXpY0s-cZZl2AbvkyGNRbm2h2zc	@admin:localhost	\N		27	50	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$Yb59onmhkHIpIJ_VnrP0V02pkFQEF1GwuJqZCNRTQeQ	@matterbot:localhost	\N		28	51	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$Yb59onmhkHIpIJ_VnrP0V02pkFQEF1GwuJqZCNRTQeQ	@matrix_a:localhost	\N		28	51	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$Yb59onmhkHIpIJ_VnrP0V02pkFQEF1GwuJqZCNRTQeQ	@ignored_user:localhost	\N		28	51	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$Yb59onmhkHIpIJ_VnrP0V02pkFQEF1GwuJqZCNRTQeQ	@admin:localhost	\N		28	51	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$j0CTOXXA4AtSOD0pk6kL2BNsa6j5w517GGfkTqmm9ZE	@user1:localhost	\N		29	52	1	1	1
+!kmbTYjjsDRDHGgVqUP:localhost	$j0CTOXXA4AtSOD0pk6kL2BNsa6j5w517GGfkTqmm9ZE	@matrix_b:localhost	\N		29	52	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$j0CTOXXA4AtSOD0pk6kL2BNsa6j5w517GGfkTqmm9ZE	@matterbot:localhost	\N		29	52	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$j0CTOXXA4AtSOD0pk6kL2BNsa6j5w517GGfkTqmm9ZE	@matrix_a:localhost	\N		29	52	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$j0CTOXXA4AtSOD0pk6kL2BNsa6j5w517GGfkTqmm9ZE	@ignored_user:localhost	\N		29	52	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$j0CTOXXA4AtSOD0pk6kL2BNsa6j5w517GGfkTqmm9ZE	@admin:localhost	\N		29	52	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$IaI_j1zJZ04lmJmCzJfvnr48U2umqKYG1xogY-r9UNY	@matrix_b:localhost	\N		31	54	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$IaI_j1zJZ04lmJmCzJfvnr48U2umqKYG1xogY-r9UNY	@matterbot:localhost	\N		31	54	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$IaI_j1zJZ04lmJmCzJfvnr48U2umqKYG1xogY-r9UNY	@matrix_a:localhost	\N		31	54	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$IaI_j1zJZ04lmJmCzJfvnr48U2umqKYG1xogY-r9UNY	@ignored_user:localhost	\N		31	54	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$IaI_j1zJZ04lmJmCzJfvnr48U2umqKYG1xogY-r9UNY	@admin:localhost	\N		31	54	1	0	1
+!dKcbdDATuwwphjRPQP:localhost	$TbIhAYsmySe2O7IaMBarYDokr6-UmyH4IYI3SpbhI-Q	@matrix_b:localhost	\N		23	55	1	0	1
+!dKcbdDATuwwphjRPQP:localhost	$TbIhAYsmySe2O7IaMBarYDokr6-UmyH4IYI3SpbhI-Q	@matterbot:localhost	\N		23	55	1	0	1
+!dKcbdDATuwwphjRPQP:localhost	$TbIhAYsmySe2O7IaMBarYDokr6-UmyH4IYI3SpbhI-Q	@matrix_a:localhost	\N		23	55	1	0	1
+!dKcbdDATuwwphjRPQP:localhost	$TbIhAYsmySe2O7IaMBarYDokr6-UmyH4IYI3SpbhI-Q	@ignored_user:localhost	\N		23	55	1	0	1
+!dKcbdDATuwwphjRPQP:localhost	$TbIhAYsmySe2O7IaMBarYDokr6-UmyH4IYI3SpbhI-Q	@admin:localhost	\N		23	55	1	0	1
+!dKcbdDATuwwphjRPQP:localhost	$YBt0yFQdKC_886W6aXe4LIv5A5BcBP7pXYeF8XLKhH0	@matrix_b:localhost	\N		24	56	1	0	1
+!dKcbdDATuwwphjRPQP:localhost	$YBt0yFQdKC_886W6aXe4LIv5A5BcBP7pXYeF8XLKhH0	@matterbot:localhost	\N		24	56	1	0	1
+!dKcbdDATuwwphjRPQP:localhost	$YBt0yFQdKC_886W6aXe4LIv5A5BcBP7pXYeF8XLKhH0	@matrix_a:localhost	\N		24	56	1	0	1
+!dKcbdDATuwwphjRPQP:localhost	$YBt0yFQdKC_886W6aXe4LIv5A5BcBP7pXYeF8XLKhH0	@ignored_user:localhost	\N		24	56	1	0	1
+!dKcbdDATuwwphjRPQP:localhost	$YBt0yFQdKC_886W6aXe4LIv5A5BcBP7pXYeF8XLKhH0	@admin:localhost	\N		24	56	1	0	1
+!dKcbdDATuwwphjRPQP:localhost	$-wkWlUVunP818RkFXsoACrEQ85-ybLTc-vWqiil50Vo	@matrix_b:localhost	\N		25	57	1	0	1
+!dKcbdDATuwwphjRPQP:localhost	$-wkWlUVunP818RkFXsoACrEQ85-ybLTc-vWqiil50Vo	@matterbot:localhost	\N		25	57	1	0	1
+!dKcbdDATuwwphjRPQP:localhost	$-wkWlUVunP818RkFXsoACrEQ85-ybLTc-vWqiil50Vo	@matrix_a:localhost	\N		25	57	1	0	1
+!dKcbdDATuwwphjRPQP:localhost	$-wkWlUVunP818RkFXsoACrEQ85-ybLTc-vWqiil50Vo	@ignored_user:localhost	\N		25	57	1	0	1
+!dKcbdDATuwwphjRPQP:localhost	$-wkWlUVunP818RkFXsoACrEQ85-ybLTc-vWqiil50Vo	@admin:localhost	\N		25	57	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$kQPpv66TuseXeTXJr41QlqLnJBWNpBA_zgzIaJMjpLc	@user1:localhost	\N		32	58	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$kQPpv66TuseXeTXJr41QlqLnJBWNpBA_zgzIaJMjpLc	@matterbot:localhost	\N		32	58	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$kQPpv66TuseXeTXJr41QlqLnJBWNpBA_zgzIaJMjpLc	@matrix_a:localhost	\N		32	58	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$kQPpv66TuseXeTXJr41QlqLnJBWNpBA_zgzIaJMjpLc	@ignored_user:localhost	\N		32	58	1	0	1
+!kmbTYjjsDRDHGgVqUP:localhost	$kQPpv66TuseXeTXJr41QlqLnJBWNpBA_zgzIaJMjpLc	@admin:localhost	\N		32	58	1	0	1
 \.
 
 
@@ -3404,7 +3714,7 @@ COPY public.event_push_summary (user_id, room_id, notif_count, stream_ordering, 
 --
 
 COPY public.event_push_summary_stream_ordering (lock, stream_ordering) FROM stdin;
-X	0
+X	20
 \.
 
 
@@ -3451,6 +3761,25 @@ $Z5cKxfveccJ3nnCMqKA-jwkRw9hbVrCMv6R68J8oPVg	sha256	\\x67970ac5fbde71c2779e708ca
 $G1fvwCN2g1XjFzNmxLnkU_pe19oYNSqJMKqzj8kfXCk	sha256	\\x1b57efc023768355e3173366c4b9e453fa5ed7da18352a8930aab38fc91f5c29
 $Jt6sBZkF1u2z9OovN4zzqiZfS0rQPS2vVpynSjt9ypI	sha256	\\x26deac059905d6edb3f4ea2f378cf3aa265f4b4ad03d2daf569ca74a3b7dca92
 $xRdCRWLb62a-YRgcfBkJSxc7lUVFkdZnQfSIvcKWw88	sha256	\\xc517424562dbeb66be61181c7c19094b173b95454591d66741f488bdc296c3cf
+$kHkn3X5sgQZbnc7m1GNs3FoN729sUsLsqASYxvh3Jb8	sha256	\\x907927dd7e6c81065b9dcee6d4636cdc5a0def6f6c52c2eca80498c6f87725bf
+$cl-cBWQqCEUtQdjEqlQcE0PD7MCeX1R25oC5CKqb7oE	sha256	\\x725f9c05642a08452d41d8c4aa541c1343c3ecc09e5f5476e680b908aa9bee81
+$8a8OTFPqvfsx2aHJeu9IBu-xR3Gn7rdv9l_HZtPKkFg	sha256	\\xf1af0e4c53eabdfb31d9a1c97aef4806efb14771a7eeb76ff65fc766d3ca9058
+$BWMrEpKFpKKbBz5Ox9zTP3TvT5zyh6w3zhpl-epXhkk	sha256	\\x05632b129285a4a29b073e4ec7dcd33f74ef4f9cf287ac37ce1a65f9ea578649
+$r3Ho1IsdJmJB13pD9yX-Jkg_a5s28kBCqoNZ5EPWwqM	sha256	\\xaf71e8d48b1d266241d77a43f725fe26483f6b9b36f24042aa8359e443d6c2a3
+$fQ28BQv7GUBcg_Ok7MCh8uTcQLoT2Tkr2BegUMhst1M	sha256	\\x7d0dbc050bfb19405c83f3a4ecc0a1f2e4dc40ba13d9392bd817a050c86cb753
+$S7qfuHyVNKlnX8WQb78EyVSR_7_dnmagLA8asozsQtE	sha256	\\x4bba9fb87c9534a9675fc5906fbf04c95491ffbfdd9e66a02c0f1ab28cec42d1
+$TOzcyxIV2S5U6CP15QCldRMJRaDz1Yaik15PorvZYGc	sha256	\\x4cecdccb1215d92e54e823f5e500a575130945a0f3d586a2935e4fa2bbd96067
+$Sa-w9Co29Yd94wHfPbpfCOuSSlMlorQ7ssiGXYp8oh8	sha256	\\x49afb0f42a36f5877de301df3dba5f08eb924a5325a2b43bb2c8865d8a7ca21f
+$n6TBNMF739-W93vnPpWYiJ_zTj-UGsx8mCtkFUsmkrY	sha256	\\x9fa4c134c17bdfdf96f77be73e9598889ff34e3f941acc7c982b64154b2692b6
+$5auMphtCZ9zvRqrhyXpY0s-cZZl2AbvkyGNRbm2h2zc	sha256	\\xe5ab8ca61b4267dcef46aae1c97a58d2cf9c65997601bbe4c863516e6da1db37
+$Yb59onmhkHIpIJ_VnrP0V02pkFQEF1GwuJqZCNRTQeQ	sha256	\\x61be7da279a1907229209fd59eb3f4574da99054041751b0b89a9908d45341e4
+$j0CTOXXA4AtSOD0pk6kL2BNsa6j5w517GGfkTqmm9ZE	sha256	\\x8f40933975c0e00b52383d2993a90bd8136c6ba8f9c39d7b1867e44ea9a6f591
+$YgrzVCWDDxVv-dvf3HhpLD0QlN4nD5-CXg0T-gEX6iI	sha256	\\x620af35425830f156ff9dbdfdc78692c3d1094de270f9f825e0d13fa0117ea22
+$IaI_j1zJZ04lmJmCzJfvnr48U2umqKYG1xogY-r9UNY	sha256	\\x21a23f8f5cc9674e25989982cc97ef9ebe3c536ba6a8a606d71a2063eafd50d6
+$TbIhAYsmySe2O7IaMBarYDokr6-UmyH4IYI3SpbhI-Q	sha256	\\x4db221018b26c927b63bb21a3016ab603a24afaf949b21f82182374a96e123e4
+$YBt0yFQdKC_886W6aXe4LIv5A5BcBP7pXYeF8XLKhH0	sha256	\\x601b74c8541d282ffcf3a5ba6977b82c8bf903905c04fee95d8785f172ca847d
+$-wkWlUVunP818RkFXsoACrEQ85-ybLTc-vWqiil50Vo	sha256	\\xfb091695456e9cff35f119055eca000ab110f39fb26cb4dcfaf5aa8a2979d15a
+$kQPpv66TuseXeTXJr41QlqLnJBWNpBA_zgzIaJMjpLc	sha256	\\x9103e9bfae93bac7977935c9af8d5096a2e724158da4103fce0cc8689323a4b7
 \.
 
 
@@ -3459,6 +3788,7 @@ $xRdCRWLb62a-YRgcfBkJSxc7lUVFkdZnQfSIvcKWw88	sha256	\\xc517424562dbeb66be61181c7
 --
 
 COPY public.event_relations (event_id, relates_to_id, relation_type, aggregation_key) FROM stdin;
+$YgrzVCWDDxVv-dvf3HhpLD0QlN4nD5-CXg0T-gEX6iI	$j0CTOXXA4AtSOD0pk6kL2BNsa6j5w517GGfkTqmm9ZE	m.annotation	🤩
 \.
 
 
@@ -3485,6 +3815,18 @@ $Z5cKxfveccJ3nnCMqKA-jwkRw9hbVrCMv6R68J8oPVg	!dKcbdDATuwwphjRPQP:localhost	\N	co
 $G1fvwCN2g1XjFzNmxLnkU_pe19oYNSqJMKqzj8kfXCk	!dKcbdDATuwwphjRPQP:localhost	\N	content.body	'filenam':1	1672856707732	37
 $Jt6sBZkF1u2z9OovN4zzqiZfS0rQPS2vVpynSjt9ypI	!kmbTYjjsDRDHGgVqUP:localhost	\N	content.body	'mydata':1	1672856707997	38
 $xRdCRWLb62a-YRgcfBkJSxc7lUVFkdZnQfSIvcKWw88	!dKcbdDATuwwphjRPQP:localhost	\N	content.body	'hidden':1 'messag':2	1672856708238	39
+$8a8OTFPqvfsx2aHJeu9IBu-xR3Gn7rdv9l_HZtPKkFg	!dKcbdDATuwwphjRPQP:localhost	\N	content.body	'text':2	1672920683485	42
+$BWMrEpKFpKKbBz5Ox9zTP3TvT5zyh6w3zhpl-epXhkk	!kmbTYjjsDRDHGgVqUP:localhost	\N	content.body	'text':2	1672920816788	43
+$r3Ho1IsdJmJB13pD9yX-Jkg_a5s28kBCqoNZ5EPWwqM	!kmbTYjjsDRDHGgVqUP:localhost	\N	content.body	'text':2	1672921550713	44
+$fQ28BQv7GUBcg_Ok7MCh8uTcQLoT2Tkr2BegUMhst1M	!kmbTYjjsDRDHGgVqUP:localhost	\N	content.body	'capacitor':11 'copi':3 'dram':7 'll':2 'pixel':14 'solid':5 'state':6 'transmitt':8 'usb':13	1672921603138	45
+$5auMphtCZ9zvRqrhyXpY0s-cZZl2AbvkyGNRbm2h2zc	!kmbTYjjsDRDHGgVqUP:localhost	\N	content.body	'channel':3 'like':1	1672922287761	50
+$Yb59onmhkHIpIJ_VnrP0V02pkFQEF1GwuJqZCNRTQeQ	!kmbTYjjsDRDHGgVqUP:localhost	\N	content.body	'alarm':14 'digit':3 'drive':6 'hard':5 'pars':10 'solid':12 'state':13 'thx':4 'use':1	1672922412287	51
+$j0CTOXXA4AtSOD0pk6kL2BNsa6j5w517GGfkTqmm9ZE	!kmbTYjjsDRDHGgVqUP:localhost	\N	content.body	'1':5 'onlin':3 'user':4	1672922547588	52
+$IaI_j1zJZ04lmJmCzJfvnr48U2umqKYG1xogY-r9UNY	!kmbTYjjsDRDHGgVqUP:localhost	\N	content.body	'ok':1	1672922600605	54
+$TbIhAYsmySe2O7IaMBarYDokr6-UmyH4IYI3SpbhI-Q	!dKcbdDATuwwphjRPQP:localhost	\N	content.body	'program':2	1672922654500	55
+$YBt0yFQdKC_886W6aXe4LIv5A5BcBP7pXYeF8XLKhH0	!dKcbdDATuwwphjRPQP:localhost	\N	content.body	'testing_in_vs_code.png':1	1672922655109	56
+$-wkWlUVunP818RkFXsoACrEQ85-ybLTc-vWqiil50Vo	!dKcbdDATuwwphjRPQP:localhost	\N	content.body	'nice':1	1672923027781	57
+$kQPpv66TuseXeTXJr41QlqLnJBWNpBA_zgzIaJMjpLc	!kmbTYjjsDRDHGgVqUP:localhost	\N	content.body	'back':11 'back-end':10 'bus':14 'circuit':6 'end':12 'hack':4 'index':8 'ip':13 'without':7	1672923221916	58
 \.
 
 
@@ -3531,6 +3873,25 @@ $Z5cKxfveccJ3nnCMqKA-jwkRw9hbVrCMv6R68J8oPVg	29
 $G1fvwCN2g1XjFzNmxLnkU_pe19oYNSqJMKqzj8kfXCk	29
 $Jt6sBZkF1u2z9OovN4zzqiZfS0rQPS2vVpynSjt9ypI	30
 $xRdCRWLb62a-YRgcfBkJSxc7lUVFkdZnQfSIvcKWw88	29
+$kHkn3X5sgQZbnc7m1GNs3FoN729sUsLsqASYxvh3Jb8	49
+$cl-cBWQqCEUtQdjEqlQcE0PD7MCeX1R25oC5CKqb7oE	50
+$8a8OTFPqvfsx2aHJeu9IBu-xR3Gn7rdv9l_HZtPKkFg	50
+$BWMrEpKFpKKbBz5Ox9zTP3TvT5zyh6w3zhpl-epXhkk	49
+$r3Ho1IsdJmJB13pD9yX-Jkg_a5s28kBCqoNZ5EPWwqM	49
+$fQ28BQv7GUBcg_Ok7MCh8uTcQLoT2Tkr2BegUMhst1M	49
+$S7qfuHyVNKlnX8WQb78EyVSR_7_dnmagLA8asozsQtE	62
+$TOzcyxIV2S5U6CP15QCldRMJRaDz1Yaik15PorvZYGc	65
+$Sa-w9Co29Yd94wHfPbpfCOuSSlMlorQ7ssiGXYp8oh8	68
+$n6TBNMF739-W93vnPpWYiJ_zTj-UGsx8mCtkFUsmkrY	71
+$5auMphtCZ9zvRqrhyXpY0s-cZZl2AbvkyGNRbm2h2zc	68
+$Yb59onmhkHIpIJ_VnrP0V02pkFQEF1GwuJqZCNRTQeQ	68
+$j0CTOXXA4AtSOD0pk6kL2BNsa6j5w517GGfkTqmm9ZE	68
+$YgrzVCWDDxVv-dvf3HhpLD0QlN4nD5-CXg0T-gEX6iI	68
+$IaI_j1zJZ04lmJmCzJfvnr48U2umqKYG1xogY-r9UNY	68
+$TbIhAYsmySe2O7IaMBarYDokr6-UmyH4IYI3SpbhI-Q	71
+$YBt0yFQdKC_886W6aXe4LIv5A5BcBP7pXYeF8XLKhH0	71
+$-wkWlUVunP818RkFXsoACrEQ85-ybLTc-vWqiil50Vo	71
+$kQPpv66TuseXeTXJr41QlqLnJBWNpBA_zgzIaJMjpLc	68
 \.
 
 
@@ -3544,6 +3905,14 @@ $hr9BoL0M0CcPevs38ww5_bA24p8HFiP4e9dlGuPrGWs	!kmbTYjjsDRDHGgVqUP:localhost	@matr
 $_OchgUntbLcDcJV42YEeAhH2t22AW-wlAxjRPO0SYfU	!kmbTYjjsDRDHGgVqUP:localhost	@matrix_a:localhost	3	m1672856707257.0	1672856707320
 $Jt6sBZkF1u2z9OovN4zzqiZfS0rQPS2vVpynSjt9ypI	!kmbTYjjsDRDHGgVqUP:localhost	@matrix_a:localhost	3	m1672856707957.0	1672856708020
 $xRdCRWLb62a-YRgcfBkJSxc7lUVFkdZnQfSIvcKWw88	!dKcbdDATuwwphjRPQP:localhost	@matrix_a:localhost	3	m1672856708195.0	1672856708266
+$8a8OTFPqvfsx2aHJeu9IBu-xR3Gn7rdv9l_HZtPKkFg	!dKcbdDATuwwphjRPQP:localhost	@admin:localhost	2	1672920683	1672920683532
+$BWMrEpKFpKKbBz5Ox9zTP3TvT5zyh6w3zhpl-epXhkk	!kmbTYjjsDRDHGgVqUP:localhost	@admin:localhost	2	1672920817	1672920816833
+$r3Ho1IsdJmJB13pD9yX-Jkg_a5s28kBCqoNZ5EPWwqM	!kmbTYjjsDRDHGgVqUP:localhost	@matrix_b:localhost	4	1672921550668	1672921550744
+$fQ28BQv7GUBcg_Ok7MCh8uTcQLoT2Tkr2BegUMhst1M	!kmbTYjjsDRDHGgVqUP:localhost	@matrix_b:localhost	4	1672921603086	1672921603165
+$Yb59onmhkHIpIJ_VnrP0V02pkFQEF1GwuJqZCNRTQeQ	!kmbTYjjsDRDHGgVqUP:localhost	@matrix_b:localhost	4	1672922412231	1672922412364
+$YgrzVCWDDxVv-dvf3HhpLD0QlN4nD5-CXg0T-gEX6iI	!kmbTYjjsDRDHGgVqUP:localhost	@user1:localhost	11	m1672922566753.0	1672922566879
+$IaI_j1zJZ04lmJmCzJfvnr48U2umqKYG1xogY-r9UNY	!kmbTYjjsDRDHGgVqUP:localhost	@user1:localhost	11	m1672922600510.1	1672922600638
+$kQPpv66TuseXeTXJr41QlqLnJBWNpBA_zgzIaJMjpLc	!kmbTYjjsDRDHGgVqUP:localhost	@matrix_b:localhost	4	1672923221882	1672923221955
 \.
 
 
@@ -3590,6 +3959,25 @@ COPY public.events (topological_ordering, event_id, type, room_id, content, unre
 17	$G1fvwCN2g1XjFzNmxLnkU_pe19oYNSqJMKqzj8kfXCk	m.room.message	!dKcbdDATuwwphjRPQP:localhost	\N	\N	t	f	17	1672856707732	1672856707767	@mm_mattermost_b:localhost	t	master	37
 20	$Jt6sBZkF1u2z9OovN4zzqiZfS0rQPS2vVpynSjt9ypI	m.room.message	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	20	1672856707997	1672856708019	@matrix_a:localhost	t	master	38
 18	$xRdCRWLb62a-YRgcfBkJSxc7lUVFkdZnQfSIvcKWw88	m.room.message	!dKcbdDATuwwphjRPQP:localhost	\N	\N	t	f	18	1672856708238	1672856708264	@matrix_a:localhost	f	master	39
+21	$kHkn3X5sgQZbnc7m1GNs3FoN729sUsLsqASYxvh3Jb8	m.room.member	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	21	1672918494139	1672918494204	@user1:localhost	f	master	40
+19	$cl-cBWQqCEUtQdjEqlQcE0PD7MCeX1R25oC5CKqb7oE	m.room.member	!dKcbdDATuwwphjRPQP:localhost	\N	\N	t	f	19	1672918508427	1672918508472	@user1:localhost	f	master	41
+20	$8a8OTFPqvfsx2aHJeu9IBu-xR3Gn7rdv9l_HZtPKkFg	m.room.message	!dKcbdDATuwwphjRPQP:localhost	\N	\N	t	f	20	1672920683485	1672920683531	@admin:localhost	f	master	42
+22	$BWMrEpKFpKKbBz5Ox9zTP3TvT5zyh6w3zhpl-epXhkk	m.room.message	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	22	1672920816788	1672920816831	@admin:localhost	f	master	43
+23	$r3Ho1IsdJmJB13pD9yX-Jkg_a5s28kBCqoNZ5EPWwqM	m.room.message	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	23	1672921550713	1672921550743	@matrix_b:localhost	f	master	44
+24	$fQ28BQv7GUBcg_Ok7MCh8uTcQLoT2Tkr2BegUMhst1M	m.room.message	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	24	1672921603138	1672921603164	@matrix_b:localhost	f	master	45
+22	$n6TBNMF739-W93vnPpWYiJ_zTj-UGsx8mCtkFUsmkrY	m.room.member	!dKcbdDATuwwphjRPQP:localhost	\N	\N	t	f	22	1672922249928	1672922250009	@mm_user1:localhost	f	master	49
+23	$TbIhAYsmySe2O7IaMBarYDokr6-UmyH4IYI3SpbhI-Q	m.room.message	!dKcbdDATuwwphjRPQP:localhost	\N	\N	t	f	23	1672922654500	1672922654526	@mm_user1:localhost	f	master	55
+25	$S7qfuHyVNKlnX8WQb78EyVSR_7_dnmagLA8asozsQtE	m.room.member	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	25	1672922249364	1672922249453	@matterbot:localhost	f	master	46
+21	$TOzcyxIV2S5U6CP15QCldRMJRaDz1Yaik15PorvZYGc	m.room.member	!dKcbdDATuwwphjRPQP:localhost	\N	\N	t	f	21	1672922249479	1672922249596	@matterbot:localhost	f	master	47
+26	$Sa-w9Co29Yd94wHfPbpfCOuSSlMlorQ7ssiGXYp8oh8	m.room.member	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	26	1672922249759	1672922249852	@mm_user1:localhost	f	master	48
+27	$5auMphtCZ9zvRqrhyXpY0s-cZZl2AbvkyGNRbm2h2zc	m.room.message	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	27	1672922287761	1672922287799	@mm_user1:localhost	f	master	50
+28	$Yb59onmhkHIpIJ_VnrP0V02pkFQEF1GwuJqZCNRTQeQ	m.room.message	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	28	1672922412287	1672922412359	@matrix_b:localhost	f	master	51
+29	$j0CTOXXA4AtSOD0pk6kL2BNsa6j5w517GGfkTqmm9ZE	m.room.message	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	29	1672922547588	1672922547621	@mm_user1:localhost	f	master	52
+30	$YgrzVCWDDxVv-dvf3HhpLD0QlN4nD5-CXg0T-gEX6iI	m.reaction	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	30	1672922566841	1672922566878	@user1:localhost	f	master	53
+31	$IaI_j1zJZ04lmJmCzJfvnr48U2umqKYG1xogY-r9UNY	m.room.message	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	31	1672922600605	1672922600637	@user1:localhost	f	master	54
+24	$YBt0yFQdKC_886W6aXe4LIv5A5BcBP7pXYeF8XLKhH0	m.room.message	!dKcbdDATuwwphjRPQP:localhost	\N	\N	t	f	24	1672922655109	1672922655131	@mm_user1:localhost	t	master	56
+25	$-wkWlUVunP818RkFXsoACrEQ85-ybLTc-vWqiil50Vo	m.room.message	!dKcbdDATuwwphjRPQP:localhost	\N	\N	t	f	25	1672923027781	1672923027845	@mm_mattermost_a:localhost	f	master	57
+32	$kQPpv66TuseXeTXJr41QlqLnJBWNpBA_zgzIaJMjpLc	m.room.message	!kmbTYjjsDRDHGgVqUP:localhost	\N	\N	t	f	32	1672923221916	1672923221954	@matrix_b:localhost	f	master	58
 \.
 
 
@@ -3615,7 +4003,7 @@ COPY public.federation_inbound_events_staging (origin, room_id, event_id, receiv
 
 COPY public.federation_stream_position (type, stream_id, instance_name) FROM stdin;
 federation	-1	master
-events	39	master
+events	58	master
 \.
 
 
@@ -3774,6 +4162,10 @@ COPY public.local_current_membership (room_id, user_id, event_id, membership) FR
 !kmbTYjjsDRDHGgVqUP:localhost	@mm_mattermost_b:localhost	$t5n7gGV4l0pVzkJq8YJdQm4IFq3hTrEHABs9QiejsEA	join
 !dKcbdDATuwwphjRPQP:localhost	@mm_mattermost_a:localhost	$CPrx1EOiKU0xFQBY1-CbMIp4Nx64vw33awql9URc-is	join
 !kmbTYjjsDRDHGgVqUP:localhost	@mm_mattermost_a:localhost	$FiPh76BhP5tT1Hors997MJgDvrehT02uvfmqsY25ilk	join
+!kmbTYjjsDRDHGgVqUP:localhost	@user1:localhost	$kHkn3X5sgQZbnc7m1GNs3FoN729sUsLsqASYxvh3Jb8	join
+!dKcbdDATuwwphjRPQP:localhost	@user1:localhost	$cl-cBWQqCEUtQdjEqlQcE0PD7MCeX1R25oC5CKqb7oE	join
+!kmbTYjjsDRDHGgVqUP:localhost	@mm_user1:localhost	$Sa-w9Co29Yd94wHfPbpfCOuSSlMlorQ7ssiGXYp8oh8	join
+!dKcbdDATuwwphjRPQP:localhost	@mm_user1:localhost	$n6TBNMF739-W93vnPpWYiJ_zTj-UGsx8mCtkFUsmkrY	join
 \.
 
 
@@ -3800,6 +4192,7 @@ COPY public.local_group_updates (stream_id, group_id, user_id, type, content) FR
 COPY public.local_media_repository (media_id, media_type, media_length, created_ts, upload_name, user_id, quarantined_by, url_cache, last_access_ts, safe_from_quarantine) FROM stdin;
 uVWXteoIJOgvlXENjBgBOUcc	text/plain	8	1672856707962	mydata	@matrix_a:localhost	\N	\N	1672856724667	f
 fndsNAAjXPUHvtbKurhIoDum	application/octet-stream	11	1672856707685	filename	@mm_mattermost_b:localhost	\N	\N	1672856724667	f
+riXoaRqUQVaJbMHbhxJcKwHB	image/png	172914	1672922654767	Testing_in_VS_Code.png	@mm_user1:localhost	\N	\N	1672922670835	f
 \.
 
 
@@ -3808,6 +4201,11 @@ fndsNAAjXPUHvtbKurhIoDum	application/octet-stream	11	1672856707685	filename	@mm_
 --
 
 COPY public.local_media_repository_thumbnails (media_id, thumbnail_width, thumbnail_height, thumbnail_type, thumbnail_method, thumbnail_length) FROM stdin;
+riXoaRqUQVaJbMHbhxJcKwHB	32	32	image/png	crop	4942
+riXoaRqUQVaJbMHbhxJcKwHB	96	96	image/png	crop	14985
+riXoaRqUQVaJbMHbhxJcKwHB	320	171	image/png	scale	59178
+riXoaRqUQVaJbMHbhxJcKwHB	640	343	image/png	scale	162554
+riXoaRqUQVaJbMHbhxJcKwHB	800	429	image/png	scale	220318
 \.
 
 
@@ -3848,11 +4246,13 @@ COPY public.presence (user_id, state, status_msg, mtime) FROM stdin;
 --
 
 COPY public.presence_stream (stream_id, user_id, state, last_active_ts, last_federation_update_ts, last_user_sync_ts, status_msg, currently_active, instance_name) FROM stdin;
-3	@mm_mattermost_a:localhost	offline	1672856706102	1672856706102	0	\N	f	master
 4	@matrix_a:localhost	offline	1672856706312	1672856706312	0	\N	f	master
-5	@matrix_b:localhost	offline	1672856706849	1672856706849	0	\N	f	master
 6	@mm_mattermost_b:localhost	offline	1672856707628	1672856707628	0	\N	f	master
-7	@admin:localhost	offline	1672856707888	1672856744610	1672856707927	\N	t	master
+121	@user1:localhost	online	1672923608227	1672923367805	1672923608227	\N	t	master
+98	@mm_user1:localhost	offline	1672922655202	1672922649578	0	\N	f	master
+54	@admin:localhost	offline	1672920816866	1672920816866	1672856707927	\N	t	master
+108	@mm_mattermost_a:localhost	offline	1672923027931	1672923026169	0	\N	f	master
+112	@matrix_b:localhost	offline	1672923221978	1672923221978	0	\N	f	master
 \.
 
 
@@ -3866,8 +4266,10 @@ matrix_a	Matrix UserA	\N
 matrix_b	matrix_b	\N
 ignored_user	ignored_user	\N
 matterbot	Mattermost Bridge	\N
+user1	User 1	\N
 mm_mattermost_a	MattermostUser A [mm]	\N
 mm_mattermost_b	mattermost_b [mm]	\N
+mm_user1	user1 [mm]	\N
 \.
 
 
@@ -3932,6 +4334,8 @@ COPY public.ratelimit_override (user_id, messages_per_second, burst_count) FROM 
 --
 
 COPY public.receipts_graph (room_id, receipt_type, user_id, event_ids, data) FROM stdin;
+!kmbTYjjsDRDHGgVqUP:localhost	m.read	@user1:localhost	["$j0CTOXXA4AtSOD0pk6kL2BNsa6j5w517GGfkTqmm9ZE"]	{"ts":1672922552070,"hidden":false}
+!dKcbdDATuwwphjRPQP:localhost	m.read	@user1:localhost	["$-wkWlUVunP818RkFXsoACrEQ85-ybLTc-vWqiil50Vo"]	{"ts":1672923138326,"hidden":false}
 \.
 
 
@@ -3940,6 +4344,8 @@ COPY public.receipts_graph (room_id, receipt_type, user_id, event_ids, data) FRO
 --
 
 COPY public.receipts_linearized (stream_id, room_id, receipt_type, user_id, event_id, data, instance_name) FROM stdin;
+8	!kmbTYjjsDRDHGgVqUP:localhost	m.read	@user1:localhost	$j0CTOXXA4AtSOD0pk6kL2BNsa6j5w517GGfkTqmm9ZE	{"ts":1672922552070,"hidden":false}	\N
+10	!dKcbdDATuwwphjRPQP:localhost	m.read	@user1:localhost	$-wkWlUVunP818RkFXsoACrEQ85-ybLTc-vWqiil50Vo	{"ts":1672923138326,"hidden":false}	\N
 \.
 
 
@@ -4012,6 +4418,8 @@ COPY public.remote_profile_cache (user_id, displayname, avatar_url, last_check) 
 --
 
 COPY public.room_account_data (user_id, room_id, account_data_type, stream_id, content, instance_name) FROM stdin;
+@user1:localhost	!kmbTYjjsDRDHGgVqUP:localhost	m.fully_read	26	{"event_id":"$IaI_j1zJZ04lmJmCzJfvnr48U2umqKYG1xogY-r9UNY"}	\N
+@user1:localhost	!dKcbdDATuwwphjRPQP:localhost	m.fully_read	29	{"event_id":"$-wkWlUVunP818RkFXsoACrEQ85-ybLTc-vWqiil50Vo"}	\N
 \.
 
 
@@ -4068,6 +4476,12 @@ $PSZPiF2_GHeawUZsuFzgg_JuCtoOyaf_11-uLulGF0c	@mm_mattermost_b:localhost	@mm_matt
 $t5n7gGV4l0pVzkJq8YJdQm4IFq3hTrEHABs9QiejsEA	@mm_mattermost_b:localhost	@mm_mattermost_b:localhost	!kmbTYjjsDRDHGgVqUP:localhost	join	0	mattermost_b [mm]	\N
 $CPrx1EOiKU0xFQBY1-CbMIp4Nx64vw33awql9URc-is	@mm_mattermost_a:localhost	@mm_mattermost_a:localhost	!dKcbdDATuwwphjRPQP:localhost	join	0	MattermostUser A [mm]	\N
 $FiPh76BhP5tT1Hors997MJgDvrehT02uvfmqsY25ilk	@mm_mattermost_a:localhost	@mm_mattermost_a:localhost	!kmbTYjjsDRDHGgVqUP:localhost	join	0	MattermostUser A [mm]	\N
+$kHkn3X5sgQZbnc7m1GNs3FoN729sUsLsqASYxvh3Jb8	@user1:localhost	@user1:localhost	!kmbTYjjsDRDHGgVqUP:localhost	join	0	User 1	\N
+$cl-cBWQqCEUtQdjEqlQcE0PD7MCeX1R25oC5CKqb7oE	@user1:localhost	@user1:localhost	!dKcbdDATuwwphjRPQP:localhost	join	0	User 1	\N
+$S7qfuHyVNKlnX8WQb78EyVSR_7_dnmagLA8asozsQtE	@mm_user1:localhost	@matterbot:localhost	!kmbTYjjsDRDHGgVqUP:localhost	invite	0	user1 [mm]	\N
+$TOzcyxIV2S5U6CP15QCldRMJRaDz1Yaik15PorvZYGc	@mm_user1:localhost	@matterbot:localhost	!dKcbdDATuwwphjRPQP:localhost	invite	0	user1 [mm]	\N
+$Sa-w9Co29Yd94wHfPbpfCOuSSlMlorQ7ssiGXYp8oh8	@mm_user1:localhost	@mm_user1:localhost	!kmbTYjjsDRDHGgVqUP:localhost	join	0	user1 [mm]	\N
+$n6TBNMF739-W93vnPpWYiJ_zTj-UGsx8mCtkFUsmkrY	@mm_user1:localhost	@mm_user1:localhost	!dKcbdDATuwwphjRPQP:localhost	join	0	user1 [mm]	\N
 \.
 
 
@@ -4084,8 +4498,8 @@ COPY public.room_retention (room_id, event_id, min_lifetime, max_lifetime) FROM 
 --
 
 COPY public.room_stats_current (room_id, current_state_events, joined_members, invited_members, left_members, banned_members, local_users_in_room, completed_delta_stream_id, knocked_members) FROM stdin;
-!dKcbdDATuwwphjRPQP:localhost	12	7	0	0	0	7	28	0
-!kmbTYjjsDRDHGgVqUP:localhost	12	7	0	0	0	7	29	0
+!kmbTYjjsDRDHGgVqUP:localhost	14	9	0	0	0	9	48	0
+!dKcbdDATuwwphjRPQP:localhost	14	9	0	0	0	9	49	0
 \.
 
 
@@ -4138,8 +4552,8 @@ COPY public.room_tags_revisions (user_id, room_id, stream_id, instance_name) FRO
 --
 
 COPY public.rooms (room_id, is_public, creator, room_version, has_auth_chain_index) FROM stdin;
-!dKcbdDATuwwphjRPQP:localhost	f	@admin:localhost	5	t
-!kmbTYjjsDRDHGgVqUP:localhost	f	@admin:localhost	5	t
+!dKcbdDATuwwphjRPQP:localhost	t	@admin:localhost	5	t
+!kmbTYjjsDRDHGgVqUP:localhost	t	@admin:localhost	5	t
 \.
 
 
@@ -4218,6 +4632,12 @@ $PSZPiF2_GHeawUZsuFzgg_JuCtoOyaf_11-uLulGF0c	!dKcbdDATuwwphjRPQP:localhost	m.roo
 $t5n7gGV4l0pVzkJq8YJdQm4IFq3hTrEHABs9QiejsEA	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@mm_mattermost_b:localhost	\N
 $CPrx1EOiKU0xFQBY1-CbMIp4Nx64vw33awql9URc-is	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@mm_mattermost_a:localhost	\N
 $FiPh76BhP5tT1Hors997MJgDvrehT02uvfmqsY25ilk	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@mm_mattermost_a:localhost	\N
+$kHkn3X5sgQZbnc7m1GNs3FoN729sUsLsqASYxvh3Jb8	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@user1:localhost	\N
+$cl-cBWQqCEUtQdjEqlQcE0PD7MCeX1R25oC5CKqb7oE	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@user1:localhost	\N
+$S7qfuHyVNKlnX8WQb78EyVSR_7_dnmagLA8asozsQtE	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@mm_user1:localhost	\N
+$TOzcyxIV2S5U6CP15QCldRMJRaDz1Yaik15PorvZYGc	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@mm_user1:localhost	\N
+$Sa-w9Co29Yd94wHfPbpfCOuSSlMlorQ7ssiGXYp8oh8	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@mm_user1:localhost	\N
+$n6TBNMF739-W93vnPpWYiJ_zTj-UGsx8mCtkFUsmkrY	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@mm_user1:localhost	\N
 \.
 
 
@@ -4272,6 +4692,31 @@ COPY public.state_group_edges (state_group, prev_state_group) FROM stdin;
 46	30
 47	30
 48	30
+49	30
+50	29
+51	50
+52	50
+53	49
+54	50
+55	49
+56	49
+57	50
+58	49
+59	49
+60	49
+61	49
+62	49
+63	50
+64	50
+65	50
+66	62
+67	62
+68	62
+69	65
+70	65
+71	65
+72	71
+73	71
 \.
 
 
@@ -4328,6 +4773,31 @@ COPY public.state_groups (id, room_id, event_id) FROM stdin;
 46	!kmbTYjjsDRDHGgVqUP:localhost	$mKf03aHjmkOTKjUfoCuRrEne10WarLTn7bc_9CtGBUE
 47	!kmbTYjjsDRDHGgVqUP:localhost	$61LtN-tB98fviQlqNuiDoWtFh9B3Hfzto_C31td4_R4
 48	!kmbTYjjsDRDHGgVqUP:localhost	$s4_VwTURD0AnN0wSTgfTmWAMQ1ZHExnW-XHQlgDXqgw
+49	!kmbTYjjsDRDHGgVqUP:localhost	$kHkn3X5sgQZbnc7m1GNs3FoN729sUsLsqASYxvh3Jb8
+50	!dKcbdDATuwwphjRPQP:localhost	$cl-cBWQqCEUtQdjEqlQcE0PD7MCeX1R25oC5CKqb7oE
+51	!dKcbdDATuwwphjRPQP:localhost	$E7asGSdoMxdTkkqkSW3E0QPPoMvwzykIQvRw-bu2MlE
+52	!dKcbdDATuwwphjRPQP:localhost	$C6gG6HIW6wwHiDAGDerxQ21ZtJ_fhVw30Ix9yjYFkLg
+53	!kmbTYjjsDRDHGgVqUP:localhost	$Vd4lLlRvqh_TADReKDXjCcwdCyrI8f6PsJFU6zAvpQo
+54	!dKcbdDATuwwphjRPQP:localhost	$Iv1tfNd19DYZLXKlL8QGU65IkNXeog_gFzeU4c-U8RE
+55	!kmbTYjjsDRDHGgVqUP:localhost	$iID6c4MBkqS7-1WsnDOBQgOYEdr1CVPN9RtxIvUuZg0
+56	!kmbTYjjsDRDHGgVqUP:localhost	$EJWKI8eTZpfGTKRknMihyVkHArdXuvLseElldAjwWHQ
+57	!dKcbdDATuwwphjRPQP:localhost	$NEDl1FOUS-Ud7GgNcynoPiZMJq9A8YlEyGYxgvc_3f0
+58	!kmbTYjjsDRDHGgVqUP:localhost	$ZT_5tMYNZ1KcFnWwJ2-QwQgqee4sEaL4NMvAr9Y7Q28
+59	!kmbTYjjsDRDHGgVqUP:localhost	$p4N1aqpvCiZwCtwrwlk0iA--rTP3GRfBXey1T9rrG8s
+60	!kmbTYjjsDRDHGgVqUP:localhost	$mN2b23T_CWKCh21s4DSMtK-0Ivse-M4o9tXNl3OcgOY
+61	!kmbTYjjsDRDHGgVqUP:localhost	$HgACI5p4LSrFIhIgjLan4Z4eDGKWa3oT4cOknqleKOQ
+62	!kmbTYjjsDRDHGgVqUP:localhost	$S7qfuHyVNKlnX8WQb78EyVSR_7_dnmagLA8asozsQtE
+63	!dKcbdDATuwwphjRPQP:localhost	$yHUzJmGkEAYoMEmrjCGIimVkrSR-XxoUdwq8U-4YxmQ
+64	!dKcbdDATuwwphjRPQP:localhost	$0vL62P-h7UrmHhU4ioF6wSA73ffo6vVKlFK1G7Ebvak
+65	!dKcbdDATuwwphjRPQP:localhost	$TOzcyxIV2S5U6CP15QCldRMJRaDz1Yaik15PorvZYGc
+66	!kmbTYjjsDRDHGgVqUP:localhost	$ir2lo1K2-OlnQHUaJd6Y3umSj10sEcvqIaj4-YxtREQ
+67	!kmbTYjjsDRDHGgVqUP:localhost	$wnL_MRKUuGQ37iq3tlr8xkZ73-622MAnfPaRoQw5Opo
+68	!kmbTYjjsDRDHGgVqUP:localhost	$Sa-w9Co29Yd94wHfPbpfCOuSSlMlorQ7ssiGXYp8oh8
+69	!dKcbdDATuwwphjRPQP:localhost	$90abgs-hzNifEYaOK-vbTnUUXcU513VrYsJBYNfG4Kw
+70	!dKcbdDATuwwphjRPQP:localhost	$Zqk5MoXrcrjH3GJoIQf220q69Vayh-9QHXfRjpic78o
+71	!dKcbdDATuwwphjRPQP:localhost	$n6TBNMF739-W93vnPpWYiJ_zTj-UGsx8mCtkFUsmkrY
+72	!dKcbdDATuwwphjRPQP:localhost	$uWaTSGIpSJnnCV9HG5a5zGb0LSH2uXK-QLCAgjgit7c
+73	!dKcbdDATuwwphjRPQP:localhost	$Tlp9YjzhiKmAmZzyivu0mpIuMlMkzWxFfWlwtj5zHZc
 \.
 
 
@@ -4382,6 +4852,31 @@ COPY public.state_groups_state (state_group, room_id, type, state_key, event_id)
 46	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@mm_mattermost_b:localhost	$mKf03aHjmkOTKjUfoCuRrEne10WarLTn7bc_9CtGBUE
 47	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@mm_mattermost_a:localhost	$61LtN-tB98fviQlqNuiDoWtFh9B3Hfzto_C31td4_R4
 48	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@mm_mattermost_b:localhost	$s4_VwTURD0AnN0wSTgfTmWAMQ1ZHExnW-XHQlgDXqgw
+49	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@user1:localhost	$kHkn3X5sgQZbnc7m1GNs3FoN729sUsLsqASYxvh3Jb8
+50	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@user1:localhost	$cl-cBWQqCEUtQdjEqlQcE0PD7MCeX1R25oC5CKqb7oE
+51	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@user1:localhost	$E7asGSdoMxdTkkqkSW3E0QPPoMvwzykIQvRw-bu2MlE
+52	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@matterbot:localhost	$C6gG6HIW6wwHiDAGDerxQ21ZtJ_fhVw30Ix9yjYFkLg
+53	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@matterbot:localhost	$Vd4lLlRvqh_TADReKDXjCcwdCyrI8f6PsJFU6zAvpQo
+54	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@mm_mattermost_b:localhost	$Iv1tfNd19DYZLXKlL8QGU65IkNXeog_gFzeU4c-U8RE
+55	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@mm_mattermost_b:localhost	$iID6c4MBkqS7-1WsnDOBQgOYEdr1CVPN9RtxIvUuZg0
+56	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@mm_mattermost_b:localhost	$EJWKI8eTZpfGTKRknMihyVkHArdXuvLseElldAjwWHQ
+57	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@mm_mattermost_a:localhost	$NEDl1FOUS-Ud7GgNcynoPiZMJq9A8YlEyGYxgvc_3f0
+58	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@mm_mattermost_b:localhost	$ZT_5tMYNZ1KcFnWwJ2-QwQgqee4sEaL4NMvAr9Y7Q28
+69	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@mm_mattermost_b:localhost	$90abgs-hzNifEYaOK-vbTnUUXcU513VrYsJBYNfG4Kw
+59	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@mm_mattermost_a:localhost	$p4N1aqpvCiZwCtwrwlk0iA--rTP3GRfBXey1T9rrG8s
+67	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@mm_mattermost_a:localhost	$wnL_MRKUuGQ37iq3tlr8xkZ73-622MAnfPaRoQw5Opo
+68	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@mm_user1:localhost	$Sa-w9Co29Yd94wHfPbpfCOuSSlMlorQ7ssiGXYp8oh8
+60	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@mm_mattermost_a:localhost	$mN2b23T_CWKCh21s4DSMtK-0Ivse-M4o9tXNl3OcgOY
+72	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@mm_mattermost_b:localhost	$uWaTSGIpSJnnCV9HG5a5zGb0LSH2uXK-QLCAgjgit7c
+61	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@mm_mattermost_a:localhost	$HgACI5p4LSrFIhIgjLan4Z4eDGKWa3oT4cOknqleKOQ
+62	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@mm_user1:localhost	$S7qfuHyVNKlnX8WQb78EyVSR_7_dnmagLA8asozsQtE
+63	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@mm_mattermost_b:localhost	$yHUzJmGkEAYoMEmrjCGIimVkrSR-XxoUdwq8U-4YxmQ
+64	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@mm_mattermost_a:localhost	$0vL62P-h7UrmHhU4ioF6wSA73ffo6vVKlFK1G7Ebvak
+65	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@mm_user1:localhost	$TOzcyxIV2S5U6CP15QCldRMJRaDz1Yaik15PorvZYGc
+70	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@mm_mattermost_a:localhost	$Zqk5MoXrcrjH3GJoIQf220q69Vayh-9QHXfRjpic78o
+71	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@mm_user1:localhost	$n6TBNMF739-W93vnPpWYiJ_zTj-UGsx8mCtkFUsmkrY
+66	!kmbTYjjsDRDHGgVqUP:localhost	m.room.member	@mm_mattermost_b:localhost	$ir2lo1K2-OlnQHUaJd6Y3umSj10sEcvqIaj4-YxtREQ
+73	!dKcbdDATuwwphjRPQP:localhost	m.room.member	@mm_mattermost_a:localhost	$Tlp9YjzhiKmAmZzyivu0mpIuMlMkzWxFfWlwtj5zHZc
 \.
 
 
@@ -4390,7 +4885,7 @@ COPY public.state_groups_state (state_group, room_id, type, state_key, event_id)
 --
 
 COPY public.stats_incremental_position (lock, stream_id) FROM stdin;
-X	39
+X	58
 \.
 
 
@@ -4399,24 +4894,6 @@ X	39
 --
 
 COPY public.stream_ordering_to_exterm (stream_ordering, room_id, event_id) FROM stdin;
-2	!kmbTYjjsDRDHGgVqUP:localhost	$mBmRyyvP_Jc-LDi7_hiGD9QTu5XGVXqNMxZM4yDMQPU
-3	!kmbTYjjsDRDHGgVqUP:localhost	$_oKaaOfL7rFtPsAsxDmHrCY9sAzFjslRwkJ_QHxHDTw
-4	!kmbTYjjsDRDHGgVqUP:localhost	$BYyVCPyJh9PVJBsxDwm9NakGY19DlCJJ1GlCcYpTv8w
-5	!kmbTYjjsDRDHGgVqUP:localhost	$X8tdoEsXAgBC6gobCepAn3rwO8CJoQU6i9NN9Rzhukg
-6	!kmbTYjjsDRDHGgVqUP:localhost	$G_m59AjH2Y1FX4D11JDsmEETfHGAWoknTIdv-_XYW2o
-7	!kmbTYjjsDRDHGgVqUP:localhost	$O5iO4EII22igkDq5cMKHFB-SGIYD0KqJQXZohS2Dzc0
-8	!dKcbdDATuwwphjRPQP:localhost	$Rczn5GeJ1aYMBU_oXSIF8ppVk8WEruaYIBA3FE7Yq88
-9	!dKcbdDATuwwphjRPQP:localhost	$PeAJ6BypXjJegHiUjcYe-I6Cf4NuCPICi_yUb-fyauA
-10	!dKcbdDATuwwphjRPQP:localhost	$P98vptI_jrNYKKnTTDYouThgohgHqJkD5Rcj0gDgxII
-11	!dKcbdDATuwwphjRPQP:localhost	$b__a7rX3L5YpX7nAZte73DAbjtXZK48JH8VKSnGOKKw
-12	!dKcbdDATuwwphjRPQP:localhost	$hEtlt0NU16h0ix9xBX0MDJR0g54ATEZ4S96udYzYBqs
-13	!dKcbdDATuwwphjRPQP:localhost	$TVnvv0nGbLydCBtMmTTz-htMsoI4hmxCr3s9AHyFGHQ
-14	!kmbTYjjsDRDHGgVqUP:localhost	$N33GyONpuSa3zRNJk1CtLYdhqJbhXBwSpAlUUm-zmB8
-15	!dKcbdDATuwwphjRPQP:localhost	$wd-zBsOV9K_8HbhPARZ91kf5cfZwLKRi7yBBGGNUAb0
-16	!kmbTYjjsDRDHGgVqUP:localhost	$llCtN-sfVC1IOdDQXgskgx4jl97hQHfKnEH-IP-lyvk
-17	!dKcbdDATuwwphjRPQP:localhost	$4ZLf-3JRJMLLADbzome2n_5rZNEeHEFIo3w1xN4KKu0
-18	!kmbTYjjsDRDHGgVqUP:localhost	$hD2Z-BHkSscOTiftcJe1n-peOIsihQlQbtyjR2IkTmA
-19	!dKcbdDATuwwphjRPQP:localhost	$Svf91tyGyUuzelYH8bbzM6QXuI9Xcab-XMXjCrIgM5A
 21	!dKcbdDATuwwphjRPQP:localhost	$mGK5pQEzegKFhAPXc0TX7drNl2qyJL8ajxnJRmA3kN8
 20	!kmbTYjjsDRDHGgVqUP:localhost	$666ybhBdzZc96KCxYMslNrmlLRi8w6uUusi8J4BUVNM
 22	!dKcbdDATuwwphjRPQP:localhost	$wEzXoaJoNtWHISsmLEY6T-CdgUw21BFOyAw1HcKBBh0
@@ -4437,6 +4914,25 @@ COPY public.stream_ordering_to_exterm (stream_ordering, room_id, event_id) FROM 
 37	!dKcbdDATuwwphjRPQP:localhost	$G1fvwCN2g1XjFzNmxLnkU_pe19oYNSqJMKqzj8kfXCk
 38	!kmbTYjjsDRDHGgVqUP:localhost	$Jt6sBZkF1u2z9OovN4zzqiZfS0rQPS2vVpynSjt9ypI
 39	!dKcbdDATuwwphjRPQP:localhost	$xRdCRWLb62a-YRgcfBkJSxc7lUVFkdZnQfSIvcKWw88
+40	!kmbTYjjsDRDHGgVqUP:localhost	$kHkn3X5sgQZbnc7m1GNs3FoN729sUsLsqASYxvh3Jb8
+41	!dKcbdDATuwwphjRPQP:localhost	$cl-cBWQqCEUtQdjEqlQcE0PD7MCeX1R25oC5CKqb7oE
+42	!dKcbdDATuwwphjRPQP:localhost	$8a8OTFPqvfsx2aHJeu9IBu-xR3Gn7rdv9l_HZtPKkFg
+43	!kmbTYjjsDRDHGgVqUP:localhost	$BWMrEpKFpKKbBz5Ox9zTP3TvT5zyh6w3zhpl-epXhkk
+44	!kmbTYjjsDRDHGgVqUP:localhost	$r3Ho1IsdJmJB13pD9yX-Jkg_a5s28kBCqoNZ5EPWwqM
+45	!kmbTYjjsDRDHGgVqUP:localhost	$fQ28BQv7GUBcg_Ok7MCh8uTcQLoT2Tkr2BegUMhst1M
+46	!kmbTYjjsDRDHGgVqUP:localhost	$S7qfuHyVNKlnX8WQb78EyVSR_7_dnmagLA8asozsQtE
+47	!dKcbdDATuwwphjRPQP:localhost	$TOzcyxIV2S5U6CP15QCldRMJRaDz1Yaik15PorvZYGc
+48	!kmbTYjjsDRDHGgVqUP:localhost	$Sa-w9Co29Yd94wHfPbpfCOuSSlMlorQ7ssiGXYp8oh8
+49	!dKcbdDATuwwphjRPQP:localhost	$n6TBNMF739-W93vnPpWYiJ_zTj-UGsx8mCtkFUsmkrY
+50	!kmbTYjjsDRDHGgVqUP:localhost	$5auMphtCZ9zvRqrhyXpY0s-cZZl2AbvkyGNRbm2h2zc
+51	!kmbTYjjsDRDHGgVqUP:localhost	$Yb59onmhkHIpIJ_VnrP0V02pkFQEF1GwuJqZCNRTQeQ
+52	!kmbTYjjsDRDHGgVqUP:localhost	$j0CTOXXA4AtSOD0pk6kL2BNsa6j5w517GGfkTqmm9ZE
+53	!kmbTYjjsDRDHGgVqUP:localhost	$YgrzVCWDDxVv-dvf3HhpLD0QlN4nD5-CXg0T-gEX6iI
+54	!kmbTYjjsDRDHGgVqUP:localhost	$IaI_j1zJZ04lmJmCzJfvnr48U2umqKYG1xogY-r9UNY
+55	!dKcbdDATuwwphjRPQP:localhost	$TbIhAYsmySe2O7IaMBarYDokr6-UmyH4IYI3SpbhI-Q
+56	!dKcbdDATuwwphjRPQP:localhost	$YBt0yFQdKC_886W6aXe4LIv5A5BcBP7pXYeF8XLKhH0
+57	!dKcbdDATuwwphjRPQP:localhost	$-wkWlUVunP818RkFXsoACrEQ85-ybLTc-vWqiil50Vo
+58	!kmbTYjjsDRDHGgVqUP:localhost	$kQPpv66TuseXeTXJr41QlqLnJBWNpBA_zgzIaJMjpLc
 \.
 
 
@@ -4445,8 +4941,10 @@ COPY public.stream_ordering_to_exterm (stream_ordering, room_id, event_id) FROM 
 --
 
 COPY public.stream_positions (stream_name, instance_name, stream_id) FROM stdin;
-events	master	39
-presence_stream	master	7
+presence_stream	master	121
+receipts	master	10
+account_data	master	29
+events	master	58
 \.
 
 
@@ -4479,10 +4977,7 @@ COPY public.threepid_validation_token (token, session_id, next_link, expires) FR
 --
 
 COPY public.ui_auth_sessions (session_id, creation_time, serverdict, clientdict, uri, method, description) FROM stdin;
-xeJRRYeggRZPDjZRxsYsQwor	1598686326894	{"registered_user_id": "@admin:localhost"}	{"username": "admin", "password_hash": "$2b$12$y3lT6nJGWMTXBWF2kFRaRuUqALWaFe.dhbEEBKROoFnkoKBuDnLhK"}	/_matrix/client/r0/register	/_matrix/client/r0/register	register a new account
-pljISqDsSRaWKiCZKERPVqQR	1598686327218	{"registered_user_id": "@matrix_a:localhost"}	{"username": "matrix_a", "password_hash": "$2b$12$V8cOJ670WikSre/C66CGI.a1ANkbEvkgYEUW.M23dlUnekRcPr08O"}	/_matrix/client/r0/register	/_matrix/client/r0/register	register a new account
-SMvQriZwHcUMqIIOdUeQtXzc	1598686327463	{"registered_user_id": "@matrix_b:localhost"}	{"username": "matrix_b", "password_hash": "$2b$12$gnHJ1cdN/bfA2A2V61rPauepmeV2dLXr/pC70rCZy9qZoM9u2GKaq"}	/_matrix/client/r0/register	/_matrix/client/r0/register	register a new account
-EGVIALjvHFLqBpLFKyGCObFZ	1598686327708	{"registered_user_id": "@ignored_user:localhost"}	{"username": "ignored_user", "password_hash": "$2b$12$cDOaADzxfGcFFspSrfJNcueOwevhD2Ex0hu6oAJcpz3S/owrOeSsW"}	/_matrix/client/r0/register	/_matrix/client/r0/register	register a new account
+JHJJMlluHnBoXCtuCYNyfxWR	1672918201751	{"request_user_id":"@user1:localhost"}	{"master_key":{"user_id":"@user1:localhost","usage":["master"],"keys":{"ed25519:58pTnmZrmfrb2oYvQzQ3gqD+pVVgFJzSKS5rGmhc64I":"58pTnmZrmfrb2oYvQzQ3gqD+pVVgFJzSKS5rGmhc64I"},"signatures":{"@user1:localhost":{"ed25519:ZLJUJWPSRR":"yBESboDwQNBEOXMduanqiGoLXTF4gKvF7N4LP5ovnEoMFi8kAbAQjbpnVX0YLH2MvpuzesgQ+bxC7p7VkQ6fBQ"}}},"self_signing_key":{"user_id":"@user1:localhost","usage":["self_signing"],"keys":{"ed25519:pdBCJJeCaBQUwJbb5/uPHNNL9DLS6KDonsWdP5TfCW0":"pdBCJJeCaBQUwJbb5/uPHNNL9DLS6KDonsWdP5TfCW0"},"signatures":{"@user1:localhost":{"ed25519:58pTnmZrmfrb2oYvQzQ3gqD+pVVgFJzSKS5rGmhc64I":"O1vPD1mJiCrfD4q0awkAK2iLx4aOmzEayu9GwW2zLZmZ44nzOsQQ4krEwKKtuXAHl1uaHgLPIknBSMgWsdkGBQ"}}},"user_signing_key":{"user_id":"@user1:localhost","usage":["user_signing"],"keys":{"ed25519:8VwxF1XcfucbvnEe3tmKLZBRBD5vxbOIg2RNVH0Ndyg":"8VwxF1XcfucbvnEe3tmKLZBRBD5vxbOIg2RNVH0Ndyg"},"signatures":{"@user1:localhost":{"ed25519:58pTnmZrmfrb2oYvQzQ3gqD+pVVgFJzSKS5rGmhc64I":"MnzzIPIWi1oUBte11VVm2XtrdKv32Zg3NXY+YMa9SZrMg6O7k9Kew1GvvfmN49wndN4Aq1V6JvCuHZSFDZjSAg"}}}}	/_matrix/client/unstable/keys/device_signing/upload	POST	add a device signing key to your account
 \.
 
 
@@ -4491,10 +4986,7 @@ EGVIALjvHFLqBpLFKyGCObFZ	1598686327708	{"registered_user_id": "@ignored_user:loc
 --
 
 COPY public.ui_auth_sessions_credentials (session_id, stage_type, result) FROM stdin;
-xeJRRYeggRZPDjZRxsYsQwor	m.login.dummy	true
-pljISqDsSRaWKiCZKERPVqQR	m.login.dummy	true
-SMvQriZwHcUMqIIOdUeQtXzc	m.login.dummy	true
-EGVIALjvHFLqBpLFKyGCObFZ	m.login.dummy	true
+JHJJMlluHnBoXCtuCYNyfxWR	m.login.password	"@user1:localhost"
 \.
 
 
@@ -4503,6 +4995,7 @@ EGVIALjvHFLqBpLFKyGCObFZ	m.login.dummy	true
 --
 
 COPY public.ui_auth_sessions_ips (session_id, ip, user_agent) FROM stdin;
+JHJJMlluHnBoXCtuCYNyfxWR	172.16.238.1	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Element/1.11.17 Chrome/108.0.5359.62 Electron/22.0.0 Safari/537.36
 \.
 
 
@@ -4511,6 +5004,13 @@ COPY public.ui_auth_sessions_ips (session_id, ip, user_agent) FROM stdin;
 --
 
 COPY public.user_daily_visits (user_id, device_id, "timestamp", user_agent) FROM stdin;
+@admin:localhost	WCSUBIGVWG	1672790400000	
+@matrix_a:localhost	TKAVEOGKHH	1672790400000	
+@matrix_b:localhost	DJFHSWMXLW	1672790400000	
+@admin:localhost	WCSUBIGVWG	1672876800000	PostmanRuntime/7.30.0
+@user1:localhost	ZLJUJWPSRR	1672876800000	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Element/1.11.17 Chrome/108.0.5359.62 Electron/22.0.0 Safari/537.36
+@user1:localhost	NXIGVVVFXK	1672876800000	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Element/1.11.17 Chrome/108.0.5359.62 Electron/22.0.0 Safari/537.36
+@matrix_b:localhost	DJFHSWMXLW	1672876800000	Playwright/1.29.1 (x64; macOS 12.6) node/18.2
 \.
 
 
@@ -4523,6 +5023,7 @@ COPY public.user_directory (user_id, room_id, display_name, avatar_url) FROM std
 @matrix_a:localhost	\N	matrix_a	\N
 @matrix_b:localhost	\N	matrix_b	\N
 @ignored_user:localhost	\N	ignored_user	\N
+@user1:localhost	\N	User 1	\N
 \.
 
 
@@ -4535,6 +5036,7 @@ COPY public.user_directory_search (user_id, vector) FROM stdin;
 @matrix_a:localhost	'localhost':2 'matrix':1A,3B
 @matrix_b:localhost	'b':2A,5B 'localhost':3 'matrix':1A,4B
 @ignored_user:localhost	'ignor':1A,4B 'localhost':3 'user':2A,5B
+@user1:localhost	'1':4B 'localhost':2 'user':3B 'user1':1A
 \.
 
 
@@ -4543,7 +5045,7 @@ COPY public.user_directory_search (user_id, vector) FROM stdin;
 --
 
 COPY public.user_directory_stream_pos (lock, stream_id) FROM stdin;
-X	39
+X	58
 \.
 
 
@@ -4560,6 +5062,7 @@ COPY public.user_external_ids (auth_provider, external_id, user_id) FROM stdin;
 --
 
 COPY public.user_filters (user_id, filter_id, filter_json) FROM stdin;
+user1	0	\\x7b22726f6f6d223a7b227374617465223a7b226c617a795f6c6f61645f6d656d62657273223a747275657d7d7d
 \.
 
 
@@ -4568,9 +5071,11 @@ COPY public.user_filters (user_id, filter_id, filter_json) FROM stdin;
 --
 
 COPY public.user_ips (user_id, access_token, device_id, ip, user_agent, last_seen) FROM stdin;
-@admin:localhost	MDAxN2xvY2F0aW9uIGxvY2FsaG9zdAowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMjNjaWQgdXNlcl9pZCA9IEBhZG1pbjpsb2NhbGhvc3QKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSBXVU9yUTVRMFRnUkNjME1ACjAwMmZzaWduYXR1cmUgdYKA-yuTQ5JV5O0HWRak-48xavOYgA1MMc6A1V_Uw5kK	WCSUBIGVWG	172.16.238.1		1672856705983
+@user1:localhost	syt_dXNlcjE_dGiJSUmorpRoxHUDXRjR_0LCV3x	NXIGVVVFXK	172.16.238.1	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Element/1.11.17 Chrome/108.0.5359.62 Electron/22.0.0 Safari/537.36	1672923608226
 @matrix_a:localhost	MDAxN2xvY2F0aW9uIGxvY2FsaG9zdAowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMjZjaWQgdXNlcl9pZCA9IEBtYXRyaXhfYTpsb2NhbGhvc3QKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSAwb3Y6eTZVdHojUk4jbFprCjAwMmZzaWduYXR1cmUgNNZKnOVRzj5svh9pEM0UUEqtXYnHjnj9XyNLJ1_uKoAK	TKAVEOGKHH	172.16.238.1		1672856706252
-@matrix_b:localhost	MDAxN2xvY2F0aW9uIGxvY2FsaG9zdAowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMjZjaWQgdXNlcl9pZCA9IEBtYXRyaXhfYjpsb2NhbGhvc3QKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSBBYl9hbWthI0daSzgtfjdICjAwMmZzaWduYXR1cmUgOReBLkPURCMNtzORS9fpogQqVa3IWN9ZEu5gXW91QTMK	DJFHSWMXLW	172.16.238.1		1672856706787
+@user1:localhost	syt_dXNlcjE_vFGpLeZRPNVxPbNorgcL_2sVSJz	ZLJUJWPSRR	172.16.238.1	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Element/1.11.17 Chrome/108.0.5359.62 Electron/22.0.0 Safari/537.36	1672918199790
+@admin:localhost	MDAxN2xvY2F0aW9uIGxvY2FsaG9zdAowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMjNjaWQgdXNlcl9pZCA9IEBhZG1pbjpsb2NhbGhvc3QKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSBXVU9yUTVRMFRnUkNjME1ACjAwMmZzaWduYXR1cmUgdYKA-yuTQ5JV5O0HWRak-48xavOYgA1MMc6A1V_Uw5kK	WCSUBIGVWG	172.16.238.1	PostmanRuntime/7.30.0	1672920816777
+@matrix_b:localhost	MDAxN2xvY2F0aW9uIGxvY2FsaG9zdAowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMjZjaWQgdXNlcl9pZCA9IEBtYXRyaXhfYjpsb2NhbGhvc3QKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSBBYl9hbWthI0daSzgtfjdICjAwMmZzaWduYXR1cmUgOReBLkPURCMNtzORS9fpogQqVa3IWN9ZEu5gXW91QTMK	DJFHSWMXLW	172.16.238.1	Playwright/1.29.1 (x64; macOS 12.6) node/18.2	1672923397269
 \.
 
 
@@ -4579,6 +5084,7 @@ COPY public.user_ips (user_id, access_token, device_id, ip, user_agent, last_see
 --
 
 COPY public.user_signature_stream (stream_id, from_user_id, user_ids) FROM stdin;
+11	@user1:localhost	["@user1:localhost"]
 \.
 
 
@@ -4594,6 +5100,8 @@ COPY public.user_stats_current (user_id, joined_rooms, completed_delta_stream_id
 @matterbot:localhost	2	21
 @mm_mattermost_b:localhost	2	27
 @mm_mattermost_a:localhost	2	29
+@user1:localhost	2	41
+@mm_user1:localhost	2	49
 \.
 
 
@@ -4626,6 +5134,7 @@ COPY public.user_threepid_id_server (user_id, medium, address, id_server) FROM s
 --
 
 COPY public.user_threepids (user_id, medium, address, validated_at, added_at) FROM stdin;
+@user1:localhost	email	user1@localhost	1672918078891	1672918078891
 \.
 
 
@@ -4634,13 +5143,15 @@ COPY public.user_threepids (user_id, medium, address, validated_at, added_at) FR
 --
 
 COPY public.users (name, password_hash, creation_ts, admin, upgrade_ts, is_guest, appservice_id, consent_version, consent_server_notice_sent, user_type, deactivated, shadow_banned) FROM stdin;
-@admin:localhost	$2b$12$y3lT6nJGWMTXBWF2kFRaRuUqALWaFe.dhbEEBKROoFnkoKBuDnLhK	1598686326	0	\N	0	\N	\N	\N	\N	0	\N
 @matrix_a:localhost	$2b$12$V8cOJ670WikSre/C66CGI.a1ANkbEvkgYEUW.M23dlUnekRcPr08O	1598686327	0	\N	0	\N	\N	\N	\N	0	\N
 @matrix_b:localhost	$2b$12$gnHJ1cdN/bfA2A2V61rPauepmeV2dLXr/pC70rCZy9qZoM9u2GKaq	1598686327	0	\N	0	\N	\N	\N	\N	0	\N
 @ignored_user:localhost	$2b$12$cDOaADzxfGcFFspSrfJNcueOwevhD2Ex0hu6oAJcpz3S/owrOeSsW	1598686327	0	\N	0	\N	\N	\N	\N	0	\N
 @matterbot:localhost		1672856700	0	\N	0	xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	\N	\N	\N	0	f
 @mm_mattermost_b:localhost		1672856704	0	\N	0	xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	\N	\N	\N	0	f
 @mm_mattermost_a:localhost		1672856704	0	\N	0	xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	\N	\N	\N	0	f
+@admin:localhost	$2b$12$y3lT6nJGWMTXBWF2kFRaRuUqALWaFe.dhbEEBKROoFnkoKBuDnLhK	1598686326	1	\N	0	\N	\N	\N	\N	0	\N
+@user1:localhost	$2b$12$q2lA2GmC4Vhw1nqoByydR.kt9aAhfwCZHXoOrFlA4sGt2od.9/IIi	1672918078	1	\N	0	\N	\N	\N	\N	0	f
+@mm_user1:localhost		1672922249	0	\N	0	xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	\N	\N	\N	0	f
 \.
 
 
@@ -4657,6 +5168,8 @@ COPY public.users_in_public_rooms (user_id, room_id) FROM stdin;
 @matrix_b:localhost	!dKcbdDATuwwphjRPQP:localhost
 @ignored_user:localhost	!kmbTYjjsDRDHGgVqUP:localhost
 @ignored_user:localhost	!dKcbdDATuwwphjRPQP:localhost
+@user1:localhost	!kmbTYjjsDRDHGgVqUP:localhost
+@user1:localhost	!dKcbdDATuwwphjRPQP:localhost
 \.
 
 
@@ -4696,14 +5209,14 @@ COPY public.worker_locks (lock_name, lock_key, instance_name, token, last_renewe
 -- Name: account_data_sequence; Type: SEQUENCE SET; Schema: public; Owner: synapse
 --
 
-SELECT pg_catalog.setval('public.account_data_sequence', 1, true);
+SELECT pg_catalog.setval('public.account_data_sequence', 29, true);
 
 
 --
 -- Name: cache_invalidation_stream_seq; Type: SEQUENCE SET; Schema: public; Owner: synapse
 --
 
-SELECT pg_catalog.setval('public.cache_invalidation_stream_seq', 41, true);
+SELECT pg_catalog.setval('public.cache_invalidation_stream_seq', 108, true);
 
 
 --
@@ -4717,7 +5230,7 @@ SELECT pg_catalog.setval('public.device_inbox_sequence', 1, true);
 -- Name: event_auth_chain_id; Type: SEQUENCE SET; Schema: public; Owner: synapse
 --
 
-SELECT pg_catalog.setval('public.event_auth_chain_id', 24, true);
+SELECT pg_catalog.setval('public.event_auth_chain_id', 28, true);
 
 
 --
@@ -4731,7 +5244,7 @@ SELECT pg_catalog.setval('public.events_backfill_stream_seq', 1, true);
 -- Name: events_stream_seq; Type: SEQUENCE SET; Schema: public; Owner: synapse
 --
 
-SELECT pg_catalog.setval('public.events_stream_seq', 39, true);
+SELECT pg_catalog.setval('public.events_stream_seq', 58, true);
 
 
 --
@@ -4745,21 +5258,21 @@ SELECT pg_catalog.setval('public.instance_map_instance_id_seq', 1, false);
 -- Name: presence_stream_sequence; Type: SEQUENCE SET; Schema: public; Owner: synapse
 --
 
-SELECT pg_catalog.setval('public.presence_stream_sequence', 7, true);
+SELECT pg_catalog.setval('public.presence_stream_sequence', 121, true);
 
 
 --
 -- Name: receipts_sequence; Type: SEQUENCE SET; Schema: public; Owner: synapse
 --
 
-SELECT pg_catalog.setval('public.receipts_sequence', 1, true);
+SELECT pg_catalog.setval('public.receipts_sequence', 10, true);
 
 
 --
 -- Name: state_group_id_seq; Type: SEQUENCE SET; Schema: public; Owner: synapse
 --
 
-SELECT pg_catalog.setval('public.state_group_id_seq', 48, true);
+SELECT pg_catalog.setval('public.state_group_id_seq', 73, true);
 
 
 --

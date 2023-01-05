@@ -81,6 +81,11 @@ $Z5cKxfveccJ3nnCMqKA-jwkRw9hbVrCMv6R68J8oPVg	7qj53zemsbnzdgad76g9ifw6hc	7qj53zem
 $G1fvwCN2g1XjFzNmxLnkU_pe19oYNSqJMKqzj8kfXCk	7qj53zemsbnzdgad76g9ifw6hc	7qj53zemsbnzdgad76g9ifw6hc
 $Jt6sBZkF1u2z9OovN4zzqiZfS0rQPS2vVpynSjt9ypI	op4mz46j4pywu8at8f9k5hk8wy	op4mz46j4pywu8at8f9k5hk8wy
 $xRdCRWLb62a-YRgcfBkJSxc7lUVFkdZnQfSIvcKWw88	96xmitp7qjnu389ecctrja49kr	96xmitp7qjnu389ecctrja49kr
+$5auMphtCZ9zvRqrhyXpY0s-cZZl2AbvkyGNRbm2h2zc	7op8pa1a43rbtmi5bscf41oefw	7op8pa1a43rbtmi5bscf41oefw
+$j0CTOXXA4AtSOD0pk6kL2BNsa6j5w517GGfkTqmm9ZE	os6sm85ooiy68go7b4uqibhgdy	os6sm85ooiy68go7b4uqibhgdy
+$TbIhAYsmySe2O7IaMBarYDokr6-UmyH4IYI3SpbhI-Q	grcxd88ak7rsxpia59fadzb7aa	grcxd88ak7rsxpia59fadzb7aa
+$YBt0yFQdKC_886W6aXe4LIv5A5BcBP7pXYeF8XLKhH0	grcxd88ak7rsxpia59fadzb7aa	grcxd88ak7rsxpia59fadzb7aa
+$-wkWlUVunP818RkFXsoACrEQ85-ybLTc-vWqiil50Vo	hp4449juf7d8xc591q3rnejfcc	hp4449juf7d8xc591q3rnejfcc
 \.
 
 
@@ -101,6 +106,8 @@ COPY public.users (matrix_userid, mattermost_userid, access_token, is_matrix_use
 @matrix_a:localhost	1fgsimi9s3rmjxzxsaeqrr66ko	6nk5qzigrfg8py1bfjx49zkrgh	t	matrix_matrix_a	Matrix UserA
 @mm_mattermost_b:localhost	3zats68fztgu9mgu944a4t35so		f	mattermost_b	mattermost_b [mm]
 @mm_mattermost_a:localhost	5bw66y36bff3umq1q57mfy4y5c		f	mattermost_a	MattermostUser A [mm]
+@user1:localhost	she685ewdtyq7m7jgmys7zoqmr	pgrgjax6rpggub1hxajrw5ne4h	t	matrix_user1	User 1
+@mm_user1:localhost	98kwr77m4jgwmbdgygknaowcch		f	user1	user1 [mm]
 \.
 
 
