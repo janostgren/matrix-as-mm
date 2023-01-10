@@ -1,6 +1,7 @@
 import AppService from './matrix/AppService';
 import { createConnection, ConnectionOptions, getConnection } from 'typeorm';
 import { Client, ClientWebsocket } from './mattermost/Client';
+import * as logLevel from 'loglevel';
 import {
     Config,
     Mapping,
@@ -69,10 +70,10 @@ export default class Main extends EventEmitter {
     ) {
         super();
         setConfig(config);
-
-        //const logConfigFile = `${__dirname}/../config/log4js.json`;
-        //log4js.configure(logConfigFile);
+        const logConfigFile = `${__dirname}/../config/log4js.json`;
+        log4js.configure(logConfigFile);
         this.myLogger = getLogger('Main', config.logging);
+        logLevel.setLevel(config.logging);
 
         this.registration = loadYaml(registrationPath);
 
@@ -481,7 +482,7 @@ export default class Main extends EventEmitter {
                 await Promise.all(channels.map(c => c.onMattermostMessage(m)));
             }
         } else {
-            this.myLogger.debug(`Unkown event type: ${m.event}`);
+            this.myLogger.debug(`Unknown event type: ${m.event}`);
         }
     }
 

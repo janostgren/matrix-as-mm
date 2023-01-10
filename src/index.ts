@@ -10,10 +10,6 @@ import { Registration } from './Interfaces';
 import Main from './Main';
 import log, { getLogger } from './Logging';
 console.time('Bridge loaded');
-const logConfigFile = `${__dirname}/../config/log4js.json`;
-log4js.configure(logConfigFile);
-
-const myLogger: log4js.Logger = getLogger('index.js');
 
 const argv = yargs
     .scriptName('matrix-appservice-mattermost')
@@ -29,6 +25,7 @@ const argv = yargs
 
 if (argv.r === undefined) {
     const main = new Main(loadYaml(argv.c), argv.f);
+    const myLogger: log4js.Logger = getLogger('index.js');
     log.timeEnd.info('Bridge loaded');
     void main.init();
 
@@ -77,6 +74,6 @@ if (argv.r === undefined) {
 
     writeFileSync(argv.f, yaml.dump(registration));
 
-    myLogger.info(`Output registration to: ${argv.f}`);
+    console.info(`Output registration to: ${argv.f}`);
     process.exit(0);
 }
