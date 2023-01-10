@@ -1,4 +1,4 @@
-FROM alpine:3.15
+FROM alpine/curl:3.14
 
 EXPOSE 22
 
