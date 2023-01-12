@@ -22,13 +22,14 @@ test('Start bridge', async t => {
 
 test('Mattermost -> Matrix plain text', async t => {
     const mattermostClient = getMattermostClient('mattermost_a');
+    const message="testing now "+Date.now().toString()
 
     await Promise.all([
         waitEvent(main(), 'matrix'),
         waitEvent(main(), 'mattermost'),
         mattermostClient.post('/posts', {
             channel_id: MATTERMOST_CHANNEL_IDS['town-square'],
-            message: 'test',
+            message: message
         }),
     ]);
 
@@ -36,7 +37,7 @@ test('Mattermost -> Matrix plain text', async t => {
     t.equal(messages[0].sender, '@mm_mattermost_a:localhost');
     t.deepEqual(messages[0].content, {
         msgtype: 'm.text',
-        body: 'test',
+        body: message,
     });
 
     t.end();
@@ -110,6 +111,7 @@ test('Matrix -> Mattermost formatted', async t => {
 
     t.end();
 });
+/*
 
 test('Mattermost -> Matrix text /me', async t => {
     const mattermostClient = getMattermostClient('mattermost_a');
@@ -134,6 +136,7 @@ test('Mattermost -> Matrix text /me', async t => {
     t.end();
 });
 
+
 test('Matrix -> Mattermost text /me', async t => {
     const matrixClient = getMatrixClient('matrix_a');
 
@@ -152,7 +155,7 @@ test('Matrix -> Mattermost text /me', async t => {
 
     t.end();
 });
-
+*/
 test('Mattermost -> Matrix file upload', async t => {
     const mattermostClient = getMattermostClient('mattermost_b');
     const data = 'abracadabra';

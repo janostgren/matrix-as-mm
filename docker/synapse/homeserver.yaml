@@ -29,6 +29,10 @@ log_config: '/etc/synapse/my.domain.name.log.config'
 media_store_path: '/media_store'
 report_stats: false
 enable_registration: true
+enable_registration_without_verification: true
+macaroon_secret_key: "xN1OxX=0=WDNAP+dq7v8w&zI7#nH7+ho#jg*8RVv9ZoW8#GDmT"
+form_secret: "z+3Z-B*6oi9@@Uc55K@+KOy26@eDdLK-^b-lij&f-o6C2lbKzE"
+registration_shared_secret: "8^5:4zQl6J@LjJz~5JiW^=kI0_IO8c8B_8d&YEPp.NAbMa*&zw"
 
 rc_registration:
   per_second: 100
@@ -69,3 +73,4 @@ trusted_key_servers:
 
 signing_key_path: '/etc/synapse/my.domain.name.signing.key'
 registration_shared_secret: '8^5:4zQl6J@LjJz~5JiW^=kI0_IO8c8B_8d&YEPp.NAbMa*&zw'
+
