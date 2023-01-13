@@ -15,10 +15,10 @@ appservice:
   # The hostname the homeserver uses to talk to the appservice. This hostname
   # should be accessible from the homeserver. If they are on the same server,
   # set it to localhost.
-  hostname: appservice
+  hostname: host.docker.internal
 
   # The host the appservice server should bind to. Defaults to hostname
-  bind: localhost
+  bind: 0.0.0.0
 
   schema: http
 

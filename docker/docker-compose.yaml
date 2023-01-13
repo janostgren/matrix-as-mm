@@ -29,6 +29,9 @@ services:
       - '80:8065'
     networks:
       - my_net
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+
     depends_on:
       - postgres
 
@@ -42,6 +45,8 @@ services:
 
     networks:
       - my_net
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
 
     depends_on:
       - postgres

@@ -1,4 +1,4 @@
-FROM alpine/curl:3.14
+FROM alpine:3.15
 
 EXPOSE 22
 
@@ -6,6 +6,11 @@ RUN apk add --no-cache openssh-server && \
     ssh-keygen -A && \
     adduser -D proxy && \
     passwd -d proxy
+    
+RUN apk add --no-cache \
+  openssh-client \
+  ca-certificates \
+  bash
 
 COPY ./sshd_config /etc/ssh/sshd_config
 CMD ["/usr/sbin/sshd", "-De"]
