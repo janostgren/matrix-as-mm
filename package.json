@@ -1,8 +1,8 @@
 {
-  "name": "matrix-appservice-mattermost",
+  "name": "matrix-as-mm",
   "version": "1.0.0",
   "description": "",
-  "repository": "https://github.com/dalcde/matrix-appservice-mattermost",
+  "repository": "https://github.com/janostgren/matrix-as-mm",
   "main": "build/Main.js",
   "bin": "build/index.js",
   "engines": {
