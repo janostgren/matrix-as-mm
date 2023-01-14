@@ -51,13 +51,6 @@ services:
     depends_on:
       - postgres
 
-  appservice:
-    build: appservice
-    ports:
-      - '8022:22'
-    networks:
-      - my_net
-
   element:
     image: vectorim/element-web:latest
     restart: unless-stopped
