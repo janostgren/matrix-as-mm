@@ -1,3 +1,4 @@
+#! /usr/bin/env node
 import * as log4js from 'log4js';
 import * as yargs from 'yargs';
 import { writeFileSync } from 'fs';

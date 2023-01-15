@@ -1,0 +1,11 @@
+src
+*.zip
+*.tgz
+log
+docker
+node_modules
+tsconfig.*
+.git*
+.vscode
+.[a-z]*
+
