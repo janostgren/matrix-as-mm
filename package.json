@@ -9,7 +9,7 @@
     "node": ">=10.16"
   },
   "scripts": {
-    "package":"zip -r docker.zip docker && npm pack",
+    "package": "zip -r docker.zip docker && npm pack",
     "-preinstall": "git config core.hooksPath .githooks",
     "build": "tsc && typescript-json-schema --noExtraProps --required src/Config.ts Config -o build/config-schema.json",
     "test": "tape build{,/**}/*.test.js",
