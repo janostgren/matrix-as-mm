@@ -8,10 +8,11 @@ grouped).
 
 This is currently in beta, but is sufficiently usable that it is used in a
 production system (with understanding users) by the author.
+
 ## Versions
+
 This is complete new version of the bridge spawned from https://github.com/dalcde/matrix-appservice-mattermost.
 New Github repository is https://github.com/janostgren/matrix-as-mm.
-
 
 ## Requirements
 
@@ -36,11 +37,12 @@ New Github repository is https://github.com/janostgren/matrix-as-mm.
 ### Installation
 
 1. Clone this repository to a directory.
-   ``` shell
+   ```shell
    git clone https://github.com/janostgren/matrix-as-mm
    ```
 2. Install dependencies and build
-   ``` shell 
+
+   ```shell
    npm ci
    npm run build
    ```
@@ -53,12 +55,11 @@ New Github repository is https://github.com/janostgren/matrix-as-mm.
    ```
 
    - You should regenerate the registration file every time you update the
-   bridge or change your configuration file.
-   - You should copy the registration file to synapse start up directory after a change. In our docker environment for development to *./docker/synapse* .
-
+     bridge or change your configuration file.
+   - You should copy the registration file to synapse start up directory after a change. In our docker environment for development to _./docker/synapse_ .
 
 5. Add the path to the registration file to the `app_service_config_files`
-   variable in the synapse configuration file *homeserver.yaml*. Then restart synapse.
+   variable in the synapse configuration file _homeserver.yaml_. Then restart synapse.
 
 6. Start the bridge by
    ```
@@ -67,22 +68,24 @@ New Github repository is https://github.com/janostgren/matrix-as-mm.
 
 ### Packaging and distribution
 
-After building you can build a NPM package. We don't publish to a npm registry today. We create a .tgz file  as a work-around. The file can be distributed to the run-time environment.
+After building you can build a NPM package. We don't publish to a npm registry today. We create a .tgz file as a work-around. The file can be distributed to the run-time environment.
 
-``` shell
+```shell
 npm run package
-``` 
+```
+
 The npm command will generate
+
 - An installable npm package in matrix-as-mm-<version>.tgz which can be installed with npm install. Install with -g flag for a global installation.
-- A zip file called *docker.zip* containing the docker containers. 
+- A zip file called _docker.zip_ containing the docker containers.
 
 Start the bridge in a target environment with copied package file (.tgz).
 
-``` shell
+```shell
 matrix-as-mm -c config.yaml -f registration.yaml
 ```
-The yaml files should be copied from the global npm directory *(/usr/local/lib/node_modules/matrix-as-mm)* before you try to startup .
 
+The yaml files should be copied from the global npm directory _(/usr/local/lib/node_modules/matrix-as-mm)_ before you try to startup .
 
 ### sd_notify
 
@@ -182,12 +185,12 @@ This renames the mattermost puppet with username `:oldName` to `:newName`. The
 
 ### Town Square channel in Mattermost
 
-- By design, every user in a team must join the Town Square room. 
+- By design, every user in a team must join the Town Square room.
 - If a matrix user joins a matrix room bridged to a mattermost channel, the puppet user would
-automatically join Town Square of the corresponding team.
+  automatically join Town Square of the corresponding team.
 
 - When the user leaves all channels of a team (i.e. all matrix rooms bridged to
-such channels), the puppet user would leave the team, hence leave Town Square.
+  such channels), the puppet user would leave the team, hence leave Town Square.
 
 ### Post deletion
 

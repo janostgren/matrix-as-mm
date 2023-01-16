@@ -56,16 +56,14 @@ $ docker-compose -f docker/docker-compose.yaml down -v
 
 # Docker containers
 
-The rest of this section documents the docker containers used development environment. 
+The rest of this section documents the docker containers used development environment.
 
 ## postgres
 
 This is a standard postgres image pulled from DockerHub. It has two database, one for mattermost and one for synapse, with the mattermost one being the "default" one.
 There is also an additional database used by the bridge for storing some meta-data. Does not need to be postgres in a target environment. Sqlite is supported https://www.sqlite.org/index.html.
 
-
 The tables are pre-populated with hardcoded values extracted from live instances. This makes it faster to start up and more convenient to write tests with known ids. The dumps are piped through awk to remove redundant lines. The awk script is placed at `docker/postgres/minify-dump.awk`.
-
 
 ## synapse
 
@@ -73,7 +71,8 @@ This installs synapse from the alpine repositories. It uses `nc` to wait until `
 Synapse is the only container which access the bridge through http. It should use the special host called host.docker.internal. See https://docs.docker.com/desktop/networking/
 
 Example of the registration file in docker.
-``` yaml
+
+```yaml
 id: xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt
 hs_token: 4Z9Nbbv5SJHskTzytN2-hSMubMUCKgybSRrgtmrlkpB-QaUwm-PAdtgnAwlptwPT
 as_token: c6QW7JvyncGYcoqwPrsE7fU12cnvFkbkwmCQw_3tYQKCf0bnmzN3nZJHrTYmTUY2
@@ -95,9 +94,11 @@ This performs a standard Mattermost 7.5.1 install on alpine.
 This again uses `nc` to wait until `postgres` is up. While Mattermost has built in support for retrying connecting to the database, it waits for 10 seconds between retries, which is generally too much.
 
 ## Element
+
 The container for Element web UI. This container talks to Synapse Matrix Server on the home server port.
-Configuration file *element-config.json* changes.
-``` json
+Configuration file _element-config.json_ changes.
+
+```json
  "default_server_config": {
     "m.homeserver": {
       "base_url": "http://synapse:8008",
@@ -108,4 +109,3 @@ Configuration file *element-config.json* changes.
     }
   }
 ```
-
