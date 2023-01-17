@@ -2,7 +2,7 @@ FROM alpine:3.15
 
 EXPOSE 8065
 
-ENV MM_VERSION=5.26.0
+ENV MM_VERSION=7.5.1
 
 RUN apk add --no-cache curl libc6-compat \
 	&& rm -rf /tmp/* \

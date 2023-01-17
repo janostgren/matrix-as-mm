@@ -3,10 +3,15 @@ services:
   postgres:
     image: postgres:15.1-alpine
     volumes:
-      - ./postgres/mattermost.sql:/docker-entrypoint-initdb.d/00-mattermost.sql
+      #- ./postgres/mattermost.sql:/docker-entrypoint-initdb.d/00-mattermost.sql
+      - ./backup/mattermost.sql:/docker-entrypoint-initdb.d/00-mattermost.sql
       - ./postgres/setup-synapse.sql:/docker-entrypoint-initdb.d/01-setup-synapse.sql
-      - ./postgres/synapse.sql:/docker-entrypoint-initdb.d/02-synapse.sql
+      # - ./postgres/synapse.sql:/docker-entrypoint-initdb.d/02-synapse.sql
+      - ./backup/synapse.sql:/docker-entrypoint-initdb.d/02-synapse.sql
       - ./postgres/setup-bridge.sql:/docker-entrypoint-initdb.d/03-setup-bridge.sql
+      - ./backup/matrix-mattermost.sql:/docker-entrypoint-initdb.d/04-matrix-mattermost.sql
+      - ./docker-scripts/dump_db.sh:/dump_db.sh
+
     environment:
       #We create synapse database in 01-setup.sql
       - POSTGRES_USER=mattermost
@@ -21,8 +26,14 @@ services:
     build: mattermost
     ports:
       - '8065:8065'
+      - '80:8065'
     networks:
       - my_net
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+
+    depends_on:
+      - postgres
 
   synapse:
     build: synapse
@@ -34,13 +45,11 @@ services:
 
     networks:
       - my_net
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
 
-  appservice:
-    build: appservice
-    ports:
-      - '8022:22'
-    networks:
-      - my_net
+    depends_on:
+      - postgres
 
   element:
     image: vectorim/element-web:latest
@@ -51,7 +60,13 @@ services:
       - '8080:80'
     networks:
       - my_net
+    depends_on:
+      - synapse
 
 networks:
   my_net:
     driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.238.0/24

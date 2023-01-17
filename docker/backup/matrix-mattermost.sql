@@ -1,3 +1,4 @@
+\c matrix-mattermost
 --
 -- PostgreSQL database dump
 --
@@ -86,10 +87,10 @@ COPY public.typeorm_metadata (type, database, schema, "table", name, value) FROM
 --
 
 COPY public.users (matrix_userid, mattermost_userid, access_token, is_matrix_user, mattermost_username, matrix_displayname) FROM stdin;
-@matrix_b:localhost	3ujgtjorx7gtxxfowjujph9npo	xtqo1n11s7njzqawwu1nqn4mec	t	matrix_matrix_b	matrix_b
-@matrix_a:localhost	atexouz5nfbujxpoofxop8trnh	66ua3uxxcjy3jy64ajk5rkaeto	t	matrix_matrix_a	Matrix UserA
-@mm_mattermost_b:localhost	3zats68fztgu9mgu944a4t35so		f	mattermost_b	mattermost_b [mm]
+@matrix_b:localhost	bqyuo5n95igtiqj15enjran1br	oo9xnia8opr9xrf5gzyw6wchhe	t	matrix_matrix_b	matrix_b
+@matrix_a:localhost	qio139w9xbyc9pknsx1wo388xc	zfmxqhxpapbmifxwgdhk7agq8r	t	matrix_matrix_a	Matrix UserA
 @mm_mattermost_a:localhost	5bw66y36bff3umq1q57mfy4y5c		f	mattermost_a	MattermostUser A [mm]
+@mm_mattermost_b:localhost	3zats68fztgu9mgu944a4t35so		f	mattermost_b	mattermost_b [mm]
 \.
 
 

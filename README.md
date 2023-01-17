@@ -9,14 +9,19 @@ grouped).
 This is currently in beta, but is sufficiently usable that it is used in a
 production system (with understanding users) by the author.
 
+## Versions
+
+This is complete new version of the bridge spawned from https://github.com/dalcde/matrix-appservice-mattermost.
+New Github repository is https://github.com/janostgren/matrix-as-mm.
+
 ## Requirements
 
-- Mattermost **5.26.0** and above.
+- Mattermost **7.5.1** and above. It is tested with 7.5.1, but other new versions will probably work.
 
   - This uses the `POST /users/{user_id}/email/verify/member` endpoint to
     verify the emails of puppet users.
 
-- Node **10.16.0**
+- Node **10.16.0** and above.
 
   - The dependency `matrix-js-sdk` uses `EventEmitter.once`, which was
     introduced in 10.16.0.
@@ -24,7 +29,7 @@ production system (with understanding users) by the author.
 - Matrix
   - A matrix server supporting the Application Services API is needed. No
     attempt has been made to track the minimum supported API version, but it
-    should work with any reasonably modern server. It is assumed to be synapse
+    should work with any reasonably modern server. It is assumed to be **Synapse Matrix Server**
     in this document.
 
 ## Set up
@@ -32,14 +37,16 @@ production system (with understanding users) by the author.
 ### Installation
 
 1. Clone this repository to a directory.
-   ```
-   git clone https://github.com/dalcde/matrix-appservice-mattermost
+   ```shell
+   git clone https://github.com/janostgren/matrix-as-mm
    ```
 2. Install dependencies and build
-   ```
+
+   ```shell
    npm ci
    npm run build
    ```
+
 3. Copy `config.sample.yaml` to `config.yaml` and edit accordingly
 4. Generate registration file
 
@@ -47,11 +54,13 @@ production system (with understanding users) by the author.
    node build/index.js -c config.yaml -f registration.yaml -r
    ```
 
-   You should regenerate the registration file every time you update the
-   bridge or change your configuration file.
+   - You should regenerate the registration file every time you update the
+     bridge or change your configuration file.
+   - You should copy the registration file to synapse start up directory after a change. In our docker environment for development to _./docker/synapse_ .
 
 5. Add the path to the registration file to the `app_service_config_files`
-   variable in the synapse configuration file. Then restart synapse.
+   variable in the synapse configuration file _homeserver.yaml_. Then restart synapse.
+
 6. Start the bridge by
    ```
    node build/index.js -c config.yaml -f registration.yaml
@@ -59,16 +68,29 @@ production system (with understanding users) by the author.
 
 ### Packaging and distribution
 
-After building, only the contents of `build/` are needed for the bridge to run.
-Of course, the dependencies are also needed. ONe can use system dependencies,
-or one can vendor the dependencies by moving the `node_modules` folder into
-`build/` after `npm ci --proudction`. All runtime dependencies are portable and
-do not require platform-specific building.
+After building you can build a NPM package. We don't publish to a npm registry today. We create a .tgz file as a work-around. The file can be distributed to the run-time environment.
+
+```shell
+npm run package
+```
+
+The npm command will generate
+
+- An installable npm package in matrix-as-mm-<version>.tgz which can be installed with npm install. Install with -g flag for a global installation.
+- A zip file called _docker.zip_ containing the docker containers.
+
+Start the bridge in a target environment with copied package file (.tgz).
+
+```shell
+matrix-as-mm -c config.yaml -f registration.yaml
+```
+
+The yaml files should be copied from the global npm directory _(/usr/local/lib/node_modules/matrix-as-mm)_ before you try to startup .
 
 ### sd_notify
 
 The bridge attempts to notify `systemd` when it has initialized.
-This ensures `systemctl start matrix-appservice-mattermost` will not return
+This ensures `systemctl start matrix-as-mm` will not return
 until the bridge is initialized. To configure this, add the following lines to
 the `Service` section of the systemd service file:
 
@@ -133,8 +155,8 @@ bridge has joined all channels to be bridged.
 
 ## Admin endpoint
 
-There is an admin endpoint that lets users interact with the bridge. This is
-accessed in the same way as the appservice.
+There is an admin endpoint that lets users interact with the bridge on the http port for the registered matrix application service.
+It is specified in the config.yaml and registration.yaml.
 
 ### Status endpoint
 
@@ -159,16 +181,16 @@ POST /bridge/rename/:oldName/:newName?access_token=<hs_token>
 This renames the mattermost puppet with username `:oldName` to `:newName`. The
 `hs_token` is the token specified in the registration file.
 
-## Remarks
+## Important remarks
 
-### Town Square
+### Town Square channel in Mattermost
 
-By design, every user in a team must join the Town Square room. If a matrix
-user joins a matrix room bridged to a mattermost channel, the puppet user would
-automatically join Town Square of the corresponding team.
+- By design, every user in a team must join the Town Square room.
+- If a matrix user joins a matrix room bridged to a mattermost channel, the puppet user would
+  automatically join Town Square of the corresponding team.
 
-When the user leaves all channels of a team (i.e. all matrix rooms bridged to
-such channels), the puppet user would leave the team, hence leave Town Square.
+- When the user leaves all channels of a team (i.e. all matrix rooms bridged to
+  such channels), the puppet user would leave the team, hence leave Town Square.
 
 ### Post deletion
 

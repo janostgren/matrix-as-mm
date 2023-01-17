@@ -1,4 +1,5 @@
-console.time('Bridge loaded');
+#! /usr/bin/env node
+import * as log4js from 'log4js';
 import * as yargs from 'yargs';
 import { writeFileSync } from 'fs';
 import * as yaml from 'js-yaml';
@@ -8,7 +9,8 @@ import { validate } from './Config';
 import { Registration } from './Interfaces';
 
 import Main from './Main';
-import log from './Logging';
+import log, { getLogger } from './Logging';
+console.time('Bridge loaded');
 
 const argv = yargs
     .scriptName('matrix-appservice-mattermost')
@@ -24,28 +26,29 @@ const argv = yargs
 
 if (argv.r === undefined) {
     const main = new Main(loadYaml(argv.c), argv.f);
+    const myLogger: log4js.Logger = getLogger('index.js');
     log.timeEnd.info('Bridge loaded');
     void main.init();
 
     process.on('SIGTERM', () => {
-        log.info('Received SIGTERM. Shutting down bridge.');
+        myLogger.info('Received SIGTERM. Shutting down bridge.');
         void main.killBridge(0);
     });
     process.on('SIGINT', () => {
-        log.info('Received SIGINT. Shutting down bridge.');
+        myLogger.info('Received SIGINT. Shutting down bridge.');
         void main.killBridge(0);
     });
     process.on('SIGHUP', () => {
-        log.info('Received SIGHUP. Reloading config.');
+        myLogger.info('Received SIGHUP. Reloading config.');
 
         const newConfig = loadYaml(argv.c);
         try {
             validate(newConfig);
         } catch (e) {
-            log.error(`Invalid config: ${e}`);
+            myLogger.error(`Invalid config: ${e}`);
         }
         main.updateConfig(newConfig).catch(e => {
-            log.error(e);
+            myLogger.error(e);
         });
     });
 } else {
@@ -72,6 +75,6 @@ if (argv.r === undefined) {
 
     writeFileSync(argv.f, yaml.dump(registration));
 
-    log.info(`Output registration to: ${argv.f}`);
+    console.info(`Output registration to: ${argv.f}`);
     process.exit(0);
 }

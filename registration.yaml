@@ -5,7 +5,7 @@ namespaces:
   users:
     - exclusive: true
       regex: '@mm_.*:localhost'
-url: http://appservice:9995
+url: http://host.docker.internal:9995
 sender_localpart: matterbot
 rate_limited: true
 protocols:

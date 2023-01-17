@@ -1,3 +1,4 @@
+import * as log4js from 'log4js';
 import Channel from '../Channel';
 import { User } from '../entities/User';
 import { Post } from '../entities/Post';
@@ -10,8 +11,10 @@ import { handlePostError, none } from '../utils/Functions';
 import { matrixToMattermost } from '../utils/Formatting';
 import { MatrixEvent } from '../Interfaces';
 import * as FormData from 'form-data';
-import log from '../Logging';
+import { getLogger } from '../Logging';
 import fetch from 'node-fetch';
+
+const myLogger: log4js.Logger = getLogger('MatrixHandler');
 
 interface Metadata {
     edits?: string;
@@ -130,7 +133,7 @@ const MatrixMessageHandlers = {
                 return;
             }
         }
-        log.info(`Cannot find post for ${content}`);
+        myLogger.info(`Cannot find post for ${content}`);
     },
     'm.file': uploadFile,
     'm.image': uploadFile,
@@ -152,7 +155,7 @@ const MatrixMembershipHandler = {
     leave: async function (this: Channel, userid: string) {
         const user = await this.main.matrixUserStore.get(userid);
         if (user === undefined) {
-            log.info(`Removing untracked matrix user ${userid}`);
+            myLogger.info(`Removing untracked matrix user ${userid}`);
             return;
         }
         await leaveMattermostChannel(
@@ -195,7 +198,7 @@ const MatrixHandlers = {
         const content = event.content;
         const user = await this.main.matrixUserStore.get(event.sender);
         if (user === undefined) {
-            log.info(
+            myLogger.info(
                 `Received message from untracked matrix user ${event.sender}`,
             );
             return;
@@ -240,7 +243,9 @@ const MatrixHandlers = {
     ): Promise<void> {
         const handler = MatrixMembershipHandler[event.content.membership];
         if (handler === undefined) {
-            log.warn(`Invalid membership state: ${event.content.membership}`);
+            myLogger.warn(
+                `Invalid membership state: ${event.content.membership}`,
+            );
             return;
         }
         await handler.bind(this)(event.state_key);

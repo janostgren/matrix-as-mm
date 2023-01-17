@@ -54,24 +54,58 @@ $ INTEGRATION_MANUAL_DOCKER=true npm run integration
 $ docker-compose -f docker/docker-compose.yaml down -v
 ```
 
-The rest of this section documents the containers used. They all run on the `alpine:3.12` base.
+# Docker containers
 
-### appservice
+The rest of this section documents the docker containers used development environment.
 
-This container allows synapse to access the appservice running on the host, since Docker generally doesn't like containers accessing the host. This container only runs an openssh server, which the bridge for reverse port forwarding.
-
-### postgres
+## postgres
 
 This is a standard postgres image pulled from DockerHub. It has two database, one for mattermost and one for synapse, with the mattermost one being the "default" one.
+There is also an additional database used by the bridge for storing some meta-data. Does not need to be postgres in a target environment. Sqlite is supported https://www.sqlite.org/index.html.
 
-The tables are prepopulated with hardcoded values extracted from live instances. This makes it faster to start up and more convenient to write tests with known ids. The dumps are piped through awk to remove redundant lines. The awk script is placed at `docker/postgres/minify-dump.awk`.
+The tables are pre-populated with hardcoded values extracted from live instances. This makes it faster to start up and more convenient to write tests with known ids. The dumps are piped through awk to remove redundant lines. The awk script is placed at `docker/postgres/minify-dump.awk`.
 
-### synapse
+## synapse
 
 This installs synapse from the alpine repositories. It uses `nc` to wait until `postgres` is up before starting synapse, since synapse crashes if the database is inaccessible.
+Synapse is the only container which access the bridge through http. It should use the special host called host.docker.internal. See https://docs.docker.com/desktop/networking/
 
-### mattermost
+Example of the registration file in docker.
 
-This performs a standard Mattermost 5.26.0 install on alpine, removing the `client` and `prepackaged_plugins` directories for very significant image size reductions. The server complains a bit about the missing `client` directory but still manages to run the tests. The config file is changed minimally from the default one.
+```yaml
+id: xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt
+hs_token: 4Z9Nbbv5SJHskTzytN2-hSMubMUCKgybSRrgtmrlkpB-QaUwm-PAdtgnAwlptwPT
+as_token: c6QW7JvyncGYcoqwPrsE7fU12cnvFkbkwmCQw_3tYQKCf0bnmzN3nZJHrTYmTUY2
+namespaces:
+  users:
+    - exclusive: true
+      regex: '@mm_.*:localhost'
+url: http://host.docker.internal:9995
+sender_localpart: matterbot
+rate_limited: true
+protocols:
+  - mattermost
+```
+
+## mattermost
+
+This performs a standard Mattermost 7.5.1 install on alpine.
 
 This again uses `nc` to wait until `postgres` is up. While Mattermost has built in support for retrying connecting to the database, it waits for 10 seconds between retries, which is generally too much.
+
+## Element
+
+The container for Element web UI. This container talks to Synapse Matrix Server on the home server port.
+Configuration file _element-config.json_ changes.
+
+```json
+ "default_server_config": {
+    "m.homeserver": {
+      "base_url": "http://synapse:8008",
+      "server_name": "synapse"
+    },
+    "m.identity_server": {
+      "base_url": "http://localhost:8008"
+    }
+  }
+```

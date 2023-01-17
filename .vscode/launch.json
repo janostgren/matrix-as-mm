@@ -19,7 +19,7 @@
       "request": "launch",
       "name": "Launch test",
       "skipFiles": ["<node_internals>/**"],
-      "program": "build/tests/01-sync.js",
+      "program": "build/tests/02-message.js",
       "env": {
         "INTEGRATION_MANUAL_DOCKER ": "true"
       },

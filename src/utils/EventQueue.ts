@@ -1,6 +1,7 @@
+import * as log4js from 'log4js';
 import { EventEmitter } from 'events';
 import Main from '../Main';
-import log from '../Logging';
+import { getLogger } from '../Logging';
 
 /**
  * The purpose of the event queue is to take a stream of events, and run an
@@ -11,6 +12,7 @@ export default class EventQueue<T> {
     private consuming?: Promise<void>;
     private queue: T[];
     private onEventBound: (data: T) => void;
+    private myLogger: log4js.Logger;
 
     constructor(
         private opts: {
@@ -29,6 +31,7 @@ export default class EventQueue<T> {
         opts.parent.on('initialize', () => {
             this.consuming = this.consume();
         });
+        this.myLogger = getLogger('EventQueue');
     }
 
     public async kill(): Promise<void> {
@@ -55,10 +58,13 @@ export default class EventQueue<T> {
         await new Promise(r => setTimeout(r, 0));
         let data;
         while ((data = this.queue.shift())) {
-            log.time.debug(`Process ${this.opts.description} message queue`);
+            //log.time.debug(`Process ${this.opts.description} message queue`);
+            this.myLogger.debug(
+                `Process ${this.opts.description} message queue`,
+            );
             try {
                 if (await this.opts.filter(data)) {
-                    log.debug(
+                    this.myLogger.debug(
                         `Skipping ${
                             this.opts.description
                         } message: ${JSON.stringify(data)}`,
@@ -67,11 +73,14 @@ export default class EventQueue<T> {
                     await this.opts.callback(data);
                 }
             } catch (e) {
-                log.error(
+                this.myLogger.error(
                     `Error when processing ${this.opts.description} message \n${e.stack}`,
                 );
             }
-            log.timeEnd.debug(`Process ${this.opts.description} message queue`);
+            //log.time.debug(`Process ${this.opts.description} message queue`);
+            this.myLogger.debug(
+                `Process ${this.opts.description} message queue`,
+            );
             this.opts.parent.emit(this.opts.description);
         }
         this.consuming = undefined;

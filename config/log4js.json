@@ -2,7 +2,7 @@
   "appenders": {
     "access": {
       "type": "dateFile",
-      "filename": "bridge-access.log",
+      "filename": "log/bridge-access.log",
       "pattern": "-yyyy-MM-dd",
       "category": "http"
     },

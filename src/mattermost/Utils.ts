@@ -1,9 +1,12 @@
+import * as log4js from 'log4js';
 import { Client, ClientError } from './Client';
 import { User } from '../entities/User';
 import Channel from '../Channel';
-import log from '../Logging';
+import { getLogger } from '../Logging';
 
 const MAX_MEMBERS: number = 10000;
+
+const myLogger: log4js.Logger = getLogger('Mattermost.Utils');
 
 export async function getMattermostUsers(
     client: Client,
@@ -154,12 +157,12 @@ export async function leaveMattermostChannel(
     } catch (e) {
         switch (e.m?.id) {
             case 'api.channel.remove.default.app_error':
-                log.debug(
+                myLogger.debug(
                     `Cannot remove user ${userid} from default town-square channel`,
                 );
                 break;
             case 'store.sql_channel.get_member.missing.app_error':
-                log.debug(
+                myLogger.debug(
                     `User ${userid} already removed from channel ${channel}`,
                 );
                 break;

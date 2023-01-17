@@ -1,3 +1,4 @@
+import * as log4js from 'log4js';
 import { User } from '../entities/User';
 import { config } from '../Config';
 import Mutex from '../utils/Mutex';
@@ -5,16 +6,18 @@ import Main from '../Main';
 import { findFirstAvailable } from '../utils/Functions';
 import { MattermostUserInfo, MatrixClient } from '../Interfaces';
 import { getMatrixClient } from '../matrix/Utils';
-import log from '../Logging';
+import { getLogger } from '../Logging';
 
 export default class MattermostUserStore {
     private users: Map<string, User>;
     private clients: Map<string, MatrixClient>;
     private mutex: Mutex;
+    private myLogger: log4js.Logger;
     constructor(private readonly main: Main) {
         this.mutex = new Mutex();
         this.users = new Map();
         this.clients = new Map();
+        this.myLogger = getLogger('AppService');
     }
 
     public get(userid: string): User | undefined {
@@ -72,7 +75,7 @@ export default class MattermostUserStore {
                     }
                 },
             );
-            log.debug(
+            this.myLogger.debug(
                 `Creating matrix puppet @${localpart}:${server_name} for ${userid}`,
             );
             user = await User.createMattermostUser(

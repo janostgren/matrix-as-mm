@@ -1,7 +1,8 @@
+import * as log4js from 'log4js';
 import Channel from '../Channel';
 import { Post } from '../entities/Post';
 import Main from '../Main';
-import log from '../Logging';
+import { getLogger } from '../Logging';
 import {
     MattermostMessage,
     MattermostPost,
@@ -12,6 +13,8 @@ import {
 import { joinMatrixRoom } from '../matrix/Utils';
 import { handlePostError, none } from '../utils/Functions';
 import { mattermostToMatrix, constructMatrixReply } from '../utils/Formatting';
+
+const myLogger: log4js.Logger = getLogger('MattermostHandler');
 
 interface Metadata {
     replyTo?: {
@@ -86,6 +89,9 @@ const MattermostPostHandlers = {
                 } else if (mimetype.startsWith('video/')) {
                     msgtype = 'm.video';
                 }
+                myLogger.debug(
+                    `Sending to Matrix ${msgtype} ${mimetype} ${url}`,
+                );
                 await sendMatrixMessage(
                     client,
                     this.matrixRoom,
@@ -106,7 +112,7 @@ const MattermostPostHandlers = {
         client
             .sendTyping(this.matrixRoom, false)
             .catch(e =>
-                log.warn(
+                myLogger.warn(
                     `Error sending typing notification to ${this.matrixRoom}\n${e.stack}`,
                 ),
             );
@@ -127,7 +133,7 @@ const MattermostPostHandlers = {
         client
             .sendTyping(this.matrixRoom, false)
             .catch(e =>
-                log.warn(
+                myLogger.warn(
                     `Error sending typing notification to ${this.matrixRoom}\n${e.stack}`,
                 ),
             );
@@ -182,7 +188,7 @@ export const MattermostHandlers = {
         if (handler !== undefined) {
             await handler.bind(this)(client, post, metadata);
         } else {
-            log.debug(`Unknown post type: ${post.type}`);
+            myLogger.debug(`Unknown post type: ${post.type}`);
         }
     },
     post_edited: async function (
@@ -276,7 +282,7 @@ export const MattermostHandlers = {
             client
                 .sendTyping(this.matrixRoom, true, 6000)
                 .catch(e =>
-                    log.warn(
+                    myLogger.warn(
                         `Error sending typing notification to ${this.matrixRoom}\n${e.stack}`,
                     ),
                 );

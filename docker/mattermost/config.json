@@ -186,7 +186,7 @@
     "FileLocation": ""
   },
   "PasswordSettings": {
-    "MinimumLength": 10,
+    "MinimumLength": 8,
     "Lowercase": true,
     "Number": true,
     "Uppercase": true,

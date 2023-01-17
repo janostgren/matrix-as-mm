@@ -15,10 +15,10 @@ appservice:
   # The hostname the homeserver uses to talk to the appservice. This hostname
   # should be accessible from the homeserver. If they are on the same server,
   # set it to localhost.
-  hostname: appservice
+  hostname: host.docker.internal
 
   # The host the appservice server should bind to. Defaults to hostname
-  bind: localhost
+  bind: 0.0.0.0
 
   schema: http
 
@@ -27,7 +27,7 @@ mattermost_url: http://localhost:8065/
 
 # If true, the bridge exits if it fails to bridge any channel. Otherwise, it
 # will go on bridging the channels it can bridge. The default is false.
-forbid_bridge_failure: true
+forbid_bridge_failure: false
 
 # Mappings between mattermost channels and matrix rooms.
 mappings:

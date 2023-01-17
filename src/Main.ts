@@ -1,6 +1,7 @@
 import AppService from './matrix/AppService';
 import { createConnection, ConnectionOptions, getConnection } from 'typeorm';
 import { Client, ClientWebsocket } from './mattermost/Client';
+import * as logLevel from 'loglevel';
 import {
     Config,
     Mapping,
@@ -30,8 +31,7 @@ import MattermostUserStore from './mattermost/MattermostUserStore';
 import { joinMattermostChannel } from './mattermost/Utils';
 import Channel from './Channel';
 import EventQueue from './utils/EventQueue';
-import log from './Logging';
-import { getLogger } from './Logging';
+import log, { getLogger } from './Logging';
 import { EventEmitter } from 'events';
 import { MattermostMainHandlers } from './mattermost/MattermostHandler';
 
@@ -42,7 +42,7 @@ export default class Main extends EventEmitter {
 
     private matrixQueue: EventQueue<MatrixEvent>;
     private mattermostQueue: EventQueue<MattermostMessage>;
-    private myLogger;
+    private myLogger: log4js.Logger;
 
     public botClient: MatrixClient;
 
@@ -69,12 +69,11 @@ export default class Main extends EventEmitter {
         private readonly exitOnFail: boolean = true,
     ) {
         super();
+        setConfig(config);
         const logConfigFile = `${__dirname}/../config/log4js.json`;
         log4js.configure(logConfigFile);
-        this.myLogger = getLogger('Main');
-
-        setConfig(config);
-        //log.level=config.logging;
+        this.myLogger = getLogger('Main', config.logging);
+        logLevel.setLevel(config.logging);
 
         this.registration = loadYaml(registrationPath);
 
@@ -133,7 +132,7 @@ export default class Main extends EventEmitter {
 
         for (const map of config.mappings) {
             if (this.mappingsByMattermost.has(map.mattermost)) {
-                log.error(
+                this.myLogger.error(
                     `Mattermost channel ${map.mattermost} already bridged. Skipping bridge ${map.mattermost} <-> ${map.matrix}`,
                 );
                 if (config.forbid_bridge_failure) {
@@ -143,7 +142,7 @@ export default class Main extends EventEmitter {
                 continue;
             }
             if (this.mappingsByMatrix.has(map.matrix)) {
-                log.error(
+                this.myLogger.error(
                     `Matrix channel ${map.matrix} already bridged. Skipping bridge ${map.mattermost} <-> ${map.matrix}`,
                 );
                 if (config.forbid_bridge_failure) {
@@ -162,13 +161,15 @@ export default class Main extends EventEmitter {
         }
 
         this.ws.on('error', e => {
-            log.error(
+            this.myLogger.error(
                 `Error when initializing websocket connection\n${e.stack}`,
             );
         });
 
         this.ws.on('close', () => {
-            log.error('Mattermost websocket closed. Shutting down bridge');
+            this.myLogger.error(
+                'Mattermost websocket closed. Shutting down bridge',
+            );
             void this.killBridge(1);
         });
     }
@@ -191,9 +192,19 @@ export default class Main extends EventEmitter {
             });
         } catch (e) {
             if (e.errcode !== 'M_USER_IN_USE') {
+                this.myLogger.error(
+                    `Register application service as user: ${
+                        config().matrix_bot.username
+                    } failed`,
+                );
                 throw e;
             }
         }
+        this.myLogger.info(
+            `Register application service as user: ${
+                config().matrix_bot.username
+            } succeeded`,
+        );
 
         const botProfile = this.updateBotProfile().catch(e =>
             this.myLogger.warn(`Error when updating bot profile\n${e.stack}`),
@@ -471,12 +482,12 @@ export default class Main extends EventEmitter {
                 await Promise.all(channels.map(c => c.onMattermostMessage(m)));
             }
         } else {
-            this.myLogger.debug(`Unkown event type: ${m.event}`);
+            this.myLogger.debug(`Unknown event type: ${m.event}`);
         }
     }
 
     private async onMatrixEvent(event: MatrixEvent): Promise<void> {
-        log.debug(`Matrix event: ${JSON.stringify(event)}`);
+        this.myLogger.debug(`Matrix event: ${JSON.stringify(event)}`);
 
         const channel = this.channelsByMatrix.get(event.room_id);
         if (channel !== undefined) {
@@ -496,7 +507,7 @@ export default class Main extends EventEmitter {
             });
             await client.leave(event.room_id);
         } else {
-            log.debug(`Message for unknown room: ${event.room_id}`);
+            this.myLogger.debug(`Message for unknown room: ${event.room_id}`);
         }
     }
 

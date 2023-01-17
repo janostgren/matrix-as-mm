@@ -5,6 +5,8 @@ import { spawnSync, spawn as spawnAsync } from 'child_process';
 import { MATTERMOST_PORT, SYNAPSE_PORT } from './utils/Data';
 
 const DOCKER_PATH = join(__dirname, '../../docker/docker-compose.yaml');
+const manualDocker: boolean =
+    (process.env.INTEGRATION_MANUAL_DOCKER || 'false') == 'true' ? true : false;
 
 function query(port: number, resolve: () => void): void {
     get(`http://localhost:${port}/`, () => {
@@ -26,7 +28,7 @@ function spawn(args: string[]): void {
 }
 
 function cleanup() {
-    if (process.env.INTEGRATION_MANUAL_DOCKER !== 'true') {
+    if (manualDocker) {
         spawn(['docker-compose', '-f', DOCKER_PATH, 'kill']);
         spawn(['docker-compose', '-f', DOCKER_PATH, 'down', '-v']);
     }
@@ -43,7 +45,7 @@ process.on('SIGINT', () => {
 });
 
 test('Start docker', async t => {
-    if (process.env.INTEGRATION_MANUAL_DOCKER !== 'true') {
+    if (manualDocker) {
         spawn(['docker-compose', '-f', DOCKER_PATH, 'kill']);
         spawn(['docker-compose', '-f', DOCKER_PATH, 'down', '-v']);
         spawn(['docker-compose', '-f', DOCKER_PATH, 'build']);
