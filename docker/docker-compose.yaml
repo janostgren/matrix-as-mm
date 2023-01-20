@@ -36,7 +36,7 @@ services:
 
     depends_on:
       - postgres
-      
+
   mattermost:
     build: mattermost
     ports:
