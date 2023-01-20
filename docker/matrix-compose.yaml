@@ -36,6 +36,19 @@ services:
 
     depends_on:
       - postgres
+      
+  mattermost:
+    build: mattermost
+    ports:
+      - '8065:8065'
+      - '80:8065'
+    networks:
+      - my_net
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+
+    depends_on:
+      - postgres
 
   element:
     image: vectorim/element-web:latest

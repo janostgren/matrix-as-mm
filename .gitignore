@@ -2,7 +2,8 @@ tsconfig.tsbuildinfo
 node_modules
 Makefile
 build
-docker/synapse/registration.yaml
+docker/matrix/data/media_store
+docker/synapse
 
 log
 *.log

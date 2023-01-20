@@ -22,26 +22,26 @@ services:
     networks:
       - my_net
 
-  mattermost:
-    build: mattermost
-    ports:
-      - '8065:8065'
-      - '80:8065'
+  matrix:
+    build: matrix
+    restart: unless-stopped
     networks:
       - my_net
+    ports:
+      - '8008:8008'
+    volumes:
+      - ./matrix/data:/data
     extra_hosts:
       - 'host.docker.internal:host-gateway'
 
     depends_on:
       - postgres
-
-  synapse:
-    build: synapse
+      
+  mattermost:
+    build: mattermost
     ports:
-      - '8008:8008'
-    volumes:
-      - ./synapse/data:/data
-
+      - '8065:8065'
+      - '80:8065'
     networks:
       - my_net
     extra_hosts:
@@ -60,7 +60,7 @@ services:
     networks:
       - my_net
     depends_on:
-      - synapse
+      - matrix
 
 networks:
   my_net:
