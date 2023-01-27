@@ -49,7 +49,6 @@ allowed_local_3pids:
 #
 enable_3pid_lookup: true
 
-
 rc_registration:
   per_second: 100
   burst_count: 100

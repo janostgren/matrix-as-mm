@@ -10,7 +10,6 @@ export type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 export class Client {
     private joinTeamPromises: Map<string, Promise<any>>;
-   
 
     constructor(
         public domain: string,
@@ -19,7 +18,6 @@ export class Client {
     ) {
         this.domain = domain.replace(/\/*$/, '');
         this.joinTeamPromises = new Map();
-       
     }
 
     public async send_raw(
@@ -158,7 +156,7 @@ export class ClientWebsocket extends EventEmitter {
         });
         this.ws.on('message', m => {
             const ev = JSON.parse(m);
-            this.myLogger.trace('Message: %s',m.toString())
+            this.myLogger.trace('Message: %s', m.toString());
             if (ev.seq_reply !== undefined) {
                 const promise = this.promises[ev.seq_reply];
                 if (promise === null) {
