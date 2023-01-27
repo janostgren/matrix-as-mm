@@ -37,6 +37,16 @@ enable_registration_without_verification: true
 macaroon_secret_key: 'xN1OxX=0=WDNAP+dq7v8w&zI7#nH7+ho#jg*8RVv9ZoW8#GDmT'
 form_secret: 'z+3Z-B*6oi9@@Uc55K@+KOy26@eDdLK-^b-lij&f-o6C2lbKzE'
 registration_shared_secret: '8^5:4zQl6J@LjJz~5JiW^=kI0_IO8c8B_8d&YEPp.NAbMa*&zw'
+allowed_local_3pids:
+  - medium: email
+    pattern: '.*@localhost.com'
+  - medium: email
+    pattern: '.*@nomail.com'
+  - medium: msisdn
+    pattern: '\\+\d\d'
+# Enable 3PIDs lookup requests to identity servers from this server.
+#
+enable_3pid_lookup: true
 
 rc_registration:
   per_second: 100

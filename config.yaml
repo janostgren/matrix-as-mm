@@ -82,7 +82,7 @@ database:
   username: matrix-mattermost
   password: hunter2
 
-logging: debug # Valid values are trace, debug, info, warn, error and silent
+logging: trace # Valid values are trace, debug, info, warn, error and silent
 
 # Matrix users that should not show up on the other side of the bridge. The bot
 # user (matterbot) is automatically included.
