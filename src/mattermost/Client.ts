@@ -1,4 +1,4 @@
-import fetch,{Response} from 'node-fetch';
+import fetch, { Response } from 'node-fetch';
 import * as WebSocket from 'ws';
 import { EventEmitter } from 'events';
 
@@ -19,7 +19,7 @@ export class Client {
     ) {
         this.domain = domain.replace(/\/*$/, '');
         this.joinTeamPromises = new Map();
-        this.myLogger = getLogger('MM Client','trace');
+        this.myLogger = getLogger('MM Client', 'trace');
     }
 
     public async send_raw(
@@ -47,10 +47,12 @@ export class Client {
                 options['body'] = JSON.stringify(data);
             }
         }
-        this.myLogger.trace(`${method}  ${endpoint} user_id: ${this.userid}`)
-        let response:Response=await fetch(`${this.domain}/api/v4${endpoint}`, options);
-        return response
-
+        this.myLogger.trace(`${method}  ${endpoint} user_id: ${this.userid}`);
+        let response: Response = await fetch(
+            `${this.domain}/api/v4${endpoint}`,
+            options,
+        );
+        return response;
     }
 
     public async send(
