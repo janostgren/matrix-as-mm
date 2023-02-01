@@ -22,7 +22,7 @@ export class Client {
         this.myLogger = getLogger('MM Client', 'trace');
     }
 
-    public async send_raw(
+    private async send_raw(
         method: Method,
         endpoint: string,
         data?: unknown | FormData,
@@ -55,7 +55,7 @@ export class Client {
         return response;
     }
 
-    public async send(
+    private async send(
         method: Method,
         endpoint: string,
         data?: unknown,

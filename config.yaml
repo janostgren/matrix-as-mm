@@ -74,8 +74,8 @@ matrix_bot:
 #
 # Try with special matrix.bridge user with system admin role
 #
-mattermost_bot_userid: 'zj8jfnjo9pr7mduigxpma6oqha'
-mattermost_bot_access_token: 'tq1km5xd3iyo5egbmgtyp9rahr'
+mattermost_bot_userid: 'ufkhrnrw6t8yteibkwjzegfwar'
+mattermost_bot_access_token: '659ozqpuapnkucctprhpwmx3kh'
 
 # Database configuration. Currently, only postgres and sqlite are supported.
 # The configuration is the arguments supplied to TypeORM's createConnection:

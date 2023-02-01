@@ -116,6 +116,7 @@ COPY public.users (matrix_userid, mattermost_userid, access_token, is_matrix_use
 @mm_mattermost_b:localhost	3zats68fztgu9mgu944a4t35so		f	mattermost_b	mattermost_b [mm]
 @user1.matrix:localhost	hfby48bpd3r5je83kq15ocnyiy	hjqz5dcjrpd35enutykik45noc	t	matrix_user1.matrix	User 1 - Matrix
 @mm_user1.mm:localhost	z3pbizcrujd8jfyqq3z3zj1i5c		f	user1.mm	user1.mm [mm]
+@mm_admin:localhost	bmq7jiumpib3xdz3mx5iyo99ro		f	admin	Admin User [mm]
 \.
 
 

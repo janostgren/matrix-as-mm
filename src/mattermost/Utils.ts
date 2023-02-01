@@ -12,8 +12,7 @@ export async function getMattermostUsers(
     client: Client,
     channel: string,
 ): Promise<Set<string>> {
-    const query = await client.send(
-        'GET',
+    const query = await client.get(
         `/channels/${channel}/members?page=0&per_page=${MAX_MEMBERS}`,
     );
     return new Set(query.map(member => member.user_id));

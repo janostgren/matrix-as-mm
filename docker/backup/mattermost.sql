@@ -1925,6 +1925,44 @@ zdshskbtb7dj7xj3mczr4y7imr	1674210716426	bmq7jiumpib3xdz3mx5iyo99ro	/api/v4/chan
 1w9ya9j3cbf1urh9o3uxk3mjdh	1674210716421	bmq7jiumpib3xdz3mx5iyo99ro	/api/v4/channels/cxtmz3ubz3gfigd5m6prendmsw/members	name=town-square user_id=qio139w9xbyc9pknsx1wo388xc	172.16.238.1	fzcwbcg1tfr3fkar9qm49kqfer
 bs5ypbi3a7d5b81umkfddtcmnr	1674210716445	bmq7jiumpib3xdz3mx5iyo99ro	/api/v4/channels/73uy6kj1jb8wdqrf3ti6zies6r/members	name=off-topic user_id=bqyuo5n95igtiqj15enjran1br	172.16.238.1	fzcwbcg1tfr3fkar9qm49kqfer
 eeow5btbbtgof8upn53of58c6w	1674210716447	bmq7jiumpib3xdz3mx5iyo99ro	/api/v4/channels/cxtmz3ubz3gfigd5m6prendmsw/members	name=town-square user_id=hfby48bpd3r5je83kq15ocnyiy	172.16.238.1	fzcwbcg1tfr3fkar9qm49kqfer
+ecri1ukwc3bkixgh949s8a9nua	1675265413310		/api/v4/users/login	attempt - login_id=admin	172.16.238.1	
+mg4obn6xci8riqwqpymcshfrgo	1675265413460	bmq7jiumpib3xdz3mx5iyo99ro	/api/v4/users/login	authenticated	172.16.238.1	
+hjcxg3xzzfy7zgzhhu8cntjbqw	1675265413474	bmq7jiumpib3xdz3mx5iyo99ro	/api/v4/users/login	success session_user=bmq7jiumpib3xdz3mx5iyo99ro	172.16.238.1	o4o8s7p567b8bcs4idk7wwq6ya
+5d66fsm4otfk8ehcas39n573ih	1675265414770	bmq7jiumpib3xdz3mx5iyo99ro	/api/v4/system/notices/view	attempt	172.16.238.1	o4o8s7p567b8bcs4idk7wwq6ya
+zyjrumjxffre8nj1uqwghrqn5e	1675265462671	bmq7jiumpib3xdz3mx5iyo99ro	/api/v4/users/logout		172.16.238.1	o4o8s7p567b8bcs4idk7wwq6ya
+5chb7aepgt8cur4fqt56uai78e	1675265534008	ufkhrnrw6t8yteibkwjzegfwar	/api/v4/users/login	attempt - login_id=	172.16.238.1	
+tgpi54mrc7npfdmy3iyifjdpgr	1675265534122	ufkhrnrw6t8yteibkwjzegfwar	/api/v4/users/login	authenticated	172.16.238.1	
+k7dx47yhcffc9x345krywm9qbo	1675265534128	ufkhrnrw6t8yteibkwjzegfwar	/api/v4/users/login	success session_user=ufkhrnrw6t8yteibkwjzegfwar	172.16.238.1	hs9ui8pj67g4zp7ohfhhn9gj4o
+nirum5tmh389zck179secqrhpe	1675265553072	ufkhrnrw6t8yteibkwjzegfwar	/api/v4/users/logout		172.16.238.1	hs9ui8pj67g4zp7ohfhhn9gj4o
+5z6cabhf8fyzfc1jj6beq3pdcr	1675265564439		/api/v4/users/login	attempt - login_id=admin	172.16.238.1	
+d53zpdtbpiggjqdufp81ij9uje	1675265564535	bmq7jiumpib3xdz3mx5iyo99ro	/api/v4/users/login	authenticated	172.16.238.1	
+ksgrgewrnpfotyyexsn4w3z44a	1675265564544	bmq7jiumpib3xdz3mx5iyo99ro	/api/v4/users/login	success session_user=bmq7jiumpib3xdz3mx5iyo99ro	172.16.238.1	hajxw1nnbt88bf94eg9mrsabiy
+4g3ne5khdty6be5jx5mrijpryc	1675265565493	bmq7jiumpib3xdz3mx5iyo99ro	/api/v4/system/notices/view	attempt	172.16.238.1	hajxw1nnbt88bf94eg9mrsabiy
+azd8d4pci3y45frzsccksg39gh	1675265622979	bmq7jiumpib3xdz3mx5iyo99ro	/api/v4/users/ufkhrnrw6t8yteibkwjzegfwar/roles	user=ufkhrnrw6t8yteibkwjzegfwar roles=system_user system_admin	172.16.238.1	hajxw1nnbt88bf94eg9mrsabiy
+mp1rt3q3rfyhmkkeutbgxjcwka	1675265688966	bmq7jiumpib3xdz3mx5iyo99ro	/api/v4/system/notices/view	attempt	172.16.238.1	hajxw1nnbt88bf94eg9mrsabiy
+5xst9fwrdpfrmgr8kyeijhx5dw	1675265697473	bmq7jiumpib3xdz3mx5iyo99ro	/api/v4/users/logout		172.16.238.1	hajxw1nnbt88bf94eg9mrsabiy
+cwokktmyc3yh3c8uqhgo49yjcy	1675265697535		/api/v4/users/logout		172.16.238.1	
+e3y9fjeb3jn3udtgw6ix3neckr	1675265697665		/api/v4/users/logout		172.16.238.1	
+uh7xffhmrtgdijckrtq47mgxpr	1675265697732		/api/v4/users/logout		172.16.238.1	
+u1e3twm7mbnhxbp98bzn9onujy	1675265712758		/api/v4/users/login	attempt - login_id=matrix.bridge	172.16.238.1	
+cy8mzynbejrd5mr9eyryd1zoee	1675265712856	ufkhrnrw6t8yteibkwjzegfwar	/api/v4/users/login	authenticated	172.16.238.1	
+cmqww9f5upbepnu9zfkzikbxfw	1675265712865	ufkhrnrw6t8yteibkwjzegfwar	/api/v4/users/login	success session_user=ufkhrnrw6t8yteibkwjzegfwar	172.16.238.1	hbtsui17h7ysfgw3tie5t474ry
+t9dtniedb3bpxb3763ww5hzu8o	1675265792254	ufkhrnrw6t8yteibkwjzegfwar	/api/v4/users/ufkhrnrw6t8yteibkwjzegfwar/tokens		172.16.238.1	hbtsui17h7ysfgw3tie5t474ry
+jqcbwedmzins8d9ubuhfxrsz4o	1675265792268	ufkhrnrw6t8yteibkwjzegfwar	/api/v4/users/ufkhrnrw6t8yteibkwjzegfwar/tokens	success - token_id=11znsbmmytfjfrh9j9sknjfuyo	172.16.238.1	hbtsui17h7ysfgw3tie5t474ry
+ji17akejw3fcmqxwfczs1ywtny	1675266104841	ufkhrnrw6t8yteibkwjzegfwar	/api/v4/channels/cxtmz3ubz3gfigd5m6prendmsw/members	name=town-square user_id=ufkhrnrw6t8yteibkwjzegfwar	172.16.238.1	yf4adrfcwpr48kspq9qt5q9wta
+yda5w9yn5pgefe6y4rwtq5twbh	1675266104842	ufkhrnrw6t8yteibkwjzegfwar	/api/v4/channels/73uy6kj1jb8wdqrf3ti6zies6r/members	name=off-topic user_id=ufkhrnrw6t8yteibkwjzegfwar	172.16.238.1	yf4adrfcwpr48kspq9qt5q9wta
+7qengc56n7grteyf74x9tu95sw	1675266105153	ufkhrnrw6t8yteibkwjzegfwar	/api/v4/users/qio139w9xbyc9pknsx1wo388xc/patch		172.16.238.1	yf4adrfcwpr48kspq9qt5q9wta
+nnhzww1qutft9kry3j6zn5ozfy	1675266105229	ufkhrnrw6t8yteibkwjzegfwar	/api/v4/channels/73uy6kj1jb8wdqrf3ti6zies6r/members	name=off-topic user_id=qio139w9xbyc9pknsx1wo388xc	172.16.238.1	yf4adrfcwpr48kspq9qt5q9wta
+4hmdd7god7dzdgcjn86q431way	1675266105270	ufkhrnrw6t8yteibkwjzegfwar	/api/v4/users/qio139w9xbyc9pknsx1wo388xc/patch		172.16.238.1	yf4adrfcwpr48kspq9qt5q9wta
+7cpitrjzn7bdfps8hd9mqb837a	1675266105276	ufkhrnrw6t8yteibkwjzegfwar	/api/v4/users/bqyuo5n95igtiqj15enjran1br/patch		172.16.238.1	yf4adrfcwpr48kspq9qt5q9wta
+fkubtrbqojd95yq5j4mu3sfdda	1675266105276	ufkhrnrw6t8yteibkwjzegfwar	/api/v4/users/hfby48bpd3r5je83kq15ocnyiy/patch		172.16.238.1	yf4adrfcwpr48kspq9qt5q9wta
+f7a9a4mxofg89xs4tpcwyysh8o	1675266105364	ufkhrnrw6t8yteibkwjzegfwar	/api/v4/users/bqyuo5n95igtiqj15enjran1br/patch		172.16.238.1	yf4adrfcwpr48kspq9qt5q9wta
+jrkq5rswfifxpkkaiggidwk9kr	1675266105371	ufkhrnrw6t8yteibkwjzegfwar	/api/v4/channels/73uy6kj1jb8wdqrf3ti6zies6r/members	name=off-topic user_id=hfby48bpd3r5je83kq15ocnyiy	172.16.238.1	yf4adrfcwpr48kspq9qt5q9wta
+gog5zt9oeibh8ebaz7gib3fdpr	1675266105392	ufkhrnrw6t8yteibkwjzegfwar	/api/v4/channels/cxtmz3ubz3gfigd5m6prendmsw/members	name=town-square user_id=qio139w9xbyc9pknsx1wo388xc	172.16.238.1	yf4adrfcwpr48kspq9qt5q9wta
+ou9b84mg8fn4ifuywsrmrwo41e	1675266105382	ufkhrnrw6t8yteibkwjzegfwar	/api/v4/users/hfby48bpd3r5je83kq15ocnyiy/patch		172.16.238.1	yf4adrfcwpr48kspq9qt5q9wta
+up7ey9149fnp5xyddf3dihxmta	1675266105447	ufkhrnrw6t8yteibkwjzegfwar	/api/v4/channels/cxtmz3ubz3gfigd5m6prendmsw/members	name=town-square user_id=bqyuo5n95igtiqj15enjran1br	172.16.238.1	yf4adrfcwpr48kspq9qt5q9wta
+7dyajoxqi78pic1a87yx66q1tr	1675266105453	ufkhrnrw6t8yteibkwjzegfwar	/api/v4/channels/73uy6kj1jb8wdqrf3ti6zies6r/members	name=off-topic user_id=bqyuo5n95igtiqj15enjran1br	172.16.238.1	yf4adrfcwpr48kspq9qt5q9wta
+cnqefiskg3reuyswgq4nxy5dce	1675266105519	ufkhrnrw6t8yteibkwjzegfwar	/api/v4/channels/cxtmz3ubz3gfigd5m6prendmsw/members	name=town-square user_id=hfby48bpd3r5je83kq15ocnyiy	172.16.238.1	yf4adrfcwpr48kspq9qt5q9wta
 \.
 
 
@@ -1966,6 +2004,8 @@ r19piuh75bya3ddt69xhjohsba	z3pbizcrujd8jfyqq3z3zj1i5c	1674111790266	\N
 r19piuh75bya3ddt69xhjohsba	hfby48bpd3r5je83kq15ocnyiy	1674111815639	\N
 sc6xxqg7qfn8fr9a7dj5pfqudr	z3pbizcrujd8jfyqq3z3zj1i5c	1674112798287	\N
 sc6xxqg7qfn8fr9a7dj5pfqudr	hfby48bpd3r5je83kq15ocnyiy	1674112823944	\N
+cxtmz3ubz3gfigd5m6prendmsw	ufkhrnrw6t8yteibkwjzegfwar	1675265542593	\N
+73uy6kj1jb8wdqrf3ti6zies6r	ufkhrnrw6t8yteibkwjzegfwar	1675265542631	\N
 \.
 
 
@@ -1983,7 +2023,6 @@ cxtmz3ubz3gfigd5m6prendmsw	5bw66y36bff3umq1q57mfy4y5c		0	0	0	{"push": "default",
 cxtmz3ubz3gfigd5m6prendmsw	qio139w9xbyc9pknsx1wo388xc		0	0	0	{"push": "default", "email": "default", "desktop": "default", "mark_unread": "all", "ignore_channel_mentions": "default"}	1673966481281	t	f	f	0	0
 73uy6kj1jb8wdqrf3ti6zies6r	qio139w9xbyc9pknsx1wo388xc		0	0	0	{"push": "default", "email": "default", "desktop": "default", "mark_unread": "all", "ignore_channel_mentions": "default"}	1673966481315	t	f	f	0	0
 73uy6kj1jb8wdqrf3ti6zies6r	bqyuo5n95igtiqj15enjran1br		0	0	0	{"push": "default", "email": "default", "desktop": "default", "mark_unread": "all", "ignore_channel_mentions": "default"}	1673966481620	t	f	f	0	0
-73uy6kj1jb8wdqrf3ti6zies6r	bmq7jiumpib3xdz3mx5iyo99ro		1673966481638	0	0	{"push": "default", "email": "default", "desktop": "default", "mark_unread": "all", "ignore_channel_mentions": "default"}	1673966481638	t	f	f	0	0
 cxtmz3ubz3gfigd5m6prendmsw	bmq7jiumpib3xdz3mx5iyo99ro		1673968214744	0	0	{"push": "default", "email": "default", "desktop": "default", "mark_unread": "all", "ignore_channel_mentions": "default"}	1673968214744	t	f	f	0	0
 cxtmz3ubz3gfigd5m6prendmsw	bqyuo5n95igtiqj15enjran1br		1673974557078	11	0	{"push": "default", "email": "default", "desktop": "default", "mark_unread": "all", "ignore_channel_mentions": "default"}	1673974557078	t	f	f	0	11
 r19piuh75bya3ddt69xhjohsba	hfby48bpd3r5je83kq15ocnyiy		0	0	1	{"push": "default", "email": "default", "desktop": "default", "mark_unread": "all", "ignore_channel_mentions": "default"}	1674111815713	t	f	f	1	0
@@ -1994,6 +2033,9 @@ r19piuh75bya3ddt69xhjohsba	z3pbizcrujd8jfyqq3z3zj1i5c		1674112749988	2	0	{"push"
 cxtmz3ubz3gfigd5m6prendmsw	hfby48bpd3r5je83kq15ocnyiy		1674211519784	15	0	{"push": "default", "email": "default", "desktop": "default", "mark_unread": "all", "ignore_channel_mentions": "default"}	1674211519784	t	f	f	0	15
 cxtmz3ubz3gfigd5m6prendmsw	z3pbizcrujd8jfyqq3z3zj1i5c		1674060070295	14	0	{"push": "default", "email": "default", "desktop": "default", "mark_unread": "all", "ignore_channel_mentions": "default"}	1674060070295	t	f	f	0	14
 73uy6kj1jb8wdqrf3ti6zies6r	hfby48bpd3r5je83kq15ocnyiy		1674211228005	7	0	{"push": "default", "email": "default", "desktop": "default", "mark_unread": "all", "ignore_channel_mentions": "default"}	1674211228005	t	f	f	0	7
+73uy6kj1jb8wdqrf3ti6zies6r	ufkhrnrw6t8yteibkwjzegfwar		0	0	0	{"push": "default", "email": "default", "desktop": "default", "mark_unread": "all", "ignore_channel_mentions": "default"}	1675265542619	t	f	f	0	0
+cxtmz3ubz3gfigd5m6prendmsw	ufkhrnrw6t8yteibkwjzegfwar		1675265542598	15	0	{"push": "default", "email": "default", "desktop": "default", "mark_unread": "all", "ignore_channel_mentions": "default"}	1675265542598	t	f	f	0	15
+73uy6kj1jb8wdqrf3ti6zies6r	bmq7jiumpib3xdz3mx5iyo99ro		1675265542635	7	0	{"push": "default", "email": "default", "desktop": "default", "mark_unread": "all", "ignore_channel_mentions": "default"}	1675265542635	t	f	f	0	7
 \.
 
 
@@ -2004,8 +2046,8 @@ cxtmz3ubz3gfigd5m6prendmsw	z3pbizcrujd8jfyqq3z3zj1i5c		1674060070295	14	0	{"push
 COPY public.channels (id, createat, updateat, deleteat, teamid, type, displayname, name, header, purpose, lastpostat, totalmsgcount, extraupdateat, creatorid, schemeid, groupconstrained, shared, totalmsgcountroot, lastrootpostat) FROM stdin;
 sc6xxqg7qfn8fr9a7dj5pfqudr	1674112798146	1674112798146	0	tgrw7sjgbiy1jggs3qg3m6zpee	P	Hockey	hockey			1674112851403	1	0	z3pbizcrujd8jfyqq3z3zj1i5c		f	\N	1	1674112851403
 r19piuh75bya3ddt69xhjohsba	1674111790238	1674111790238	0	tgrw7sjgbiy1jggs3qg3m6zpee	O	Bandy	bandy		Testing	1674112749988	2	0	z3pbizcrujd8jfyqq3z3zj1i5c		f	\N	2	1674112749988
-73uy6kj1jb8wdqrf3ti6zies6r	1598351837717	1598351837717	0	tgrw7sjgbiy1jggs3qg3m6zpee	O	Off-Topic	off-topic			1674211228005	7	0		\N	\N	\N	7	1674211228005
-cxtmz3ubz3gfigd5m6prendmsw	1598351837713	1598351837713	0	tgrw7sjgbiy1jggs3qg3m6zpee	O	Town Square	town-square			1674211519784	15	0		\N	\N	\N	15	1674211519784
+cxtmz3ubz3gfigd5m6prendmsw	1598351837713	1598351837713	0	tgrw7sjgbiy1jggs3qg3m6zpee	O	Town Square	town-square			1675265542598	15	0		\N	\N	\N	15	1675265542598
+73uy6kj1jb8wdqrf3ti6zies6r	1598351837717	1598351837717	0	tgrw7sjgbiy1jggs3qg3m6zpee	O	Off-Topic	off-topic			1675265542635	7	0		\N	\N	\N	7	1675265542635
 \.
 
 
@@ -3019,6 +3061,7 @@ bo47rmr9x6jyuffzi8wjhz9fpgo	2023-01-17 14:30:26.527051+00	0		system	system	O	Wel
 --
 
 COPY public.focalboard_categories (id, name, user_id, team_id, channel_id, create_at, update_at, delete_at, collapsed, type) FROM stdin;
+7j7xs4etnmby3ujmjtfeqf5zr7e	Boards	ufkhrnrw6t8yteibkwjzegfwar	tgrw7sjgbiy1jggs3qg3m6zpee	\N	1675265717729	1675265717729	0	f	system
 \.
 
 
@@ -3287,6 +3330,7 @@ COPY public.ir_timelineevent (id, incidentid, createat, deleteat, eventat, event
 
 COPY public.ir_userinfo (id, lastdailytododmat, digestnotificationsettingsjson) FROM stdin;
 z3pbizcrujd8jfyqq3z3zj1i5c	1674210751311	{"disable_daily_digest":false}
+bmq7jiumpib3xdz3mx5iyo99ro	1675265692470	{"disable_daily_digest":false}
 \.
 
 
@@ -3470,6 +3514,7 @@ kpa4fmurxt8i3ft9ogij4thmfy	expiry_notify	0	1674201743720	1674203273774	167420327
 17mg65t98pykzbbqjorydcunwc	product_notices	0	1674201743713	1674203273785	1674203275409	success	0	null
 rxktrszsbj8p5mk5z1k9wtfyoc	expiry_notify	0	1674203273539	1674203288791	1674203288816	success	0	null
 nh6synuzqj88m8cakj5xi1s9fr	expiry_notify	0	1674211217820	1674211228120	1674211228166	success	0	null
+bpnfuinux7rxtjesizxusm8w4e	expiry_notify	0	1675265835189	1675265836635	1675265836644	success	0	null
 \.
 
 
@@ -3593,6 +3638,8 @@ mqt4mixqzpb9fjwo8a7k3e5ifw	1674112851403	1674112851403	0	0	f	z3pbizcrujd8jfyqq3z
 9arqkaza4irbixj5xqekrxeaqr	1674211099218	1674211099218	0	0	f	hfby48bpd3r5je83kq15ocnyiy	73uy6kj1jb8wdqrf3ti6zies6r					{}		[]	["xrmywz8trfno7jx7dyt7nqzt1c"]	f	\N
 f5stqsigmpg33mbjf8sfimsrra	1674211228005	1674211228005	0	0	f	hfby48bpd3r5je83kq15ocnyiy	73uy6kj1jb8wdqrf3ti6zies6r					{}		[]	["yd5pem8jqtdkp85ujit6sbsnqh"]	f	\N
 iy5cuxty378h3qaydjwyxmdm1o	1674211519784	1674211519784	0	0	f	hfby48bpd3r5je83kq15ocnyiy	cxtmz3ubz3gfigd5m6prendmsw			Nice		{}		[]	[]	f	\N
+nkep9bcdjpd9dxw8dthgbonunr	1675265542598	1675265542598	0	0	f	ufkhrnrw6t8yteibkwjzegfwar	cxtmz3ubz3gfigd5m6prendmsw			matrix.bridge joined the team.	system_join_team	{"username": "matrix.bridge"}		[]	[]	f	\N
+qbwajirp7bn49f8ddpfb91ifao	1675265542635	1675265542635	0	0	f	ufkhrnrw6t8yteibkwjzegfwar	73uy6kj1jb8wdqrf3ti6zies6r			matrix.bridge joined the channel.	system_join_channel	{"username": "matrix.bridge"}		[]	[]	f	\N
 \.
 
 
@@ -3616,7 +3663,6 @@ z3pbizcrujd8jfyqq3z3zj1i5c	insights	insights_tutorial_state	{"insights_modal_vie
 bmq7jiumpib3xdz3mx5iyo99ro	onboarding_task_list	onboarding_task_list_show	true
 bmq7jiumpib3xdz3mx5iyo99ro	recommended_next_steps	hide	true
 bmq7jiumpib3xdz3mx5iyo99ro	onboarding_task_list	onboarding_task_list_open	false
-bmq7jiumpib3xdz3mx5iyo99ro	channel_approximate_view_time		1673968029119
 z3pbizcrujd8jfyqq3z3zj1i5c	onboarding_task_list	onboarding_task_list_show	true
 z3pbizcrujd8jfyqq3z3zj1i5c	recommended_next_steps	hide	true
 z3pbizcrujd8jfyqq3z3zj1i5c	onboarding_task_list	onboarding_task_list_open	false
@@ -3628,6 +3674,17 @@ z3pbizcrujd8jfyqq3z3zj1i5c	favorite_channel	r19piuh75bya3ddt69xhjohsba	true
 z3pbizcrujd8jfyqq3z3zj1i5c	favorite_channel	73uy6kj1jb8wdqrf3ti6zies6r	true
 z3pbizcrujd8jfyqq3z3zj1i5c	favorite_channel	cxtmz3ubz3gfigd5m6prendmsw	true
 z3pbizcrujd8jfyqq3z3zj1i5c	channel_approximate_view_time		1674203324259
+ufkhrnrw6t8yteibkwjzegfwar	tutorial_step	ufkhrnrw6t8yteibkwjzegfwar	0
+ufkhrnrw6t8yteibkwjzegfwar	insights	insights_tutorial_state	{"insights_modal_viewed":true}
+ufkhrnrw6t8yteibkwjzegfwar	onboarding_task_list	onboarding_task_list_show	true
+ufkhrnrw6t8yteibkwjzegfwar	recommended_next_steps	hide	true
+ufkhrnrw6t8yteibkwjzegfwar	channel_approximate_view_time		1675265546682
+ufkhrnrw6t8yteibkwjzegfwar	onboarding_task_list	onboarding_task_list_open	false
+bmq7jiumpib3xdz3mx5iyo99ro	channel_approximate_view_time		1675265691108
+ufkhrnrw6t8yteibkwjzegfwar	focalboard	welcomePageViewed	1
+ufkhrnrw6t8yteibkwjzegfwar	focalboard	tourCategory	sidebar
+ufkhrnrw6t8yteibkwjzegfwar	focalboard	onboardingTourStep	999
+ufkhrnrw6t8yteibkwjzegfwar	focalboard	version72MessageCanceled	true
 \.
 
 
@@ -3639,7 +3696,6 @@ COPY public.productnoticeviewstate (userid, noticeid, viewed, "timestamp") FROM 
 qio139w9xbyc9pknsx1wo388xc	use_case_survey	1	1673966481
 qio139w9xbyc9pknsx1wo388xc	june15-cloud-freemium	1	1673966481
 qio139w9xbyc9pknsx1wo388xc	desktop_upgrade_v5.2	1	1673966481
-qio139w9xbyc9pknsx1wo388xc	server_upgrade_v7.5	1	1673966481
 qio139w9xbyc9pknsx1wo388xc	crt-admin-disabled	1	1673966481
 qio139w9xbyc9pknsx1wo388xc	crt-admin-default_off	1	1673966481
 qio139w9xbyc9pknsx1wo388xc	crt-user-default-on	1	1673966481
@@ -3650,7 +3706,6 @@ qio139w9xbyc9pknsx1wo388xc	unsupported-server-v5.37	1	1673966481
 bqyuo5n95igtiqj15enjran1br	use_case_survey	1	1673966481
 bqyuo5n95igtiqj15enjran1br	june15-cloud-freemium	1	1673966481
 bqyuo5n95igtiqj15enjran1br	desktop_upgrade_v5.2	1	1673966481
-bqyuo5n95igtiqj15enjran1br	server_upgrade_v7.5	1	1673966481
 bqyuo5n95igtiqj15enjran1br	crt-admin-disabled	1	1673966481
 bqyuo5n95igtiqj15enjran1br	crt-admin-default_off	1	1673966481
 bqyuo5n95igtiqj15enjran1br	crt-user-default-on	1	1673966481
@@ -3661,7 +3716,6 @@ bqyuo5n95igtiqj15enjran1br	unsupported-server-v5.37	1	1673966481
 z3pbizcrujd8jfyqq3z3zj1i5c	use_case_survey	1	1673967395
 z3pbizcrujd8jfyqq3z3zj1i5c	june15-cloud-freemium	1	1673967395
 z3pbizcrujd8jfyqq3z3zj1i5c	desktop_upgrade_v5.2	1	1673967395
-z3pbizcrujd8jfyqq3z3zj1i5c	server_upgrade_v7.5	1	1673967395
 z3pbizcrujd8jfyqq3z3zj1i5c	crt-admin-disabled	1	1673967395
 z3pbizcrujd8jfyqq3z3zj1i5c	crt-admin-default_off	1	1673967395
 z3pbizcrujd8jfyqq3z3zj1i5c	crt-user-default-on	1	1673967395
@@ -3674,7 +3728,6 @@ bmq7jiumpib3xdz3mx5iyo99ro	crt-user-always-on	1	1673967867
 hfby48bpd3r5je83kq15ocnyiy	use_case_survey	1	1673969010
 hfby48bpd3r5je83kq15ocnyiy	june15-cloud-freemium	1	1673969010
 hfby48bpd3r5je83kq15ocnyiy	desktop_upgrade_v5.2	1	1673969010
-hfby48bpd3r5je83kq15ocnyiy	server_upgrade_v7.5	1	1673969010
 hfby48bpd3r5je83kq15ocnyiy	crt-admin-disabled	1	1673969010
 hfby48bpd3r5je83kq15ocnyiy	crt-admin-default_off	1	1673969010
 hfby48bpd3r5je83kq15ocnyiy	crt-user-default-on	1	1673969010
@@ -3682,6 +3735,20 @@ hfby48bpd3r5je83kq15ocnyiy	crt-user-always-on	1	1673969010
 hfby48bpd3r5je83kq15ocnyiy	v6.0_user_introduction	1	1673969010
 hfby48bpd3r5je83kq15ocnyiy	v6.2_boards	1	1673969010
 hfby48bpd3r5je83kq15ocnyiy	unsupported-server-v5.37	1	1673969010
+bmq7jiumpib3xdz3mx5iyo99ro	server_upgrade_v7.7	1	1675265414
+ufkhrnrw6t8yteibkwjzegfwar	use_case_survey	1	1675265533
+ufkhrnrw6t8yteibkwjzegfwar	june15-cloud-freemium	1	1675265533
+ufkhrnrw6t8yteibkwjzegfwar	desktop_upgrade_v5.2	1	1675265533
+ufkhrnrw6t8yteibkwjzegfwar	server_upgrade_v7.7	1	1675265533
+ufkhrnrw6t8yteibkwjzegfwar	crt-admin-disabled	1	1675265533
+ufkhrnrw6t8yteibkwjzegfwar	crt-admin-default_off	1	1675265533
+ufkhrnrw6t8yteibkwjzegfwar	crt-user-default-on	1	1675265533
+ufkhrnrw6t8yteibkwjzegfwar	crt-user-always-on	1	1675265533
+ufkhrnrw6t8yteibkwjzegfwar	v6.0_user_introduction	1	1675265533
+ufkhrnrw6t8yteibkwjzegfwar	v6.2_boards	1	1675265533
+ufkhrnrw6t8yteibkwjzegfwar	unsupported-server-v5.37	1	1675265533
+bmq7jiumpib3xdz3mx5iyo99ro	v6.0_user_introduction	1	1675265565
+bmq7jiumpib3xdz3mx5iyo99ro	v6.2_boards	1	1675265688
 \.
 
 
@@ -3791,6 +3858,8 @@ tsik87snnfbjzbjpgnfbqdcb5y	oo9xnia8opr9xrf5gzyw6wchhe	1673973089566	482757308956
 fzcwbcg1tfr3fkar9qm49kqfer	s537n3t8zib1tx7eyd44qzqnbr	1673965922891	4827565922891	1674210715649	bmq7jiumpib3xdz3mx5iyo99ro		system_admin system_user	f	f	{"type": "UserAccessToken", "is_guest": "false", "user_access_token_id": "98yjyceocfb5mc3jaibtbmr1ph"}
 q6zbdigwcp8gtbbkm4uykb7dua	1icpjqtuetg1be7nmp841fk5uy	1673968258143	1676795324001	1674211179373	z3pbizcrujd8jfyqq3z3zj1i5c		system_user	f	f	{"os": "Mac OS", "csrf": "dghfn3ggsbrbdegri1a8iui79e", "isSaml": "false", "browser": "Chrome/108.0", "isMobile": "false", "is_guest": "false", "platform": "Macintosh", "isOAuthUser": "false"}
 sc1kdunmi7y63cdohg4dtw3qho	hjqz5dcjrpd35enutykik45noc	1673972961766	4827572961766	1674211228123	hfby48bpd3r5je83kq15ocnyiy		system_user	f	f	{"type": "UserAccessToken", "is_guest": "false", "user_access_token_id": "z7etn7g1jfnb8pciotu8bawddh"}
+hbtsui17h7ysfgw3tie5t474ry	faz6b5dozpf4m8sitq9b886roe	1675265712860	1677857712859	1675265712860	ufkhrnrw6t8yteibkwjzegfwar		system_user system_admin	f	f	{"os": "Mac OS", "csrf": "98jw3rgziiyzdx9gb8ic4gs9jo", "isSaml": "false", "browser": "Chrome/109.0", "isMobile": "false", "is_guest": "false", "platform": "Macintosh", "isOAuthUser": "false"}
+yf4adrfcwpr48kspq9qt5q9wta	659ozqpuapnkucctprhpwmx3kh	1675266049327	4828866049327	1675266049327	ufkhrnrw6t8yteibkwjzegfwar		system_user system_admin	f	f	{"type": "UserAccessToken", "is_guest": "false", "user_access_token_id": "11znsbmmytfjfrh9j9sknjfuyo"}
 \.
 
 
@@ -3846,6 +3915,9 @@ channels_hfby48bpd3r5je83kq15ocnyiy_tgrw7sjgbiy1jggs3qg3m6zpee	hfby48bpd3r5je83k
 direct_messages_hfby48bpd3r5je83kq15ocnyiy_tgrw7sjgbiy1jggs3qg3m6zpee	hfby48bpd3r5je83kq15ocnyiy	tgrw7sjgbiy1jggs3qg3m6zpee	20	recent	direct_messages	Direct Messages	f	f
 favorites_z3pbizcrujd8jfyqq3z3zj1i5c_tgrw7sjgbiy1jggs3qg3m6zpee	z3pbizcrujd8jfyqq3z3zj1i5c	tgrw7sjgbiy1jggs3qg3m6zpee	0		favorites	Favorites	f	f
 channels_z3pbizcrujd8jfyqq3z3zj1i5c_tgrw7sjgbiy1jggs3qg3m6zpee	z3pbizcrujd8jfyqq3z3zj1i5c	tgrw7sjgbiy1jggs3qg3m6zpee	10	recent	channels	Channels	f	t
+favorites_ufkhrnrw6t8yteibkwjzegfwar_tgrw7sjgbiy1jggs3qg3m6zpee	ufkhrnrw6t8yteibkwjzegfwar	tgrw7sjgbiy1jggs3qg3m6zpee	0		favorites	Favorites	f	f
+channels_ufkhrnrw6t8yteibkwjzegfwar_tgrw7sjgbiy1jggs3qg3m6zpee	ufkhrnrw6t8yteibkwjzegfwar	tgrw7sjgbiy1jggs3qg3m6zpee	10		channels	Channels	f	f
+direct_messages_ufkhrnrw6t8yteibkwjzegfwar_tgrw7sjgbiy1jggs3qg3m6zpee	ufkhrnrw6t8yteibkwjzegfwar	tgrw7sjgbiy1jggs3qg3m6zpee	20	recent	direct_messages	Direct Messages	f	f
 \.
 
 
@@ -3867,9 +3939,10 @@ sc6xxqg7qfn8fr9a7dj5pfqudr	z3pbizcrujd8jfyqq3z3zj1i5c	channels_z3pbizcrujd8jfyqq
 
 COPY public.status (userid, status, manual, lastactivityat, dndendtime, prevstatus) FROM stdin;
 bqyuo5n95igtiqj15enjran1br	offline	f	1673974304320	0	
-z3pbizcrujd8jfyqq3z3zj1i5c	online	f	1674210751903	0	
-hfby48bpd3r5je83kq15ocnyiy	online	f	1674211520027	0	
-bmq7jiumpib3xdz3mx5iyo99ro	offline	f	1674211548806	0	
+z3pbizcrujd8jfyqq3z3zj1i5c	offline	f	1674210751903	0	
+hfby48bpd3r5je83kq15ocnyiy	offline	f	1674211520027	0	
+bmq7jiumpib3xdz3mx5iyo99ro	offline	f	1675265697804	0	
+ufkhrnrw6t8yteibkwjzegfwar	online	f	1675266104490	0	
 \.
 
 
@@ -3927,7 +4000,7 @@ ContentExtractionConfigDefaultTrueMigrationComplete	true
 PlaybookRolesCreationMigrationComplete	true
 RemainingSchemaMigrations	true
 FirstAdminSetupComplete	true
-LastSecurityTime	1674151235427
+LastSecurityTime	1675264313472
 \.
 
 
@@ -3944,6 +4017,7 @@ tgrw7sjgbiy1jggs3qg3m6zpee	qio139w9xbyc9pknsx1wo388xc		0	t	f	f	1673966481254
 tgrw7sjgbiy1jggs3qg3m6zpee	bqyuo5n95igtiqj15enjran1br		0	t	f	f	1673966481456
 tgrw7sjgbiy1jggs3qg3m6zpee	z3pbizcrujd8jfyqq3z3zj1i5c		0	t	f	f	1673968214665
 tgrw7sjgbiy1jggs3qg3m6zpee	hfby48bpd3r5je83kq15ocnyiy		0	t	f	f	1673969011073
+tgrw7sjgbiy1jggs3qg3m6zpee	ufkhrnrw6t8yteibkwjzegfwar		0	t	f	f	1675265542550
 \.
 
 
@@ -4008,6 +4082,7 @@ e3dnfu1g17fjtxq53odawh6e7y	ox8n8edimjdbfkeybdf56pj4xw	3zats68fztgu9mgu944a4t35so
 ii1puxgctb86ifuw8big5epn6r	zfmxqhxpapbmifxwgdhk7agq8r	qio139w9xbyc9pknsx1wo388xc	bridge	t
 zqa6p4rjcfgcmn5iqqzgjpdn4r	oo9xnia8opr9xrf5gzyw6wchhe	bqyuo5n95igtiqj15enjran1br	bridge	t
 z7etn7g1jfnb8pciotu8bawddh	hjqz5dcjrpd35enutykik45noc	hfby48bpd3r5je83kq15ocnyiy	bridge	t
+11znsbmmytfjfrh9j9sknjfuyo	659ozqpuapnkucctprhpwmx3kh	ufkhrnrw6t8yteibkwjzegfwar	Bridge Token	t
 \.
 
 
@@ -4029,13 +4104,14 @@ COPY public.users (id, createat, updateat, deleteat, username, password, authdat
 0z4okgmv5lfhx3p0tf6pnpk8sk	1598351800458	1598352057088	0	ignored_user	$2a$10$WdovEVVvy9ZS867UE2hSq.7hV38Lg9H2ozgaF3gwuO6fuoCkkTzIu	\N		ignored_user@localhost	f					system_user	f	{}	{"push": "mention", "email": "true", "channel": "true", "desktop": "mention", "comments": "never", "first_name": "false", "push_status": "away", "mention_keys": "", "desktop_sound": "true"}	1598352057088	0	0	en	{"manualTimezone": "", "automaticTimezone": "", "useAutomaticTimezone": "true"}	f		\N
 jf5pp1xbbjnu7j9bekkmuhf87h	1673965821894	1673965821894	0	boards		\N		boards@localhost	f		Boards			system_user	f	{}	{"push": "mention", "email": "true", "channel": "true", "desktop": "mention", "comments": "never", "first_name": "false", "push_status": "away", "mention_keys": "", "push_threads": "all", "desktop_sound": "true", "email_threads": "all", "desktop_threads": "all"}	1673965821894	0	0	en	{"manualTimezone": "", "automaticTimezone": "", "useAutomaticTimezone": "true"}	f		\N
 79skdzyqafbftx6orqugpitixy	1673966099803	1673966099803	0	system-bot		\N		system-bot@localhost	f		System			system_user	f	{}	{"push": "mention", "email": "true", "channel": "true", "desktop": "mention", "comments": "never", "first_name": "false", "push_status": "away", "mention_keys": "", "push_threads": "all", "desktop_sound": "true", "email_threads": "all", "desktop_threads": "all"}	1673966099803	0	0	en	{"manualTimezone": "", "automaticTimezone": "", "useAutomaticTimezone": "true"}	f		\N
-bmq7jiumpib3xdz3mx5iyo99ro	1598351769026	1598351847718	0	admin	$2a$10$dCK8unlOWxu7Ge1Fmeo70eaETqonsQC1mVbwnLi5lCH5ALbzKyqnO	\N		admin@localhost	f		Admin	User		system_admin system_user	f	{}	{"push": "mention", "email": "true", "channel": "true", "desktop": "mention", "comments": "never", "first_name": "false", "push_status": "away", "mention_keys": "", "desktop_sound": "true"}	1598351769026	0	0	en	{"manualTimezone": "", "automaticTimezone": "", "useAutomaticTimezone": "true"}	f		\N
 z3pbizcrujd8jfyqq3z3zj1i5c	1673967395212	1673968214688	0	user1.mm	$2a$10$5hC1Trr6gIf7b4Ebs2iLZ.SLZ8dYfnlNAyMvsuUz.vrI3FypLf3ki	\N		user1.mm@localhost	f					system_user	f	{}	{"push": "mention", "email": "true", "channel": "true", "desktop": "mention", "comments": "never", "first_name": "false", "push_status": "away", "mention_keys": "", "push_threads": "all", "desktop_sound": "true", "email_threads": "all", "desktop_threads": "all"}	1673967395212	0	0	en	{"manualTimezone": "", "automaticTimezone": "", "useAutomaticTimezone": "true"}	f		\N
-4yrxecdqy785ubz1wtr6oud5uo	1673965818961	1674210399996	0	appsbot		\N		appsbot@localhost	f		Mattermost Apps			system_user	f	{}	{"push": "mention", "email": "true", "channel": "true", "desktop": "mention", "comments": "never", "first_name": "false", "push_status": "away", "mention_keys": "", "push_threads": "all", "desktop_sound": "true", "email_threads": "all", "desktop_threads": "all"}	1673965818961	1674210399996	0	en	{"manualTimezone": "", "automaticTimezone": "", "useAutomaticTimezone": "true"}	f		\N
-74y58caaebyg8mgx5p9gzm8u5r	1673965820126	1674210400876	0	playbooks		\N		playbooks@localhost	f		Playbooks			system_user	f	{}	{"push": "mention", "email": "true", "channel": "true", "desktop": "mention", "comments": "never", "first_name": "false", "push_status": "away", "mention_keys": "", "push_threads": "all", "desktop_sound": "true", "email_threads": "all", "desktop_threads": "all"}	1673965820126	1674210400876	0	en	{"manualTimezone": "", "automaticTimezone": "", "useAutomaticTimezone": "true"}	f		\N
-bqyuo5n95igtiqj15enjran1br	1673966481231	1674210716246	0	matrix_matrix_b	$2a$10$crKD3uSMFucdddtKtyFJUuBNsWkQ.qLlCo6vFjMR5Ptz7.tdeHYfi	\N		devnull-bl-fgmpttfchxza-@localhost	t		matrix_b			system_user	f	{}	{"push": "mention", "email": "true", "channel": "true", "desktop": "mention", "comments": "never", "first_name": "false", "push_status": "away", "mention_keys": "", "push_threads": "all", "desktop_sound": "true", "email_threads": "all", "desktop_threads": "all"}	1673966481231	0	0	en	{"manualTimezone": "", "automaticTimezone": "", "useAutomaticTimezone": "true"}	f		\N
-qio139w9xbyc9pknsx1wo388xc	1673966481028	1674210716247	0	matrix_matrix_a	$2a$10$aAfumPLpr0l3Xn9IdSdyF.rhtEVFtUG/qzUraTfS6hslHLEZ4Bxv.	\N		devnull-jb-lcviwjp84pzu6@localhost	t		Matrix UserA			system_user	f	{}	{"push": "mention", "email": "true", "channel": "true", "desktop": "mention", "comments": "never", "first_name": "false", "push_status": "away", "mention_keys": "", "push_threads": "all", "desktop_sound": "true", "email_threads": "all", "desktop_threads": "all"}	1673966481028	0	0	en	{"manualTimezone": "", "automaticTimezone": "", "useAutomaticTimezone": "true"}	f		\N
-hfby48bpd3r5je83kq15ocnyiy	1673969010778	1674210716257	0	matrix_user1.matrix	$2a$10$cILCyifI1hWTyIY6UorbK.qLyYflQLYoH1PD5DA8laLE9y1QRE/Ri	\N		devnull-6z9b6_whtsca8qia@localhost	t		User 1 - Matrix			system_user	f	{}	{"push": "mention", "email": "true", "channel": "true", "desktop": "mention", "comments": "never", "first_name": "false", "push_status": "away", "mention_keys": "", "push_threads": "all", "desktop_sound": "true", "email_threads": "all", "desktop_threads": "all"}	1673969010778	0	0	en	{"manualTimezone": "", "automaticTimezone": "", "useAutomaticTimezone": "true"}	f		\N
+4yrxecdqy785ubz1wtr6oud5uo	1673965818961	1675264318252	0	appsbot		\N		appsbot@localhost	f		Mattermost Apps			system_user	f	{}	{"push": "mention", "email": "true", "channel": "true", "desktop": "mention", "comments": "never", "first_name": "false", "push_status": "away", "mention_keys": "", "push_threads": "all", "desktop_sound": "true", "email_threads": "all", "desktop_threads": "all"}	1673965818961	1675264318252	0	en	{"manualTimezone": "", "automaticTimezone": "", "useAutomaticTimezone": "true"}	f		\N
+74y58caaebyg8mgx5p9gzm8u5r	1673965820126	1675264318791	0	playbooks		\N		playbooks@localhost	f		Playbooks			system_user	f	{}	{"push": "mention", "email": "true", "channel": "true", "desktop": "mention", "comments": "never", "first_name": "false", "push_status": "away", "mention_keys": "", "push_threads": "all", "desktop_sound": "true", "email_threads": "all", "desktop_threads": "all"}	1673965820126	1675264318791	0	en	{"manualTimezone": "", "automaticTimezone": "", "useAutomaticTimezone": "true"}	f		\N
+bmq7jiumpib3xdz3mx5iyo99ro	1598351769026	1598351847718	0	admin	$2a$10$dCK8unlOWxu7Ge1Fmeo70eaETqonsQC1mVbwnLi5lCH5ALbzKyqnO	\N		admin@localhost	f		Admin	User		system_admin system_user	f	{}	{"push": "mention", "email": "true", "channel": "true", "desktop": "mention", "comments": "never", "first_name": "false", "push_status": "away", "mention_keys": "", "desktop_sound": "true"}	1598351769026	0	0	en	{"manualTimezone": "", "automaticTimezone": "", "useAutomaticTimezone": "true"}	f		\N
+ufkhrnrw6t8yteibkwjzegfwar	1675265533854	1675265622973	0	matrix.bridge	$2a$10$tqLVdJoJq.XYLCg42ozNmO83a1SzoGHGoipmi8xV0n8sOVwuyfZvy	\N		matrix.bridge@localhost.com	f					system_user system_admin	f	{}	{"push": "mention", "email": "true", "channel": "true", "desktop": "mention", "comments": "never", "first_name": "false", "push_status": "away", "mention_keys": "", "push_threads": "all", "desktop_sound": "true", "email_threads": "all", "desktop_threads": "all"}	1675265533854	0	0	en	{"manualTimezone": "", "automaticTimezone": "", "useAutomaticTimezone": "true"}	f		\N
+hfby48bpd3r5je83kq15ocnyiy	1673969010778	1675266105275	0	matrix_user1.matrix	$2a$10$cILCyifI1hWTyIY6UorbK.qLyYflQLYoH1PD5DA8laLE9y1QRE/Ri	\N		devnull-6z9b6_whtsca8qia@localhost	t		User 1 - Matrix			system_user	f	{}	{"push": "mention", "email": "true", "channel": "true", "desktop": "mention", "comments": "never", "first_name": "false", "push_status": "away", "mention_keys": "", "push_threads": "all", "desktop_sound": "true", "email_threads": "all", "desktop_threads": "all"}	1673969010778	0	0	en	{"manualTimezone": "", "automaticTimezone": "", "useAutomaticTimezone": "true"}	f		\N
+bqyuo5n95igtiqj15enjran1br	1673966481231	1675266105231	0	matrix_matrix_b	$2a$10$crKD3uSMFucdddtKtyFJUuBNsWkQ.qLlCo6vFjMR5Ptz7.tdeHYfi	\N		devnull-bl-fgmpttfchxza-@localhost	t		matrix_b			system_user	f	{}	{"push": "mention", "email": "true", "channel": "true", "desktop": "mention", "comments": "never", "first_name": "false", "push_status": "away", "mention_keys": "", "push_threads": "all", "desktop_sound": "true", "email_threads": "all", "desktop_threads": "all"}	1673966481231	0	0	en	{"manualTimezone": "", "automaticTimezone": "", "useAutomaticTimezone": "true"}	f		\N
+qio139w9xbyc9pknsx1wo388xc	1673966481028	1675266105254	0	matrix_matrix_a	$2a$10$aAfumPLpr0l3Xn9IdSdyF.rhtEVFtUG/qzUraTfS6hslHLEZ4Bxv.	\N		devnull-jb-lcviwjp84pzu6@localhost	t		Matrix UserA			system_user	f	{}	{"push": "mention", "email": "true", "channel": "true", "desktop": "mention", "comments": "never", "first_name": "false", "push_status": "away", "mention_keys": "", "push_threads": "all", "desktop_sound": "true", "email_threads": "all", "desktop_threads": "all"}	1673966481028	0	0	en	{"manualTimezone": "", "automaticTimezone": "", "useAutomaticTimezone": "true"}	f		\N
 \.
 
 

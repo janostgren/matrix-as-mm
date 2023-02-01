@@ -13,7 +13,7 @@ import log, { getLogger } from './Logging';
 console.time('Bridge loaded');
 
 const argv = yargs
-    .scriptName('matrix-appservice-mattermost')
+    .scriptName('matrix-as-mm')
     .help('help')
     .alias('h', 'help')
     .option('r', { describe: 'generate registration file' })

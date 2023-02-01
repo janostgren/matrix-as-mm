@@ -70,7 +70,7 @@ const MattermostPostHandlers = {
             for (const file of post.metadata.files) {
                 // Read everything into memory to compute content-length
                 const body = await (
-                    await this.main.client.send_raw('GET', `/files/${file.id}`)
+                    await this.main.client.get( `/files/${file.id}`)
                 ).buffer();
                 const mimetype = file.mime_type;
 

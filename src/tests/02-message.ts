@@ -234,10 +234,7 @@ test('Matrix -> Mattermost file upload', async t => {
     const fileid = files[0].id;
 
     const mattermostClient = getMattermostClient('mattermost_b');
-    const downloaded = await mattermostClient.send_raw(
-        'GET',
-        `/files/${fileid}`,
-    );
+    const downloaded = await mattermostClient.get(`/files/${fileid}`)
     t.equal(await downloaded.text(), data);
 
     t.end();

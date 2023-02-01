@@ -8,4 +8,5 @@ tsconfig.*
 .git*
 .vscode
 .[a-z]*
+tsconfig.tsbuildinfo
 
