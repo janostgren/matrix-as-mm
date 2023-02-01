@@ -72,7 +72,8 @@ export default class Main extends EventEmitter {
         setConfig(config);
         const logConfigFile = `${__dirname}/../config/log4js.json`;
         log4js.configure(logConfigFile);
-        this.myLogger = getLogger('Main', config.logging);
+
+        this.myLogger = getLogger('Main');
         logLevel.setLevel(config.logging);
 
         this.registration = loadYaml(registrationPath);
@@ -198,6 +199,11 @@ export default class Main extends EventEmitter {
                     } failed`,
                 );
                 throw e;
+            } else {
+                this.myLogger.info(
+                    'Register Application Service return message: %s',
+                    e.errcode || '',
+                );
             }
         }
         this.myLogger.info(

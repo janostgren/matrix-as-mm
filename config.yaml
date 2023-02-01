@@ -68,9 +68,14 @@ matrix_bot:
 
 # The mattermost bot used by the bridge. This has to be an existing user with
 # system administration privileges, in order to verify the emails of the puppet
-# users.
-mattermost_bot_userid: 'bmq7jiumpib3xdz3mx5iyo99ro'
-mattermost_bot_access_token: 's537n3t8zib1tx7eyd44qzqnbr'
+# users. This is the admin user.
+# mattermost_bot_userid: 'bmq7jiumpib3xdz3mx5iyo99ro'
+# mattermost_bot_access_token: 's537n3t8zib1tx7eyd44qzqnbr'
+#
+# Try with special matrix.bridge user with system admin role
+#
+mattermost_bot_userid: 'zj8jfnjo9pr7mduigxpma6oqha'
+mattermost_bot_access_token: 'tq1km5xd3iyo5egbmgtyp9rahr'
 
 # Database configuration. Currently, only postgres and sqlite are supported.
 # The configuration is the arguments supplied to TypeORM's createConnection:

@@ -1,13 +1,16 @@
-import fetch from 'node-fetch';
+import fetch, { Response } from 'node-fetch';
 import * as WebSocket from 'ws';
 import { EventEmitter } from 'events';
-import log from '../Logging';
+
+import log, { getLogger } from '../Logging';
+import * as log4js from 'log4js';
 import * as FormData from 'form-data';
 
 export type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 export class Client {
     private joinTeamPromises: Map<string, Promise<any>>;
+    private myLogger: log4js.Logger;
 
     constructor(
         public domain: string,
@@ -16,6 +19,7 @@ export class Client {
     ) {
         this.domain = domain.replace(/\/*$/, '');
         this.joinTeamPromises = new Map();
+        this.myLogger = getLogger('MM Client', 'trace');
     }
 
     public async send_raw(
@@ -43,7 +47,12 @@ export class Client {
                 options['body'] = JSON.stringify(data);
             }
         }
-        return await fetch(`${this.domain}/api/v4${endpoint}`, options);
+        this.myLogger.trace(`${method}  ${endpoint} user_id: ${this.userid}`);
+        let response: Response = await fetch(
+            `${this.domain}/api/v4${endpoint}`,
+            options,
+        );
+        return response;
     }
 
     public async send(
@@ -123,6 +132,7 @@ interface PromiseCallbacks {
 }
 
 export class ClientWebsocket extends EventEmitter {
+    private myLogger: log4js.Logger;
     private ws: WebSocket;
     private seq: number;
     private promises: PromiseCallbacks[];
@@ -130,6 +140,7 @@ export class ClientWebsocket extends EventEmitter {
 
     constructor(private client: Client) {
         super();
+        this.myLogger = getLogger('Websocket');
         if (this.client.token === null) {
             throw new Error('Cannot open websocket without access token');
         }
@@ -152,6 +163,7 @@ export class ClientWebsocket extends EventEmitter {
         });
         this.ws.on('message', m => {
             const ev = JSON.parse(m);
+            this.myLogger.trace('Message: %s', m.toString());
             if (ev.seq_reply !== undefined) {
                 const promise = this.promises[ev.seq_reply];
                 if (promise === null) {
