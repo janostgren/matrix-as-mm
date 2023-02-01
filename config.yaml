@@ -32,11 +32,11 @@ forbid_bridge_failure: false
 # Mappings between mattermost channels and matrix rooms.
 mappings:
   # Town Square
-  - mattermost: 'cxtmz3ubz3gfigd5m6prendmsw'
-    matrix: '!kmbTYjjsDRDHGgVqUP:localhost'
+  - mattermost: 'g593o5aooif69kt9xfdzsydu3y'
+    matrix: '!YmJPedFXUiFFGzTnFq:localhost'
   # Off-Topic
-  - mattermost: '73uy6kj1jb8wdqrf3ti6zies6r'
-    matrix: '!dKcbdDATuwwphjRPQP:localhost'
+  - mattermost: '6j47rggkup8xupunzj5dfxojih'
+    matrix: '!DaecDLDoTLOuqPWadN:localhost'
 
 # A puppet matrix user of a real mattermost user with have matrix localpart
 # with this prefix.
@@ -74,8 +74,8 @@ matrix_bot:
 #
 # Try with special matrix.bridge user with system admin role
 #
-mattermost_bot_userid: 'ufkhrnrw6t8yteibkwjzegfwar'
-mattermost_bot_access_token: '659ozqpuapnkucctprhpwmx3kh'
+mattermost_bot_userid: 'yp7iiitd1prkukea7ci1yeqo4h'
+mattermost_bot_access_token: '8swf93z98t8w5q9rc1ia8bmy5r'
 
 # Database configuration. Currently, only postgres and sqlite are supported.
 # The configuration is the arguments supplied to TypeORM's createConnection:

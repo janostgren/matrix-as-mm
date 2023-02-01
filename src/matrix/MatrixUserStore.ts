@@ -58,8 +58,22 @@ export default class MatrixUserStore {
             const client = this.main.client;
             const localpart_ = localpart(matrix_userid);
             const template = config().mattermost_username_template;
+            let realUserName=matrix_userid.split('.')[0].substring(1)
 
-            let displayname = '';
+
+            let mm_user=undefined
+            try{
+                mm_user= await client.get(`/users/username/${realUserName}`)
+
+            }
+            catch (err) {
+                if(!err.message.includes('404'))
+                    throw err
+               
+            }
+
+            let displayname = 
+            '';
 
             if (template.includes('[DISPLAY]')) {
                 try {
