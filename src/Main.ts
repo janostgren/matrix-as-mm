@@ -26,7 +26,7 @@ import {
     Registration,
 } from './Interfaces';
 import MatrixUserStore from './matrix/MatrixUserStore';
-import { getMatrixClient } from './matrix/Utils';
+import { getMatrixClient, registerAppService } from './matrix/Utils';
 import MattermostUserStore from './mattermost/MattermostUserStore';
 import { joinMattermostChannel } from './mattermost/Utils';
 import Channel from './Channel';
@@ -186,30 +186,10 @@ export default class Main extends EventEmitter {
             process.argv,
         );
 
-        try {
-            await this.botClient.registerRequest({
-                username: config().matrix_bot.username,
-                type: 'm.login.application_service',
-            });
-        } catch (e) {
-            if (e.errcode !== 'M_USER_IN_USE') {
-                this.myLogger.error(
-                    `Register application service as user: ${
-                        config().matrix_bot.username
-                    } failed`,
-                );
-                throw e;
-            } else {
-                this.myLogger.info(
-                    'Register Application Service return message: %s',
-                    e.errcode || '',
-                );
-            }
-        }
-        this.myLogger.info(
-            `Register application service as user: ${
-                config().matrix_bot.username
-            } succeeded`,
+        await registerAppService(
+            this.botClient,
+            config().matrix_bot.username,
+            this.myLogger,
         );
 
         const botProfile = this.updateBotProfile().catch(e =>
@@ -276,6 +256,7 @@ export default class Main extends EventEmitter {
             }),
         );
 
+        /*
         try {
             await this.leaveUnbridgedChannels();
         } catch (e) {
@@ -286,6 +267,7 @@ export default class Main extends EventEmitter {
                 await this.killBridge(1);
             }
         }
+        */
 
         if (this.channelsByMattermost.size === 0) {
             this.myLogger.info(
@@ -498,7 +480,8 @@ export default class Main extends EventEmitter {
         const channel = this.channelsByMatrix.get(event.room_id);
         if (channel !== undefined) {
             await channel.onMatrixEvent(event);
-        } else if (
+        } else {
+            /*
             event.type === 'm.room.member' &&
             event.content.membership === 'invite' &&
             event.state_key &&
@@ -512,8 +495,13 @@ export default class Main extends EventEmitter {
                 msgtype: 'm.notice',
             });
             await client.leave(event.room_id);
-        } else {
-            this.myLogger.debug(`Message for unknown room: ${event.room_id}`);
+            */
+            let z = 1;
+            if (z === 1) {
+                this.myLogger.debug(
+                    `Message for unknown room: ${event.room_id}`,
+                );
+            }
         }
     }
 

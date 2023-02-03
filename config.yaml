@@ -97,7 +97,7 @@ ignored_matrix_users:
 
 # Same as above. The mattermost bot is also automatically included.
 ignored_mattermost_users:
-  - '0z4okgmv5lfhx3p0tf6pnpk8sk'
+  - 'tkzqirh7h78opxqwk5a4bt3fkw'
 
 # Email template used for puppet users, with [RANDOM] replaced by a random
 # string. These do not have to be valid emails, as the users have their emails

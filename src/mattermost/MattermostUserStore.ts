@@ -5,7 +5,7 @@ import Mutex from '../utils/Mutex';
 import Main from '../Main';
 import { findFirstAvailable } from '../utils/Functions';
 import { MattermostUserInfo, MatrixClient } from '../Interfaces';
-import { getMatrixClient } from '../matrix/Utils';
+import { getMatrixClient, registerAppService } from '../matrix/Utils';
 import { getLogger } from '../Logging';
 
 export default class MattermostUserStore {
@@ -17,7 +17,7 @@ export default class MattermostUserStore {
         this.mutex = new Mutex();
         this.users = new Map();
         this.clients = new Map();
-        this.myLogger = getLogger('AppService');
+        this.myLogger = getLogger('MattermostUserStore');
     }
 
     public get(userid: string): User | undefined {
@@ -61,17 +61,10 @@ export default class MattermostUserStore {
                 `${config().matrix_localpart_prefix}${data.username}`,
                 async s => {
                     try {
-                        await this.main.botClient.registerRequest({
-                            username: s,
-                            type: 'm.login.application_service',
-                        });
-                        return true;
+                        let ret=await registerAppService(this.main.botClient,s,this.myLogger);
+                        return ret==='OK'?true:false;
                     } catch (e) {
-                        if (e.errcode === 'M_USER_IN_USE') {
-                            return false;
-                        } else {
-                            throw e;
-                        }
+                        throw e;
                     }
                 },
             );
@@ -79,6 +72,7 @@ export default class MattermostUserStore {
                 `Creating matrix puppet @${localpart}:${server_name} for ${userid}`,
             );
             user = await User.createMattermostUser(
+                this.main.client,
                 `@${localpart}:${server_name}`,
                 userid,
                 data.username,

@@ -1,3 +1,5 @@
+import * as sdk from 'matrix-js-sdk';
+
 export interface MattermostMessage {
     event: string;
     data: any;
@@ -88,6 +90,7 @@ export interface MattermostUserInfo {
 export interface MatrixClient {
     sendMessage: (room: string, message: MatrixMessage) => Promise<MatrixEvent>;
     fetchRoomEvent: (room: string, eventid: string) => Promise<MatrixEvent>;
+    
     [propName: string]: any;
 }
 
