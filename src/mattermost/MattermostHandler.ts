@@ -1,4 +1,5 @@
 import * as log4js from 'log4js';
+import * as sdk from 'matrix-js-sdk'
 import Channel from '../Channel';
 import { Post } from '../entities/Post';
 import Main from '../Main';
@@ -6,9 +7,7 @@ import { getLogger } from '../Logging';
 import {
     MattermostMessage,
     MattermostPost,
-    MatrixMessage,
-    MatrixEvent,
-    MatrixClient,
+    MatrixMessage
 } from '../Interfaces';
 import { joinMatrixRoom } from '../matrix/Utils';
 import { handlePostError, none } from '../utils/Functions';
@@ -24,7 +23,7 @@ interface Metadata {
 }
 
 async function sendMatrixMessage(
-    client: MatrixClient,
+    client: sdk.MatrixClient,
     room: string,
     postid: string,
     message: MatrixMessage,
@@ -34,12 +33,14 @@ async function sendMatrixMessage(
     if (metadata.replyTo !== undefined) {
         const replyTo = metadata.replyTo;
         rootid = replyTo.mattermost;
-        let original: MatrixEvent | undefined = undefined;
+        let original: Partial<sdk.IEvent> ={}
+        await client.fetchRelations
         try {
-            original = await client.fetchRoomEvent(room, replyTo.matrix);
+            original = await client.fetchRoomEvent(room, replyTo.matrix)
         } catch (e) {}
         if (original !== undefined) {
-            constructMatrixReply(original, message);
+            let event:sdk.IEvent= JSON.parse(JSON.stringify(original))
+            constructMatrixReply(event, message);
         }
     }
     const event = await client.sendMessage(room, message);
@@ -54,7 +55,7 @@ async function sendMatrixMessage(
 const MattermostPostHandlers = {
     '': async function (
         this: Channel,
-        client: MatrixClient,
+        client: sdk.MatrixClient,
         post: MattermostPost,
         metadata: Metadata,
     ) {
@@ -70,15 +71,16 @@ const MattermostPostHandlers = {
             for (const file of post.metadata.files) {
                 // Read everything into memory to compute content-length
                 const body = await (
-                    await this.main.client.send_raw('GET', `/files/${file.id}`)
+                    await this.main.client.get( `/files/${file.id}`)
                 ).buffer();
                 const mimetype = file.mime_type;
 
+            
                 const url = await client.uploadContent(body, {
                     name: file.name,
                     type: mimetype,
-                    rawResponse: false,
-                    onlyContentUri: true,
+                    //rawResponse: false,
+                    //onlyContentUri: true,
                 });
 
                 let msgtype = 'm.file';
@@ -109,8 +111,7 @@ const MattermostPostHandlers = {
                 );
             }
         }
-        client
-            .sendTyping(this.matrixRoom, false)
+        client.sendTyping(this.matrixRoom, false,3000)
             .catch(e =>
                 myLogger.warn(
                     `Error sending typing notification to ${this.matrixRoom}\n${e.stack}`,
@@ -119,7 +120,7 @@ const MattermostPostHandlers = {
     },
     me: async function (
         this: Channel,
-        client: MatrixClient,
+        client: sdk.MatrixClient,
         post: MattermostPost,
         metadata: Metadata,
     ) {
@@ -131,7 +132,7 @@ const MattermostPostHandlers = {
             metadata,
         );
         client
-            .sendTyping(this.matrixRoom, false)
+            .sendTyping(this.matrixRoom, false,3000)
             .catch(e =>
                 myLogger.warn(
                     `Error sending typing notification to ${this.matrixRoom}\n${e.stack}`,
@@ -256,7 +257,7 @@ export const MattermostHandlers = {
         const client = await this.main.mattermostUserStore.getOrCreateClient(
             m.data.user_id,
         );
-        await joinMatrixRoom(this.main.botClient, client, this.matrixRoom);
+        await joinMatrixRoom(this.main.botClient, this.matrixRoom);
     },
     user_removed: async function (
         this: Channel,
@@ -279,8 +280,7 @@ export const MattermostHandlers = {
     ): Promise<void> {
         const client = this.main.mattermostUserStore.getClient(m.data.user_id);
         if (client !== undefined) {
-            client
-                .sendTyping(this.matrixRoom, true, 6000)
+            client.sendTyping(this.matrixRoom, true, 6000)
                 .catch(e =>
                     myLogger.warn(
                         `Error sending typing notification to ${this.matrixRoom}\n${e.stack}`,

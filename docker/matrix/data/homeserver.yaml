@@ -29,7 +29,7 @@ database:
 #  args:
 #    database: /data/homeserver.db
 
-log_config: '/data/localhost.log.config'
+# log_config: '/data/localhost.log.config'
 media_store_path: '/data/media_store'
 report_stats: false
 enable_registration: true

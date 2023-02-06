@@ -1,4 +1,5 @@
 import * as log4js from 'log4js';
+import * as sdk  from 'matrix-js-sdk'
 import { User } from '../entities/User';
 import Mutex from '../utils/Mutex';
 import Main from '../Main';
@@ -58,8 +59,10 @@ export default class MatrixUserStore {
             const client = this.main.client;
             const localpart_ = localpart(matrix_userid);
             const template = config().mattermost_username_template;
+            let realUserName=matrix_userid.split('.')[0].substring(1)
 
-            let displayname = '';
+            let displayname = 
+            '';
 
             if (template.includes('[DISPLAY]')) {
                 try {
@@ -91,7 +94,7 @@ export default class MatrixUserStore {
                 displayname,
             );
             this.myLogger.debug(
-                `Creating mattermost puppet ${user.mattermost_userid} for ${matrix_userid}`,
+                `Creating mattermost puppet id: ${user.mattermost_userid} name:  ${user.mattermost_username} for matrix user: ${matrix_userid}`,
             );
             this.mutex.unlock();
         }

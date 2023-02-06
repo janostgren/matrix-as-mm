@@ -1,5 +1,6 @@
 import * as log4js from 'log4js';
-import { MatrixEvent, MattermostMessage } from './Interfaces';
+import * as sdk  from 'matrix-js-sdk'
+import { MattermostMessage } from './Interfaces';
 import { getLogger } from './Logging';
 import Main from './Main';
 import MatrixHandlers from './matrix/MatrixHandler';
@@ -79,7 +80,6 @@ export default class Channel {
                     const client = this.main.mattermostUserStore.client(user);
                     await joinMatrixRoom(
                         this.main.botClient,
-                        client,
                         this.matrixRoom,
                     );
                 }
@@ -89,6 +89,7 @@ export default class Channel {
         await Promise.all(
             Array.from(matrixUsers.remote, async matrix_userid => {
                 const client = getMatrixClient(
+   
                     this.main.registration,
                     matrix_userid,
                 );
@@ -106,7 +107,7 @@ export default class Channel {
         }
     }
 
-    public async onMatrixEvent(event: MatrixEvent): Promise<void> {
+    public async onMatrixEvent(event: sdk.IEvent): Promise<void> {
         const handler = MatrixHandlers[event.type];
         if (handler === undefined) {
             this.myLogger.debug(`Unknown matrix event type: ${event.type}`);
