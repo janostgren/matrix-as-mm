@@ -1,4 +1,5 @@
 import * as log4js from 'log4js';
+import * as sdk from 'matrix-js-sdk'
 import Channel from '../Channel';
 import { User } from '../entities/User';
 import { Post } from '../entities/Post';
@@ -9,7 +10,7 @@ import {
 } from '../mattermost/Utils';
 import { handlePostError, none } from '../utils/Functions';
 import { matrixToMattermost } from '../utils/Formatting';
-import { MatrixEvent } from '../Interfaces';
+//import { MatrixEvent } from '../Interfaces';
 import * as FormData from 'form-data';
 import { getLogger } from '../Logging';
 import fetch from 'node-fetch';
@@ -23,7 +24,7 @@ interface Metadata {
 async function uploadFile(
     this: Channel,
     user: User,
-    event: MatrixEvent,
+    event: sdk.IEvent,
     metadata: Metadata,
 ) {
     const mxc = event.content.url;
@@ -63,7 +64,7 @@ const MatrixMessageHandlers = {
     'm.text': async function (
         this: Channel,
         user: User,
-        event: MatrixEvent,
+        event: sdk.IEvent,
         metadata: Metadata,
     ) {
         if (metadata.edits) {
@@ -92,7 +93,7 @@ const MatrixMessageHandlers = {
     'm.emote': async function (
         this: Channel,
         user: User,
-        event: MatrixEvent,
+        event: sdk.IEvent,
         metadata: Metadata,
     ) {
         if (metadata.edits) {
@@ -193,7 +194,7 @@ const MatrixMembershipHandler = {
 const MatrixHandlers = {
     'm.room.message': async function (
         this: Channel,
-        event: MatrixEvent,
+        event: sdk.IEvent,
     ): Promise<void> {
         const content = event.content;
         const user = await this.main.matrixUserStore.get(event.sender);
@@ -230,8 +231,8 @@ const MatrixHandlers = {
                 }
             }
         }
-
-        let handler = MatrixMessageHandlers[content.msgtype];
+        let msgType:string = content.msgtype || "not found"
+        let handler = MatrixMessageHandlers[msgType]; 
         if (handler === undefined) {
             handler = MatrixMessageHandlers['m.text'];
         }
@@ -239,9 +240,10 @@ const MatrixHandlers = {
     },
     'm.room.member': async function (
         this: Channel,
-        event: MatrixEvent,
+        event: sdk.IEvent,
     ): Promise<void> {
-        const handler = MatrixMembershipHandler[event.content.membership];
+        const membership:string= event.content.membership || "not found"
+        const handler = MatrixMembershipHandler[membership];
         if (handler === undefined) {
             myLogger.warn(
                 `Invalid membership state: ${event.content.membership}`,
@@ -252,7 +254,7 @@ const MatrixHandlers = {
     },
     'm.room.redaction': async function (
         this: Channel,
-        event: MatrixEvent,
+        event: sdk.IEvent,
     ): Promise<void> {
         const botid = this.main.botClient.getUserId();
         // Matrix loop detection doesn't catch redactions.

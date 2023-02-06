@@ -1,16 +1,17 @@
 import * as log4js from 'log4js';
+import * as sdk from 'matrix-js-sdk';
 import { User } from '../entities/User';
 import { config } from '../Config';
 import Mutex from '../utils/Mutex';
 import Main from '../Main';
 import { findFirstAvailable } from '../utils/Functions';
-import { MattermostUserInfo, MatrixClient } from '../Interfaces';
-import { getMatrixClient, registerAppService } from '../matrix/Utils';
+import { MattermostUserInfo} from '../Interfaces';
+import { getMatrixClient,loginAppService,registerAppService} from '../matrix/Utils';
 import { getLogger } from '../Logging';
 
 export default class MattermostUserStore {
     private users: Map<string, User>;
-    private clients: Map<string, MatrixClient>;
+    private clients: Map<string, sdk.MatrixClient>;
     private mutex: Mutex;
     private myLogger: log4js.Logger;
     constructor(private readonly main: Main) {
@@ -59,10 +60,11 @@ export default class MattermostUserStore {
         if (user === undefined) {
             const localpart = await findFirstAvailable(
                 `${config().matrix_localpart_prefix}${data.username}`,
-                async s => {
+                async userName => {
                     try {
-                        let ret=await registerAppService(this.main.botClient,s,this.myLogger);
-                        return ret==='OK'?true:false;
+                        //await loginAppService(this.main.botClient,userName);
+                        await registerAppService(this.main.botClient,userName,this.myLogger)
+                        return true
                     } catch (e) {
                         throw e;
                     }
@@ -113,10 +115,11 @@ export default class MattermostUserStore {
             user.matrix_displayname = displayName;
             await user.save();
         }
-        await this.client(user).setDisplayName(displayName);
+        //await this.client.(user).setDisplayName(displayName);
+   
     }
 
-    public client(user: User): MatrixClient {
+    public client(user: User): sdk.MatrixClient {
         let client = this.clients.get(user.matrix_userid);
         if (client === undefined) {
             client = getMatrixClient(
@@ -131,11 +134,11 @@ export default class MattermostUserStore {
     public async getOrCreateClient(
         userid: string,
         sync: boolean = false,
-    ): Promise<MatrixClient> {
+    ): Promise<sdk.MatrixClient> {
         return this.client(await this.getOrCreate(userid, sync));
     }
 
-    public getClient(userid: string): MatrixClient | undefined {
+    public getClient(userid: string): sdk.MatrixClient | undefined {
         const user = this.get(userid);
         if (user === undefined) {
             return undefined;

@@ -2,6 +2,8 @@ import AppService from './matrix/AppService';
 import { createConnection, ConnectionOptions, getConnection } from 'typeorm';
 import { Client, ClientWebsocket } from './mattermost/Client';
 import * as logLevel from 'loglevel';
+import * as sdk  from 'matrix-js-sdk'
+
 import {
     Config,
     Mapping,
@@ -21,12 +23,10 @@ import { Post } from './entities/Post';
 import * as log4js from 'log4js';
 import {
     MattermostMessage,
-    MatrixClient,
-    MatrixEvent,
     Registration,
 } from './Interfaces';
 import MatrixUserStore from './matrix/MatrixUserStore';
-import { getMatrixClient, registerAppService } from './matrix/Utils';
+import { getMatrixClient, loginAppService,registerAppService } from './matrix/Utils';
 import MattermostUserStore from './mattermost/MattermostUserStore';
 import { joinMattermostChannel } from './mattermost/Utils';
 import Channel from './Channel';
@@ -40,11 +40,11 @@ export default class Main extends EventEmitter {
     private readonly appService: AppService;
     public readonly registration: Registration;
 
-    private matrixQueue: EventQueue<MatrixEvent>;
+    private matrixQueue: EventQueue<sdk.IEvent>;
     private mattermostQueue: EventQueue<MattermostMessage>;
     private myLogger: log4js.Logger;
 
-    public botClient: MatrixClient;
+    public botClient: sdk.MatrixClient;
 
     public initialized: boolean;
     public killed: boolean;
@@ -185,12 +185,23 @@ export default class Main extends EventEmitter {
             packInfo.version,
             process.argv,
         );
-
+        
+        /*
+        let info =await loginAppService(
+            this.botClient,
+            config().matrix_bot.username
+        );
+        
+        this.myLogger.info("Login as app service: %s",info)
+        this.botClient.setAccessToken(info.access_token)
+        */
+        
         await registerAppService(
             this.botClient,
             config().matrix_bot.username,
-            this.myLogger,
+            this.myLogger
         );
+        
 
         const botProfile = this.updateBotProfile().catch(e =>
             this.myLogger.warn(`Error when updating bot profile\n${e.stack}`),
@@ -432,8 +443,8 @@ export default class Main extends EventEmitter {
 
     private async updateBotProfile(): Promise<void> {
         const targetProfile = config().matrix_bot;
-        const profile = await this.botClient
-            .getProfileInfo(this.botClient.getUserId())
+        const profile:any = await this.botClient
+            .getProfileInfo(this.botClient.getUserId() || '')
             .catch(() => ({ display_name: '' }));
         if (
             targetProfile.display_name &&
@@ -474,10 +485,10 @@ export default class Main extends EventEmitter {
         }
     }
 
-    private async onMatrixEvent(event: MatrixEvent): Promise<void> {
+    private async onMatrixEvent(event: sdk.IEvent): Promise<void> {
         this.myLogger.debug(`Matrix event: ${JSON.stringify(event)}`);
 
-        const channel = this.channelsByMatrix.get(event.room_id);
+        const channel = this.channelsByMatrix.get(event.room_id || '');
         if (channel !== undefined) {
             await channel.onMatrixEvent(event);
         } else {

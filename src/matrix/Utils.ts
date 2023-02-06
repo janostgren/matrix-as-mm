@@ -1,9 +1,8 @@
 import Main from '../Main';
 import * as sdk from 'matrix-js-sdk';
-import { MatrixClient, Registration } from '../Interfaces';
-import { config } from '../Config';
 import * as log4js from 'log4js'
-import { Logger } from 'ajv';
+import { Registration } from '../Interfaces';
+import { config } from '../Config';
 
 export async function getMatrixUsers(
     main: Main,
@@ -36,8 +35,8 @@ export async function getMatrixUsers(
 export function getMatrixClient(
     registration: Registration,
     userId: string,
-): MatrixClient {
-    let sdkClient=sdk.createClient({
+): sdk.MatrixClient {
+    const client: sdk.MatrixClient = sdk.createClient({
         accessToken: registration.as_token,
         baseUrl: config().homeserver.url,
         userId,
@@ -47,20 +46,25 @@ export function getMatrixClient(
         },
         scheduler: new (sdk as any).MatrixScheduler(),
         localTimeoutMs: 1000 * 60 * 2,
-    });
-    return sdkClient
-}
+    })
+    return client
+    
+    }
 
-export async function registerAppService(client:MatrixClient,username:string, logger:log4js.Logger):Promise<string>{
+
+export async function registerAppService(client: sdk.MatrixClient, username: string, logger: log4js.Logger): Promise<string> {
     try {
         await client.registerRequest({
             username: username,
+            auth:{
             type: 'm.login.application_service',
+            }
         });
     } catch (e) {
         if (e.errcode !== 'M_USER_IN_USE') {
+            const token=client.getAccessToken()
             logger.error(
-                `Register application service as user: ${username} failed`,
+                `Register application service as user: ${username} failed. Token: ${token}`,
             );
             throw e;
         } else {
@@ -75,13 +79,27 @@ export async function registerAppService(client:MatrixClient,username:string, lo
     return 'OK'
 }
 
+
+export async function loginAppService(client: sdk.MatrixClient,username:string): Promise<any> {
+
+    return await client.login("m.login.application_service",
+    {
+        "identifier": {
+            "type": "m.id.user",
+            "user": username
+          }
+
+    })
+
+}    
+
+
 export async function joinMatrixRoom(
-    botClient: MatrixClient,
-    client: MatrixClient,
+    client: sdk.MatrixClient,
     roomId: string,
 ): Promise<void> {
     try {
-        await botClient.invite(roomId, client.getUserId());
+        await client.invite(roomId, client.getUserId() || '');
     } catch (e) {
         if (
             !(

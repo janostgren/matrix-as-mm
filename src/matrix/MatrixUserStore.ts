@@ -1,4 +1,5 @@
 import * as log4js from 'log4js';
+import * as sdk  from 'matrix-js-sdk'
 import { User } from '../entities/User';
 import Mutex from '../utils/Mutex';
 import Main from '../Main';
