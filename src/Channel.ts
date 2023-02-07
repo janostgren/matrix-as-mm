@@ -1,6 +1,6 @@
 import * as log4js from 'log4js';
-import * as sdk  from 'matrix-js-sdk'
-import { MattermostMessage } from './Interfaces';
+import * as mxClient from './matrix/MatrixClient';
+import { MattermostMessage,MatrixEvent } from './Interfaces';
 import { getLogger } from './Logging';
 import Main from './Main';
 import MatrixHandlers from './matrix/MatrixHandler';
@@ -79,7 +79,7 @@ export default class Channel {
                     matrixUsers.remote.delete(user.matrix_userid);
                     const client = this.main.mattermostUserStore.client(user);
                     await joinMatrixRoom(
-                        this.main.botClient,
+                        client,
                         this.matrixRoom,
                     );
                 }
@@ -107,7 +107,7 @@ export default class Channel {
         }
     }
 
-    public async onMatrixEvent(event: sdk.IEvent): Promise<void> {
+    public async onMatrixEvent(event: MatrixEvent): Promise<void> {
         const handler = MatrixHandlers[event.type];
         if (handler === undefined) {
             this.myLogger.debug(`Unknown matrix event type: ${event.type}`);

@@ -1,5 +1,5 @@
 import * as log4js from 'log4js';
-import * as sdk  from 'matrix-js-sdk'
+import * as mxClient from '../matrix/MatrixClient';
 import { User } from '../entities/User';
 import Mutex from '../utils/Mutex';
 import Main from '../Main';
@@ -67,8 +67,7 @@ export default class MatrixUserStore {
             if (template.includes('[DISPLAY]')) {
                 try {
                     const resp = await this.main.botClient.getProfileInfo(
-                        matrix_userid,
-                        'displayname',
+                        matrix_userid
                     );
                     if (resp.displayname) {
                         displayname = resp.displayname;
@@ -110,8 +109,7 @@ export default class MatrixUserStore {
 
         try {
             const resp = await this.main.botClient.getProfileInfo(
-                user.matrix_userid,
-                'displayname',
+                user.matrix_userid
             );
             if (resp.displayname) {
                 displayname = resp.displayname;

@@ -1,6 +1,6 @@
 import Main from '../Main';
-import * as sdk from 'matrix-js-sdk';
-import * as log4js from 'log4js'
+import * as mxClient from './MatrixClient';
+import * as log4js from 'log4js';
 import { Registration } from '../Interfaces';
 import { config } from '../Config';
 
@@ -14,9 +14,16 @@ export async function getMatrixUsers(
     const realMatrixUsers: Set<string> = new Set();
     const remoteMatrixUsers: Set<string> = new Set();
 
-    const allMatrixUsers = Object.keys(
-        (await main.botClient.getJoinedRoomMembers(roomid)).joined,
+    /*const allMatrixUsers = Object.keys(
+        (await main.botClient.getRoomMembers(roomid)),
     );
+    */
+    const allMatrixUsers:string[]=[]
+    let resp=await main.botClient.getRoomMembers(roomid)
+    for (let member of resp.chunk) {
+        allMatrixUsers.push(member.user_id)
+    }
+
     for (const matrixUser of allMatrixUsers) {
         if (main.isRemoteUser(matrixUser)) {
             remoteMatrixUsers.add(matrixUser);
@@ -30,85 +37,60 @@ export async function getMatrixUsers(
     };
 }
 
-
-
 export function getMatrixClient(
     registration: Registration,
     userId: string,
-): sdk.MatrixClient {
-    const client: sdk.MatrixClient = sdk.createClient({
-        accessToken: registration.as_token,
-        baseUrl: config().homeserver.url,
-        userId,
-        queryParams: {
-            user_id: userId,
-            access_token: registration.as_token,
-        },
-        scheduler: new (sdk as any).MatrixScheduler(),
-        localTimeoutMs: 1000 * 60 * 2,
-    })
-    return client
-    
+): mxClient.MatrixClient {
+    const client = new mxClient.MatrixClient( {
+        userId:userId,
+        baseUrl:config().homeserver.url,
+        accessToken:registration.as_token,
     }
-
-
-export async function registerAppService(client: sdk.MatrixClient, username: string, logger: log4js.Logger): Promise<string> {
-    try {
-        await client.registerRequest({
-            username: username,
-            auth:{
-            type: 'm.login.application_service',
-            }
-        });
-    } catch (e) {
-        if (e.errcode !== 'M_USER_IN_USE') {
-            const token=client.getAccessToken()
-            logger.error(
-                `Register application service as user: ${username} failed. Token: ${token}`,
-            );
-            throw e;
-        } else {
-            logger.debug(
-                'Register Application Service as %s return message: %s',
-                username,
-                e.errcode || '',
-            );
-            return e.errcode
-        }
-    }
-    return 'OK'
+    );
+    return client;
 }
 
+export async function registerAppService(
+    client: mxClient.MatrixClient,
+    username: string,
+    logger: log4js.Logger,
+): Promise<string> {
+    try {
+        let ret =await client.registerService(username)
+        logger.debug("Register app service with username:%s userId:%s returns %s",username,client.getUserId(),ret)
+        return ret
+       
+    } catch (e) {
+        throw e;
+    }
+}
 
-export async function loginAppService(client: sdk.MatrixClient,username:string): Promise<any> {
-
-    return await client.login("m.login.application_service",
-    {
-        "identifier": {
-            "type": "m.id.user",
-            "user": username
-          }
-
-    })
-
-}    
-
+export async function loginAppService(
+    client: mxClient.MatrixClient,
+    username: string,
+): Promise<any> {
+    return await client.loginAppService(username)
+      
+}
 
 export async function joinMatrixRoom(
-    client: sdk.MatrixClient,
+    client: mxClient.MatrixClient,
     roomId: string,
 ): Promise<void> {
+    const reason="Needed for app service"
     try {
-        await client.invite(roomId, client.getUserId() || '');
+        const userId=client.getUserId() 
+       await client.invite(roomId,userId,reason)
+       
     } catch (e) {
         if (
             !(
-                e.data.errcode === 'M_FORBIDDEN' &&
-                e.data.error.endsWith('is already in the room.')
+                e.errcode === 'M_FORBIDDEN' &&
+                e.error.endsWith('is already in the room.')
             )
         ) {
-            throw e;
+            throw e.message;
         }
     }
-    await client.joinRoom(roomId);
+    await client.joinRoom(roomId,reason);
 }

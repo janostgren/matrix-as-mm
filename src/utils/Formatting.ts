@@ -1,10 +1,9 @@
-import { MatrixMessage} from '../Interfaces';
+import { MatrixMessage,MatrixEvent,} from '../Interfaces';
 import { User } from '../entities/User';
 import { replaceAsync } from './Functions';
 import { config } from '../Config';
 import { marked } from 'marked';
 import * as Turndown from 'turndown';
-import * as sdk  from 'matrix-js-sdk'
 
 const MARKED_OPTIONS = {
     gfm: true,
@@ -63,7 +62,7 @@ async function translateMattermostUsername(body: string, html: boolean) {
 }
 
 export async function matrixToMattermost(
-    content: sdk.IContent,
+    content: MatrixMessage,
 ): Promise<string> {
     if (content.formatted_body === undefined) {
         return content.body;
@@ -118,7 +117,7 @@ export async function mattermostToMatrix(
 }
 
 export function constructMatrixReply(
-    original: sdk.IEvent,
+    original: MatrixEvent,
     message: MatrixMessage,
 ): void {
     message['m.relates_to'] = {

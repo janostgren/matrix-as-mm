@@ -1,5 +1,5 @@
 import * as log4js from 'log4js';
-import * as sdk from 'matrix-js-sdk'
+import * as mxClient from '../matrix/MatrixClient';
 import Channel from '../Channel';
 import { Post } from '../entities/Post';
 import Main from '../Main';
@@ -7,7 +7,8 @@ import { getLogger } from '../Logging';
 import {
     MattermostMessage,
     MattermostPost,
-    MatrixMessage
+    MatrixMessage,
+    MatrixEvent,
 } from '../Interfaces';
 import { joinMatrixRoom } from '../matrix/Utils';
 import { handlePostError, none } from '../utils/Functions';
@@ -23,27 +24,29 @@ interface Metadata {
 }
 
 async function sendMatrixMessage(
-    client: sdk.MatrixClient,
+    client: mxClient.MatrixClient,
     room: string,
     postid: string,
     message: MatrixMessage,
     metadata: Metadata,
 ) {
     let rootid = postid;
+    let original: MatrixEvent = {} as any;
     if (metadata.replyTo !== undefined) {
         const replyTo = metadata.replyTo;
         rootid = replyTo.mattermost;
-        let original: Partial<sdk.IEvent> ={}
-        await client.fetchRelations
+
         try {
-            original = await client.fetchRoomEvent(room, replyTo.matrix)
-        } catch (e) {}
+            original = await client.getRoomEvent(room, replyTo.matrix);
+        } catch (e) { }
         if (original !== undefined) {
-            let event:sdk.IEvent= JSON.parse(JSON.stringify(original))
-            constructMatrixReply(event, message);
+            constructMatrixReply(original, message);
         }
     }
-    const event = await client.sendMessage(room, message);
+    const event = await client.sendMessage(room, "m.room.message", {
+        body: message.body,
+        msgtype: message.msgtype,
+    });
     await Post.create({
         postid,
         rootid,
@@ -55,7 +58,7 @@ async function sendMatrixMessage(
 const MattermostPostHandlers = {
     '': async function (
         this: Channel,
-        client: sdk.MatrixClient,
+        client: mxClient.MatrixClient,
         post: MattermostPost,
         metadata: Metadata,
     ) {
@@ -71,17 +74,12 @@ const MattermostPostHandlers = {
             for (const file of post.metadata.files) {
                 // Read everything into memory to compute content-length
                 const body = await (
-                    await this.main.client.get( `/files/${file.id}`)
+                    await this.main.client.get(`/files/${file.id}`)
                 ).buffer();
                 const mimetype = file.mime_type;
 
-            
-                const url = await client.uploadContent(body, {
-                    name: file.name,
-                    type: mimetype,
-                    //rawResponse: false,
-                    //onlyContentUri: true,
-                });
+                let fileName = `${file.name}.${file.extension}`;
+                const url = await client.upload(fileName, mimetype);
 
                 let msgtype = 'm.file';
                 if (mimetype.startsWith('image/')) {
@@ -111,7 +109,9 @@ const MattermostPostHandlers = {
                 );
             }
         }
-        client.sendTyping(this.matrixRoom, false,3000)
+
+        client
+            .sendTyping(this.matrixRoom, client.getUserId(), false, 3000)
             .catch(e =>
                 myLogger.warn(
                     `Error sending typing notification to ${this.matrixRoom}\n${e.stack}`,
@@ -120,7 +120,7 @@ const MattermostPostHandlers = {
     },
     me: async function (
         this: Channel,
-        client: sdk.MatrixClient,
+        client: mxClient.MatrixClient,
         post: MattermostPost,
         metadata: Metadata,
     ) {
@@ -132,7 +132,7 @@ const MattermostPostHandlers = {
             metadata,
         );
         client
-            .sendTyping(this.matrixRoom, false,3000)
+            .sendTyping(this.matrixRoom, client.getUserId(), false, 3000)
             .catch(e =>
                 myLogger.warn(
                     `Error sending typing notification to ${this.matrixRoom}\n${e.stack}`,
@@ -225,7 +225,10 @@ export const MattermostHandlers = {
                 rel_type: 'm.replace',
             };
         }
-        await client.sendMessage(this.matrixRoom, msg);
+        await client.sendMessage(this.matrixRoom, m.event, {
+            msgtype: msg.msgtype,
+            body: msg.body,
+        });
     },
     post_deleted: async function (
         this: Channel,
@@ -244,7 +247,15 @@ export const MattermostHandlers = {
         // It is okay to redact an event already redacted.
         for (const event of matrixEvents) {
             promises.push(
-                this.main.botClient.redactEvent(this.matrixRoom, event.eventid),
+                //this.main.botClient.redactEvent(this.matrixRoom, event.eventid),
+                this.main.botClient.sendStateEvent(
+                    this.matrixRoom,
+                    'm.room.redaction',
+                    this.main.botClient.getUserId(),
+                    {
+                        event_id: event.eventid,
+                    },
+                ),
             );
             promises.push(event.remove());
         }
@@ -257,7 +268,7 @@ export const MattermostHandlers = {
         const client = await this.main.mattermostUserStore.getOrCreateClient(
             m.data.user_id,
         );
-        await joinMatrixRoom(this.main.botClient, this.matrixRoom);
+        await joinMatrixRoom(client, this.matrixRoom);
     },
     user_removed: async function (
         this: Channel,
@@ -280,7 +291,8 @@ export const MattermostHandlers = {
     ): Promise<void> {
         const client = this.main.mattermostUserStore.getClient(m.data.user_id);
         if (client !== undefined) {
-            client.sendTyping(this.matrixRoom, true, 6000)
+            client
+                .sendTyping(this.matrixRoom, client.getUserId(), true, 6000)
                 .catch(e =>
                     myLogger.warn(
                         `Error sending typing notification to ${this.matrixRoom}\n${e.stack}`,

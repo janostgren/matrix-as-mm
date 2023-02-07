@@ -1,5 +1,5 @@
 import * as log4js from 'log4js';
-import * as sdk from 'matrix-js-sdk'
+import * as mxClient from './MatrixClient';
 import Channel from '../Channel';
 import { User } from '../entities/User';
 import { Post } from '../entities/Post';
@@ -10,7 +10,7 @@ import {
 } from '../mattermost/Utils';
 import { handlePostError, none } from '../utils/Functions';
 import { matrixToMattermost } from '../utils/Formatting';
-//import { MatrixEvent } from '../Interfaces';
+import { MatrixEvent } from '../Interfaces';
 import * as FormData from 'form-data';
 import { getLogger } from '../Logging';
 import fetch from 'node-fetch';
@@ -24,13 +24,13 @@ interface Metadata {
 async function uploadFile(
     this: Channel,
     user: User,
-    event: sdk.IEvent,
+    event: MatrixEvent,
     metadata: Metadata,
 ) {
     const mxc = event.content.url;
 
     const body = await fetch(
-        `${this.main.botClient.baseUrl}/_matrix/media/r0/download/${mxc.slice(
+        `${this.main.botClient.getBaseUrl()}/_matrix/media/r0/download/${mxc.slice(
             6,
         )}`,
     );
@@ -64,7 +64,7 @@ const MatrixMessageHandlers = {
     'm.text': async function (
         this: Channel,
         user: User,
-        event: sdk.IEvent,
+        event: MatrixEvent,
         metadata: Metadata,
     ) {
         if (metadata.edits) {
@@ -93,7 +93,7 @@ const MatrixMessageHandlers = {
     'm.emote': async function (
         this: Channel,
         user: User,
-        event: sdk.IEvent,
+        event: MatrixEvent,
         metadata: Metadata,
     ) {
         if (metadata.edits) {
@@ -173,7 +173,7 @@ const MatrixMembershipHandler = {
 
         const joined = await Promise.all(
             channels.map(async channel => {
-                const members = await this.main.botClient.getJoinedRoomMembers(
+                const members = await this.main.botClient.getRoomMembers(
                     channel.matrixRoom,
                 );
                 return Object.keys(members.joined).includes(user.matrix_userid);
@@ -194,7 +194,7 @@ const MatrixMembershipHandler = {
 const MatrixHandlers = {
     'm.room.message': async function (
         this: Channel,
-        event: sdk.IEvent,
+        event: MatrixEvent,
     ): Promise<void> {
         const content = event.content;
         const user = await this.main.matrixUserStore.get(event.sender);
@@ -240,7 +240,7 @@ const MatrixHandlers = {
     },
     'm.room.member': async function (
         this: Channel,
-        event: sdk.IEvent,
+        event: MatrixEvent,
     ): Promise<void> {
         const membership:string= event.content.membership || "not found"
         const handler = MatrixMembershipHandler[membership];
@@ -254,7 +254,7 @@ const MatrixHandlers = {
     },
     'm.room.redaction': async function (
         this: Channel,
-        event: sdk.IEvent,
+        event: MatrixEvent,
     ): Promise<void> {
         const botid = this.main.botClient.getUserId();
         // Matrix loop detection doesn't catch redactions.

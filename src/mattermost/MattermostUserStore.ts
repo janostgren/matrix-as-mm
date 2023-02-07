@@ -1,5 +1,5 @@
 import * as log4js from 'log4js';
-import * as sdk from 'matrix-js-sdk';
+import * as mxClient from '../matrix/MatrixClient';
 import { User } from '../entities/User';
 import { config } from '../Config';
 import Mutex from '../utils/Mutex';
@@ -11,7 +11,7 @@ import { getLogger } from '../Logging';
 
 export default class MattermostUserStore {
     private users: Map<string, User>;
-    private clients: Map<string, sdk.MatrixClient>;
+    private clients: Map<string, mxClient.MatrixClient>;
     private mutex: Mutex;
     private myLogger: log4js.Logger;
     constructor(private readonly main: Main) {
@@ -119,7 +119,7 @@ export default class MattermostUserStore {
    
     }
 
-    public client(user: User): sdk.MatrixClient {
+    public client(user: User): mxClient.MatrixClient {
         let client = this.clients.get(user.matrix_userid);
         if (client === undefined) {
             client = getMatrixClient(
@@ -134,11 +134,11 @@ export default class MattermostUserStore {
     public async getOrCreateClient(
         userid: string,
         sync: boolean = false,
-    ): Promise<sdk.MatrixClient> {
+    ): Promise<mxClient.MatrixClient> {
         return this.client(await this.getOrCreate(userid, sync));
     }
 
-    public getClient(userid: string): sdk.MatrixClient | undefined {
+    public getClient(userid: string): mxClient.MatrixClient | undefined {
         const user = this.get(userid);
         if (user === undefined) {
             return undefined;

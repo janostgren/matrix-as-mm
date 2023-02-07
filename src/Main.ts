@@ -2,7 +2,7 @@ import AppService from './matrix/AppService';
 import { createConnection, ConnectionOptions, getConnection } from 'typeorm';
 import { Client, ClientWebsocket } from './mattermost/Client';
 import * as logLevel from 'loglevel';
-import * as sdk  from 'matrix-js-sdk'
+import * as mxClient from './matrix/MatrixClient';
 
 import {
     Config,
@@ -24,9 +24,15 @@ import * as log4js from 'log4js';
 import {
     MattermostMessage,
     Registration,
+    MatrixMessage,
+    MatrixEvent,
 } from './Interfaces';
 import MatrixUserStore from './matrix/MatrixUserStore';
-import { getMatrixClient, loginAppService,registerAppService } from './matrix/Utils';
+import {
+    getMatrixClient,
+    loginAppService,
+    registerAppService,
+} from './matrix/Utils';
 import MattermostUserStore from './mattermost/MattermostUserStore';
 import { joinMattermostChannel } from './mattermost/Utils';
 import Channel from './Channel';
@@ -40,11 +46,11 @@ export default class Main extends EventEmitter {
     private readonly appService: AppService;
     public readonly registration: Registration;
 
-    private matrixQueue: EventQueue<sdk.IEvent>;
+    private matrixQueue: EventQueue<MatrixEvent>;
     private mattermostQueue: EventQueue<MattermostMessage>;
     private myLogger: log4js.Logger;
 
-    public botClient: sdk.MatrixClient;
+    public botClient: mxClient.MatrixClient;
 
     public initialized: boolean;
     public killed: boolean;
@@ -185,7 +191,7 @@ export default class Main extends EventEmitter {
             packInfo.version,
             process.argv,
         );
-        
+
         /*
         let info =await loginAppService(
             this.botClient,
@@ -195,13 +201,12 @@ export default class Main extends EventEmitter {
         this.myLogger.info("Login as app service: %s",info)
         this.botClient.setAccessToken(info.access_token)
         */
-        
+
         await registerAppService(
             this.botClient,
             config().matrix_bot.username,
-            this.myLogger
+            this.myLogger,
         );
-        
 
         const botProfile = this.updateBotProfile().catch(e =>
             this.myLogger.warn(`Error when updating bot profile\n${e.stack}`),
@@ -267,7 +272,6 @@ export default class Main extends EventEmitter {
             }),
         );
 
-        /*
         try {
             await this.leaveUnbridgedChannels();
         } catch (e) {
@@ -278,7 +282,6 @@ export default class Main extends EventEmitter {
                 await this.killBridge(1);
             }
         }
-        */
 
         if (this.channelsByMattermost.size === 0) {
             this.myLogger.info(
@@ -308,16 +311,26 @@ export default class Main extends EventEmitter {
     }
 
     private async leaveUnbridgedMatrixRooms(): Promise<void> {
-        const rooms = (await this.botClient.getJoinedRooms()).joined_rooms;
+        const resp = await this.botClient.getJoinedRooms();
+        const rooms = resp.joined_rooms;
 
         await Promise.all(
             rooms.map(async room => {
                 if (this.mappingsByMatrix.has(room)) {
                     return;
                 }
+                /*
                 const members = Object.keys(
-                    (await this.botClient.getJoinedRoomMembers(room)).joined,
+                    (await this.botClient.getRoomMembers(room)).joined,
                 );
+                */
+                const members: string[] = [];
+                let resp = await this.botClient.getRoomMembers(room);
+                if (resp) {
+                    for (let member of resp.chunk) {
+                        members.push(member.sender);
+                    }
+                }
                 await Promise.all(
                     members.map(async userid => {
                         if (this.isRemoteUser(userid)) {
@@ -328,7 +341,7 @@ export default class Main extends EventEmitter {
                         }
                     }),
                 );
-                await this.botClient.leave(room);
+                //await this.botClient.leave(room);
             }),
         );
     }
@@ -443,14 +456,17 @@ export default class Main extends EventEmitter {
 
     private async updateBotProfile(): Promise<void> {
         const targetProfile = config().matrix_bot;
-        const profile:any = await this.botClient
+        const profile: any = await this.botClient
             .getProfileInfo(this.botClient.getUserId() || '')
             .catch(() => ({ display_name: '' }));
         if (
             targetProfile.display_name &&
             profile.displayname !== targetProfile.display_name
         ) {
-            await this.botClient.setDisplayName(targetProfile.display_name);
+            await this.botClient.setUserDisplayName(
+                this.botClient.getUserId(),
+                targetProfile.display_name,
+            );
         }
     }
 
@@ -485,9 +501,8 @@ export default class Main extends EventEmitter {
         }
     }
 
-    private async onMatrixEvent(event: sdk.IEvent): Promise<void> {
+    private async onMatrixEvent(event: MatrixEvent): Promise<void> {
         this.myLogger.debug(`Matrix event: ${JSON.stringify(event)}`);
-
         const channel = this.channelsByMatrix.get(event.room_id || '');
         if (channel !== undefined) {
             await channel.onMatrixEvent(event);

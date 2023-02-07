@@ -121,7 +121,7 @@ export async function joinMattermostChannel(
                     // leave followed by a join, which is not disasterous.
                     const matrixMembers = Object.keys(
                         (
-                            await channel.main.botClient.getJoinedRoomMembers(
+                            await channel.main.botClient.getRoomMembers(
                                 matrixRoom,
                             )
                         ).joined,
