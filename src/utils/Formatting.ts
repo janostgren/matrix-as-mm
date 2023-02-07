@@ -1,4 +1,4 @@
-import { MatrixMessage,MatrixEvent,} from '../Interfaces';
+import { MatrixMessage, MatrixEvent } from '../Interfaces';
 import { User } from '../entities/User';
 import { replaceAsync } from './Functions';
 import { config } from '../Config';
@@ -125,7 +125,7 @@ export function constructMatrixReply(
             event_id: original.event_id,
         },
     };
-    let content = original.type
+    let content = original.type;
     const block = `<mx-reply><blockquote><a href="https://matrix.to/#/${
         original.room_id
     }/${original.event_id}?via=${

@@ -206,7 +206,7 @@ export class MatrixClient {
         return retValue;
     }
 
-    public async loginAppService(userName: string):Promise<any>{
+    public async loginAppService(userName: string): Promise<any> {
         const resp: axios.AxiosResponse = await this.client.post(
             '/_matrix/client/r0/login',
             {
@@ -293,7 +293,9 @@ export class MatrixClient {
 
     private async doRequest(options: axios.AxiosRequestConfig): Promise<any> {
         let method = options.method || 'GET';
-        this.myLogger.trace(`${method} ${options.url} active userId=${this.getUserId()}`);
+        this.myLogger.trace(
+            `${method} ${options.url} active userId=${this.getUserId()}`,
+        );
         try {
             let response: axios.AxiosResponse = await this.client.request(
                 options,
@@ -301,8 +303,10 @@ export class MatrixClient {
             return response.data;
         } catch (e: any) {
             const me = MatrixClient.getMatrixError(e);
-            if(me) {
-              this.myLogger.error (`${method} ${options.url} error: ${me.errcode}:${me.error}`)
+            if (me) {
+                this.myLogger.error(
+                    `${method} ${options.url} error: ${me.errcode}:${me.error}`,
+                );
             }
             throw me || e;
         }

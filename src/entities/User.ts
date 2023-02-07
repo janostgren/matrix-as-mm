@@ -2,7 +2,7 @@ import { Entity, PrimaryColumn, Column, BaseEntity } from 'typeorm';
 import { Client } from '../mattermost/Client';
 import { config } from '../Config';
 import { randomString } from '../utils/Functions';
-const PERSONAL_ACCESS_TOKEN_NAME='For the bridge' 
+const PERSONAL_ACCESS_TOKEN_NAME = 'For the bridge';
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -81,13 +81,16 @@ export class User extends BaseEntity {
         username: string,
         displayname: string,
     ): Promise<User> {
-        let token:any =await client.post(`/users/${mattermost_userid}/tokens`,{
-            "description": PERSONAL_ACCESS_TOKEN_NAME
-        })
+        let token: any = await client.post(
+            `/users/${mattermost_userid}/tokens`,
+            {
+                description: PERSONAL_ACCESS_TOKEN_NAME,
+            },
+        );
         const user = User.create({
             matrix_userid,
             mattermost_userid,
-            access_token: token?.token ||'',
+            access_token: token?.token || '',
             is_matrix_user: false,
             mattermost_username: username,
             matrix_displayname: displayname,

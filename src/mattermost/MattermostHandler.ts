@@ -38,12 +38,12 @@ async function sendMatrixMessage(
 
         try {
             original = await client.getRoomEvent(room, replyTo.matrix);
-        } catch (e) { }
+        } catch (e) {}
         if (original !== undefined) {
             constructMatrixReply(original, message);
         }
     }
-    const event = await client.sendMessage(room, "m.room.message", {
+    const event = await client.sendMessage(room, 'm.room.message', {
         body: message.body,
         msgtype: message.msgtype,
     });

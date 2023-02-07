@@ -18,10 +18,10 @@ export async function getMatrixUsers(
         (await main.botClient.getRoomMembers(roomid)),
     );
     */
-    const allMatrixUsers:string[]=[]
-    let resp=await main.botClient.getRoomMembers(roomid)
+    const allMatrixUsers: string[] = [];
+    let resp = await main.botClient.getRoomMembers(roomid);
     for (let member of resp.chunk) {
-        allMatrixUsers.push(member.user_id)
+        allMatrixUsers.push(member.user_id);
     }
 
     for (const matrixUser of allMatrixUsers) {
@@ -41,12 +41,11 @@ export function getMatrixClient(
     registration: Registration,
     userId: string,
 ): mxClient.MatrixClient {
-    const client = new mxClient.MatrixClient( {
-        userId:userId,
-        baseUrl:config().homeserver.url,
-        accessToken:registration.as_token,
-    }
-    );
+    const client = new mxClient.MatrixClient({
+        userId: userId,
+        baseUrl: config().homeserver.url,
+        accessToken: registration.as_token,
+    });
     return client;
 }
 
@@ -56,10 +55,14 @@ export async function registerAppService(
     logger: log4js.Logger,
 ): Promise<string> {
     try {
-        let ret =await client.registerService(username)
-        logger.debug("Register app service with username:%s userId:%s returns %s",username,client.getUserId(),ret)
-        return ret
-       
+        let ret = await client.registerService(username);
+        logger.debug(
+            'Register app service with username:%s userId:%s returns %s',
+            username,
+            client.getUserId(),
+            ret,
+        );
+        return ret;
     } catch (e) {
         throw e;
     }
@@ -69,19 +72,17 @@ export async function loginAppService(
     client: mxClient.MatrixClient,
     username: string,
 ): Promise<any> {
-    return await client.loginAppService(username)
-      
+    return await client.loginAppService(username);
 }
 
 export async function joinMatrixRoom(
     client: mxClient.MatrixClient,
     roomId: string,
 ): Promise<void> {
-    const reason="Needed for app service"
+    const reason = 'Needed for app service';
     try {
-        const userId=client.getUserId() 
-       await client.invite(roomId,userId,reason)
-       
+        const userId = client.getUserId();
+        await client.invite(roomId, userId, reason);
     } catch (e) {
         if (
             !(
@@ -92,5 +93,5 @@ export async function joinMatrixRoom(
             throw e.message;
         }
     }
-    await client.joinRoom(roomId,reason);
+    await client.joinRoom(roomId, reason);
 }

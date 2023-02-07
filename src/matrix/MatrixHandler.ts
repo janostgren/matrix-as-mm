@@ -231,8 +231,8 @@ const MatrixHandlers = {
                 }
             }
         }
-        let msgType:string = content.msgtype || "not found"
-        let handler = MatrixMessageHandlers[msgType]; 
+        let msgType: string = content.msgtype || 'not found';
+        let handler = MatrixMessageHandlers[msgType];
         if (handler === undefined) {
             handler = MatrixMessageHandlers['m.text'];
         }
@@ -242,7 +242,7 @@ const MatrixHandlers = {
         this: Channel,
         event: MatrixEvent,
     ): Promise<void> {
-        const membership:string= event.content.membership || "not found"
+        const membership: string = event.content.membership || 'not found';
         const handler = MatrixMembershipHandler[membership];
         if (handler === undefined) {
             myLogger.warn(

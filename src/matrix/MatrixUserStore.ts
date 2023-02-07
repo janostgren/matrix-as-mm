@@ -59,15 +59,14 @@ export default class MatrixUserStore {
             const client = this.main.client;
             const localpart_ = localpart(matrix_userid);
             const template = config().mattermost_username_template;
-            let realUserName=matrix_userid.split('.')[0].substring(1)
+            let realUserName = matrix_userid.split('.')[0].substring(1);
 
-            let displayname = 
-            '';
+            let displayname = '';
 
             if (template.includes('[DISPLAY]')) {
                 try {
                     const resp = await this.main.botClient.getProfileInfo(
-                        matrix_userid
+                        matrix_userid,
                     );
                     if (resp.displayname) {
                         displayname = resp.displayname;
@@ -109,7 +108,7 @@ export default class MatrixUserStore {
 
         try {
             const resp = await this.main.botClient.getProfileInfo(
-                user.matrix_userid
+                user.matrix_userid,
             );
             if (resp.displayname) {
                 displayname = resp.displayname;

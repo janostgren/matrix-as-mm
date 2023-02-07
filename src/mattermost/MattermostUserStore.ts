@@ -5,8 +5,12 @@ import { config } from '../Config';
 import Mutex from '../utils/Mutex';
 import Main from '../Main';
 import { findFirstAvailable } from '../utils/Functions';
-import { MattermostUserInfo} from '../Interfaces';
-import { getMatrixClient,loginAppService,registerAppService} from '../matrix/Utils';
+import { MattermostUserInfo } from '../Interfaces';
+import {
+    getMatrixClient,
+    loginAppService,
+    registerAppService,
+} from '../matrix/Utils';
 import { getLogger } from '../Logging';
 
 export default class MattermostUserStore {
@@ -63,8 +67,12 @@ export default class MattermostUserStore {
                 async userName => {
                     try {
                         //await loginAppService(this.main.botClient,userName);
-                        await registerAppService(this.main.botClient,userName,this.myLogger)
-                        return true
+                        await registerAppService(
+                            this.main.botClient,
+                            userName,
+                            this.myLogger,
+                        );
+                        return true;
                     } catch (e) {
                         throw e;
                     }
@@ -116,7 +124,6 @@ export default class MattermostUserStore {
             await user.save();
         }
         //await this.client.(user).setDisplayName(displayName);
-   
     }
 
     public client(user: User): mxClient.MatrixClient {

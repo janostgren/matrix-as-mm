@@ -29,7 +29,7 @@ services:
     ports:
       - '8008:8008'
     volumes:
-     - ./matrix/data:/data
+      - ./matrix/data:/data
     extra_hosts:
       - 'host.docker.internal:host-gateway'
 

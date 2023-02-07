@@ -1,6 +1,6 @@
 import * as log4js from 'log4js';
 import * as mxClient from './matrix/MatrixClient';
-import { MattermostMessage,MatrixEvent } from './Interfaces';
+import { MattermostMessage, MatrixEvent } from './Interfaces';
 import { getLogger } from './Logging';
 import Main from './Main';
 import MatrixHandlers from './matrix/MatrixHandler';
@@ -78,10 +78,7 @@ export default class Channel {
                         );
                     matrixUsers.remote.delete(user.matrix_userid);
                     const client = this.main.mattermostUserStore.client(user);
-                    await joinMatrixRoom(
-                        client,
-                        this.matrixRoom,
-                    );
+                    await joinMatrixRoom(client, this.matrixRoom);
                 }
             }),
         );
@@ -89,7 +86,6 @@ export default class Channel {
         await Promise.all(
             Array.from(matrixUsers.remote, async matrix_userid => {
                 const client = getMatrixClient(
-   
                     this.main.registration,
                     matrix_userid,
                 );
