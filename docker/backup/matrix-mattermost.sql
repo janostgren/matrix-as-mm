@@ -71,6 +71,9 @@ ALTER TABLE public.users OWNER TO "matrix-mattermost";
 --
 
 COPY public.posts (eventid, postid, rootid) FROM stdin;
+$fuPA22emW4V0wHC5EllCh7JbzYMhTIW0DLr_D73YRtU	o86d1bhaxfg48kwzmx1ofz7gwr	o86d1bhaxfg48kwzmx1ofz7gwr
+$iZZW6EsuxUAxVBXtwcMnKFWoQkFHMXw7rvUqBVZ0wOM	gopprzcaf781uf3qhizmanp6ur	gopprzcaf781uf3qhizmanp6ur
+$nD-WsmqnhEa4BIar13mUOspyj5CQ-NVfZYZo7aUnG8o	fxz1usgc37f3bp65rj6yh8affy	fxz1usgc37f3bp65rj6yh8affy
 \.
 
 
@@ -87,7 +90,8 @@ COPY public.typeorm_metadata (type, database, schema, "table", name, value) FROM
 --
 
 COPY public.users (matrix_userid, mattermost_userid, access_token, is_matrix_user, mattermost_username, matrix_displayname) FROM stdin;
-@mm_admin:localhost	tkzqirh7h78opxqwk5a4bt3fkw		f	admin	admin [mm]
+@user1.matrix:localhost	pqzp7j96epnczy4icow41mnhpc	wunm3dioj383xfm6rjqruhnynw	t	matrix_user1.matrix	user1.matrix
+@mm_user1.mm:localhost	cjsqd673nbgzzybrrkmzxou34y	zsgpd5dqh7rqpbpajay98nadqh	f	user1.mm	user1.mm [mm]
 \.
 
 

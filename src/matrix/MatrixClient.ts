@@ -5,10 +5,18 @@ import * as axios from 'axios';
 import * as https from 'https';
 import { TIMEOUT } from 'dns';
 import { timeStamp } from 'console';
+import { threadId } from 'worker_threads';
 export interface MatrixClientCreateOpts {
     userId: string;
     baseUrl: string;
-    accessToken: string;
+    accessToken?: string;
+}
+
+export enum SessionCreatedWith {
+    None = 0,
+    RegisterAppService,
+    LoginAppService,
+    LoginPassword,
 }
 
 export interface SendRoomContent {
@@ -22,17 +30,23 @@ export class MatrixClient {
     private userId: string;
     private baseUrl: string;
     private accessToken: string;
+    private sessionCreateMethod: SessionCreatedWith = SessionCreatedWith.None;
+    private sessionIsValid: boolean = false;
+    private logoutDone: boolean = false;
 
     constructor(options: MatrixClientCreateOpts) {
         //super()
         this.myLogger = getLogger('MatrixClient', 'trace');
 
-        this.accessToken = options.accessToken;
+        this.accessToken = options.accessToken || '';
         (this.userId = options.userId), (this.baseUrl = options.baseUrl);
         let httpsAgent = new https.Agent({
             keepAlive: true,
         });
-        const bearer: string = `Bearer ${options.accessToken}`;
+
+        const bearer: string = this.accessToken
+            ? `Bearer ${options.accessToken}`
+            : '';
         this.client = axios.default.create({
             baseURL: options.baseUrl,
             httpsAgent: httpsAgent,
@@ -40,6 +54,13 @@ export class MatrixClient {
                 Authorization: bearer,
             },
         });
+        this.myLogger.debug('New matrix client created for userId=%s, baseUrl=%s,accessToken=%s',
+          this.userId,this.baseUrl,this.accessToken
+        )
+    }
+
+    public getSessionCreateMethod(): SessionCreatedWith {
+        return this.sessionCreateMethod;
     }
 
     public getUserId(): string {
@@ -203,6 +224,8 @@ export class MatrixClient {
                 throw error;
             }
         }
+        this.sessionCreateMethod = SessionCreatedWith.RegisterAppService;
+        this.sessionIsValid = true;
         return retValue;
     }
 
@@ -218,7 +241,39 @@ export class MatrixClient {
                 },
             },
         );
+        this.sessionCreateMethod = SessionCreatedWith.LoginAppService;
+        this.sessionIsValid = true;
         return resp.data;
+    }
+    public async loginWithPassword(
+        userName: string,
+        password: string,
+    ): Promise<any> {
+        const resp: axios.AxiosResponse = await this.client.post(
+            '/_matrix/client/r0/login',
+            {
+                identifier: {
+                    type: 'm.id.user',
+                    user: userName,
+                },
+                initial_device_display_name: `${userName}_device`,
+                password: password,
+                type: 'm.login.password',
+            },
+        );
+        this.sessionCreateMethod = SessionCreatedWith.LoginPassword;
+        this.sessionIsValid = true;
+        this.setAccessToken(resp.data.access_token);
+        return resp.data;
+    }
+
+    public async logout() {
+        this.sessionIsValid = false;
+        this.logoutDone = true;
+        return await this.doRequest({
+            method: 'POST',
+            url: '/_matrix/client/v3/logout',
+        });
     }
 
     public async getProfileInfo(userId: string): Promise<any> {
@@ -275,26 +330,55 @@ export class MatrixClient {
         });
     }
 
+    private setResponseType(contentType: string): axios.ResponseType {
+        let responseType: axios.ResponseType = 'text';
+        if (
+            contentType.startsWith('image') ||
+            contentType.startsWith('audio') ||
+            contentType.startsWith('video') ||
+            contentType.includes('pkc8') ||
+            contentType.includes('pdf') ||
+            contentType.includes('zip')
+        ) {
+            responseType = 'arraybuffer';
+        }
+
+        return responseType;
+    }
+
     public async upload(fileName: string, contentType: string): Promise<any> {
-        const resp: axios.AxiosResponse = await this.client.post(
-            `_matrix/media/v3/upload`,
-            undefined,
-            {
-                headers: {
-                    'Content-Type': contentType,
-                },
-                params: {
-                    filename: fileName,
-                },
+        let responseType: axios.ResponseType =
+            this.setResponseType(contentType);
+        return await this.doRequest({
+            method: 'POST',
+            url: '_matrix/media/v3/upload',
+            responseType: responseType,
+            headers: {
+                'Content-Type': contentType,
             },
-        );
-        return resp.data;
+            params: {
+                filename: fileName,
+            },
+        });
     }
 
     private async doRequest(options: axios.AxiosRequestConfig): Promise<any> {
         let method = options.method || 'GET';
+        /*
+        if (!this.logoutDone && !this.sessionIsValid) {
+            this.myLogger.fatal(
+                `${method} ${
+                    options.url
+                } active userId=${this.getUserId()}. Session is not valid`,
+            );
+            let err = new Error('Matrix Client Session not valid');
+            err.name = 'MatrixClient Error';
+            throw err;
+        }
+        */
+
         this.myLogger.trace(
-            `${method} ${options.url} active userId=${this.getUserId()}`,
+            `${method} ${options.url} active userId=${this.getUserId()}. Valid Session= ${this.sessionIsValid}`,
         );
         try {
             let response: axios.AxiosResponse = await this.client.request(
@@ -303,6 +387,9 @@ export class MatrixClient {
             return response.data;
         } catch (e: any) {
             const me = MatrixClient.getMatrixError(e);
+            if (!this.sessionIsValid && me) {
+                return me;
+            }
             if (me) {
                 this.myLogger.error(
                     `${method} ${options.url} error: ${me.errcode}:${me.error}`,

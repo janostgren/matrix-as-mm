@@ -82,7 +82,12 @@ export async function joinMatrixRoom(
     const reason = 'Needed for app service';
     try {
         const userId = client.getUserId();
-        await client.invite(roomId, userId, reason);
+        const resp = await client.getJoinedRooms();
+        const joinedRooms: string[] = resp.joined_rooms;
+        const foundRoom = joinedRooms.find(room => room === roomId);
+        if (!foundRoom) {
+            await client.invite(roomId, userId, reason);
+        }
     } catch (e) {
         if (
             !(

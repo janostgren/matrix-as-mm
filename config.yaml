@@ -94,6 +94,7 @@ logging: debug # Valid values are trace, debug, info, warn, error and silent
 ignored_matrix_users:
   - '@admin:localhost'
   - '@ignored_user:localhost'
+  - '@mm_admin:localhost'
 
 # Same as above. The mattermost bot is also automatically included.
 ignored_mattermost_users:

@@ -304,10 +304,12 @@ export default class Main extends EventEmitter {
     }
 
     private async leaveUnbridgedChannels(): Promise<void> {
+        /*
         await Promise.all([
             this.leaveUnbridgedMattermostChannels(),
             this.leaveUnbridgedMatrixRooms(),
         ]);
+        */
     }
 
     private async leaveUnbridgedMatrixRooms(): Promise<void> {
@@ -427,6 +429,12 @@ export default class Main extends EventEmitter {
                 exitCode = 1;
             }
         }
+        try {
+            await this.botClient.logout()
+            this.myLogger.info("MatrixClient logged out. Session invalidated.")
+
+        } catch(ignore) {}
+
         if (this.exitOnFail) {
             process.exit(exitCode);
         }
