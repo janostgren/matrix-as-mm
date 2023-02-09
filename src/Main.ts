@@ -218,7 +218,7 @@ export default class Main extends EventEmitter {
 
         const db = Object.assign({}, config().database);
         db['entities'] = [User, Post];
-        db['synchronize'] = true;
+        db['synchronize'] = false;
         db['logging'] = false;
 
         await createConnection(db as ConnectionOptions);
@@ -304,12 +304,12 @@ export default class Main extends EventEmitter {
     }
 
     private async leaveUnbridgedChannels(): Promise<void> {
-        /*
+        
         await Promise.all([
             this.leaveUnbridgedMattermostChannels(),
             this.leaveUnbridgedMatrixRooms(),
         ]);
-        */
+        
     }
 
     private async leaveUnbridgedMatrixRooms(): Promise<void> {
@@ -321,11 +321,7 @@ export default class Main extends EventEmitter {
                 if (this.mappingsByMatrix.has(room)) {
                     return;
                 }
-                /*
-                const members = Object.keys(
-                    (await this.botClient.getRoomMembers(room)).joined,
-                );
-                */
+               
                 const members: string[] = [];
                 let resp = await this.botClient.getRoomMembers(room);
                 if (resp) {

@@ -1,2 +1,2 @@
-CREATE USER "matrix-mattermost" WITH PASSWORD 'hunter2';
-CREATE DATABASE "matrix-mattermost" OWNER "matrix-mattermost";
+CREATE USER "mm-matrix-bridge" WITH PASSWORD 'hunter2';
+CREATE DATABASE "mm-matrix-bridge" OWNER  "mm-matrix-bridge";

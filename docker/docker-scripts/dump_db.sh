@@ -11,8 +11,8 @@ pg_dump -U mattermost -d synapse > $dumpdir/synapse.tmp
 cat $dumpdir/prefix.sql  $dumpdir/synapse.tmp > $dumpdir/synapse.sql
 
 pg_dump -U mattermost -d mattermost > $dumpdir/mattermost.sql
-pg_dump -U matrix-mattermost -d matrix-mattermost > $dumpdir/matrix-mattermost.tmp
-echo '\c matrix-mattermost' > $dumpdir/prefix.sql
-cat $dumpdir/prefix.sql  $dumpdir/matrix-mattermost.tmp > $dumpdir/matrix-mattermost.sql
+pg_dump -U  mm-matrix-bridge -d  mm-matrix-bridge > $dumpdir/mm-matrix-bridge.tmp
+echo '\c  mm-matrix-bridge' > $dumpdir/prefix.sql
+cat $dumpdir/prefix.sql  $dumpdir/mm-matrix-bridge.tmp > $dumpdir/mm-matrix-bridge.sql
 rm $dumpdir/prefix.sql
 rm $dumpdir/*.tmp 
