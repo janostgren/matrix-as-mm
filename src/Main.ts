@@ -211,17 +211,26 @@ export default class Main extends EventEmitter {
         const botProfile = this.updateBotProfile().catch(e =>
             this.myLogger.warn(`Error when updating bot profile\n${e.stack}`),
         );
-        const appservice = this.appService.listen(
-            config().appservice.port,
-            config().appservice.bind || config().appservice.hostname,
-        );
 
         const db = Object.assign({}, config().database);
         db['entities'] = [User, Post];
         db['synchronize'] = false;
         db['logging'] = false;
 
+       try {
         await createConnection(db as ConnectionOptions);
+       }
+        catch(error) {
+            this.myLogger.fatal(error)
+            throw error
+        }
+
+        const appservice = this.appService.listen(
+            config().appservice.port,
+            config().appservice.bind || config().appservice.hostname,
+        );
+
+        
 
         const onChannelError = async (e: Error, channel: Channel) => {
             this.myLogger.error(
