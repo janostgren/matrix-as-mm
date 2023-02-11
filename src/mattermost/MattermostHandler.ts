@@ -173,8 +173,13 @@ export const MattermostHandlers = {
 
                 const thisIndex = threads.indexOf(post.id);
                 const id = threads[thisIndex - 1] as string;
-                const replyTo = await Post.findOne({ postid: id });
-                if (replyTo !== undefined) {
+                const replyTo = await Post.findOne(
+                    { 
+                    //postid: id
+                    "where":{"postid":id} 
+                }
+                );
+                if (replyTo ) {
                     metadata.replyTo = {
                         matrix: replyTo.eventid,
                         mattermost: post.root_id,
@@ -205,7 +210,8 @@ export const MattermostHandlers = {
         );
 
         const matrixEvent = await Post.findOne({
-            postid: post.id,
+            //postid: post.id,
+            "where":{"postid":post.id} 
         });
         const msgtype = post.type === '' ? 'm.text' : 'm.emote';
 
@@ -215,7 +221,7 @@ export const MattermostHandlers = {
             msg.formatted_body = `* ${msg.formatted_body}`;
         }
 
-        if (matrixEvent !== undefined) {
+        if (matrixEvent ) {
             msg['m.new_content'] = await mattermostToMatrix(
                 post.message,
                 msgtype,

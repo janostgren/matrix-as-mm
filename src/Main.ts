@@ -1,5 +1,6 @@
 import AppService from './matrix/AppService';
-import { createConnection, ConnectionOptions, getConnection } from 'typeorm';
+import {run} from './db-test/index'
+import { createConnection, ConnectionOptions, getConnection,DataSource,DataSourceOptions } from 'typeorm';
 import { Client, ClientWebsocket } from './mattermost/Client';
 import * as logLevel from 'loglevel';
 import * as mxClient from './matrix/MatrixClient';
@@ -212,13 +213,21 @@ export default class Main extends EventEmitter {
             this.myLogger.warn(`Error when updating bot profile\n${e.stack}`),
         );
 
-        const db = Object.assign({}, config().database);
+        const db:any = Object.assign({}, config().database);
         db['entities'] = [User, Post];
         db['synchronize'] = false;
-        db['logging'] = false;
+        db['logging'] = ["query", "error"]
+        db.logger="advanced-console"
+        db.port = 5432
+        let ds=new DataSource(
+           db
+        )
+        let m=ds.manager
 
        try {
-        await createConnection(db as ConnectionOptions);
+            //await createConnection(db as ConnectionOptions);
+            await ds.initialize()
+
        }
         catch(error) {
             this.myLogger.fatal(error)

@@ -210,23 +210,29 @@ const MatrixHandlers = {
         if (relatesTo !== undefined) {
             if (relatesTo.rel_type === 'm.replace') {
                 const post = await Post.findOne({
-                    eventid: relatesTo.event_id,
+                    //eventid: relatesTo.event_id,
+                    where: { eventid: relatesTo.event_id },
                 });
                 if (post !== undefined) {
-                    metadata.edits = post.postid;
+                    metadata.edits = post?.postid;
                 }
             } else if (relatesTo['m.in_reply_to'] !== undefined) {
                 const post = await Post.findOne({
-                    eventid: relatesTo['m.in_reply_to'].event_id,
+                    //eventid: relatesTo['m.in_reply_to'].event_id,
+                    where: { eventid: relatesTo['m.in_reply_to'].event_id },
                 });
-                if (post !== undefined) {
+                if (post !== null) {
                     try {
                         const props = await user.client.get(
                             `/posts/${post.postid}`,
                         );
-                        metadata.root_id = props.root_id || post.postid;
+                        metadata.root_id = props.root_id || post?.postid;
                     } catch (e) {
-                        await handlePostError(e, post.postid);
+                        if (post?.postid != null)
+                            await handlePostError(e, post.postid);
+                        else {
+                            throw e;
+                        }
                     }
                 }
             }
@@ -261,10 +267,13 @@ const MatrixHandlers = {
         if (event.sender === botid) {
             return;
         }
+        const r:any= event["redacts"]
+        const redacts:string = r || ''
         const post = await Post.findOne({
-            eventid: event.redacts as string,
+            //eventid: event.redacts as string,
+            "where": {"eventid":redacts}
         });
-        if (post === undefined) {
+        if (post === null) {
             return;
         }
 

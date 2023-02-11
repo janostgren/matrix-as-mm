@@ -3,6 +3,7 @@ import * as log4js from 'log4js';
 import * as yargs from 'yargs';
 import { writeFileSync } from 'fs';
 import * as yaml from 'js-yaml';
+//import {run} from './db-test/index'
 
 import { loadYaml, randomString } from './utils/Functions';
 import { validate } from './Config';
@@ -10,6 +11,8 @@ import { Registration } from './Interfaces';
 
 import Main from './Main';
 import log, { getLogger } from './Logging';
+//import { run } from './db-test';
+
 console.time('Bridge loaded');
 
 const argv = yargs
@@ -29,7 +32,6 @@ if (argv.r === undefined) {
     const myLogger: log4js.Logger = getLogger('index.js');
     log.timeEnd.info('Bridge loaded');
     void main.init();
-
     process.on('SIGTERM', () => {
         myLogger.info('Received SIGTERM. Shutting down bridge.');
         void main.killBridge(0);

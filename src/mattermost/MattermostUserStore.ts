@@ -12,6 +12,7 @@ import {
     registerAppService,
 } from '../matrix/Utils';
 import { getLogger } from '../Logging';
+import { IsNull } from 'typeorm';
 
 export default class MattermostUserStore {
     private users: Map<string, User>;
@@ -43,25 +44,27 @@ export default class MattermostUserStore {
         await this.mutex.lock();
         // Try again. it might have been created in another call.
         user = this.users.get(userid);
-        if (user !== undefined) {
+        if (user) {
             this.mutex.unlock();
             if (sync) await this.updateUser(undefined, user);
             return user;
         }
 
         const data_promise = this.main.client.get(`/users/${userid}`);
-        user = await User.findOne({
-            mattermost_userid: userid,
+        let user2 = await User.findOne({
+            //mattermost_userid: userid,
+            where: { mattermost_userid: userid },
         });
-        if (user?.is_matrix_user) {
+        if (user2?.is_matrix_user) {
             throw new Error(
                 'Trying to get Matrix user from MattermostUserStore',
             );
         }
+
         const data = await data_promise;
         const server_name = config().homeserver.server_name;
 
-        if (user === undefined) {
+        if (user2) {
             const localpart = await findFirstAvailable(
                 `${config().matrix_localpart_prefix}${data.username}`,
                 async userName => {
@@ -89,12 +92,13 @@ export default class MattermostUserStore {
                 '', // Set the displayname to be '' for now. It will be updated in updateUser
             );
         }
-        await this.updateUser(data, user);
-        this.users.set(userid, user);
-
-        this.mutex.unlock();
-
-        return user;
+        if (user) {
+            await this.updateUser(data, user);
+            this.users.set(userid, user);
+            this.mutex.unlock();
+            return user;
+        }
+        throw "No user found. Issue with update typeorm"
     }
 
     public async updateUser(

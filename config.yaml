@@ -27,7 +27,7 @@ mattermost_url: http://localhost:8065/
 
 # If true, the bridge exits if it fails to bridge any channel. Otherwise, it
 # will go on bridging the channels it can bridge. The default is false.
-forbid_bridge_failure: false
+forbid_bridge_failure: true
 
 # Mappings between mattermost channels and matrix rooms.
 mappings:

@@ -41,9 +41,10 @@ async function translateMattermostUsername(body: string, html: boolean) {
         let tail = '';
         while (true) {
             const user = await User.findOne({
-                mattermost_username: s.slice(1),
+                "where":{"mattermost_username":s.slice(1)}
+                //mattermost_username: s.slice(1),
             });
-            if (user !== undefined) {
+            if (user ) {
                 if (html) {
                     return `<a href='https://matrix.to/#/${user.matrix_userid}'>${user.matrix_displayname}</a>${tail}`;
                 } else {
@@ -75,9 +76,11 @@ export async function matrixToMattermost(
     return await replaceAsync(formatted, match, async (s, p1, p2) => {
         if (p1[0] === '@') {
             const user = await User.findOne({
-                matrix_userid: p1,
+                //matrix_userid: p1,
+                "where":{"matrix_userid":p1}
+                
             });
-            if (user !== undefined) {
+            if (user ) {
                 return `@${user.mattermost_username}`;
             } else {
                 return p2;

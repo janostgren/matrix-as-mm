@@ -48,11 +48,16 @@ export class Client {
             }
         }
         this.myLogger.trace(`${method}  ${endpoint} user_id: ${this.userid}`);
-        let response: Response = await fetch(
-            `${this.domain}/api/v4${endpoint}`,
-            options,
-        );
-        return response;
+        try {
+            let response: Response = await fetch(
+                `${this.domain}/api/v4${endpoint}`,
+                options,
+            );
+            return response;
+        } catch (err) {
+            this.myLogger.fatal(`${method} ${endpoint} user_id: ${this.userid} error:${err.message}`)
+            throw err
+        }
     }
 
     private async send(

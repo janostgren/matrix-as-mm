@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, Column, BaseEntity } from 'typeorm';
+import { Entity, PrimaryColumn, Column, BaseEntity} from 'typeorm';
 import { Client } from '../mattermost/Client';
 import { config } from '../Config';
 import { randomString } from '../utils/Functions';
@@ -9,19 +9,19 @@ export class User extends BaseEntity {
     @PrimaryColumn('text')
     public matrix_userid!: string;
 
-    @Column('character', { length: '26' })
+    @Column('character', { length: '26',"nullable":false })
     public mattermost_userid!: string;
 
-    @Column('text')
+    @Column('text',{"nullable":false})
     public access_token!: string;
 
-    @Column('boolean')
+    @Column('boolean',{"nullable":false})
     public is_matrix_user!: boolean;
 
-    @Column('text')
+    @Column('text',{"nullable":false})
     public mattermost_username!: string;
 
-    @Column('text')
+    @Column('text',{"nullable":false})
     public matrix_displayname!: string;
 
     private _client?: Client;

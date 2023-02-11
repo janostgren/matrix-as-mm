@@ -38,23 +38,26 @@ export default class MatrixUserStore {
         await this.mutex.lock();
         // Try again. it might have been created in another call.
         user = this.get(matrix_userid);
-        if (user !== undefined) {
+        if (user) {
             this.mutex.unlock();
             if (sync) await this.updateUser(user);
             return user;
         }
 
-        user = await User.findOne({
-            matrix_userid,
+        let user2 = await User.findOne({
+            //matrix_userid,
+            "where":{"matrix_userid":matrix_userid}
         });
-        if (user !== undefined) {
+        
+        if (user2) {
             this.mutex.unlock();
-            if (!user.is_matrix_user) {
+            if (!user2.is_matrix_user) {
                 throw new Error(
                     'Trying to get Mattermost user from MatrixUserStore',
                 );
             }
-            await this.updateUser(user);
+            await this.updateUser(user2);
+            user=user2
         } else {
             const client = this.main.client;
             const localpart_ = localpart(matrix_userid);
@@ -96,7 +99,7 @@ export default class MatrixUserStore {
             );
             this.mutex.unlock();
         }
-
+        
         this.byMatrixUserId.set(matrix_userid, user);
         this.byMattermostUserId.set(user.mattermost_userid, user);
 
@@ -140,9 +143,10 @@ export default class MatrixUserStore {
             return cached;
         }
         const response = await User.findOne({
-            mattermost_userid: mattermostUserId,
+            //mattermost_userid: mattermostUserId,
+            "where":{"mattermost_userid":mattermostUserId}
         });
-        if (response === undefined || response.is_matrix_user === false) {
+        if (response === null || response.is_matrix_user === false) {
             return null;
         } else {
             return response;
