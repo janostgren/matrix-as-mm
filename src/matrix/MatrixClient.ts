@@ -3,9 +3,7 @@ import { getLogger } from '../Logging';
 
 import * as axios from 'axios';
 import * as https from 'https';
-import { TIMEOUT } from 'dns';
-import { timeStamp } from 'console';
-import { threadId } from 'worker_threads';
+
 export interface MatrixClientCreateOpts {
     userId: string;
     baseUrl: string;
