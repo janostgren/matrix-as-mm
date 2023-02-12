@@ -13,7 +13,7 @@ export const AppDataSource = new DataSource({
     database: "mm-matrix-bridge",
     synchronize: false,
     logging: "all",
-    logger:"file",
+    logger:"advanced-console",
     entities: [Post, User],
     subscribers: [],
     migrations: [],

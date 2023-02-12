@@ -38,7 +38,7 @@ export class Client {
     }
 
     private async send_raw(
-        method: axios.Method,
+        method: Method,
         endpoint: string,
         data?: any | FormData,
         auth: boolean = true,
@@ -61,37 +61,44 @@ export class Client {
             return response.data;
         } catch (error: any) {
             let message: string = error.message;
-            let errName='ApiError'
+            let errName = 'ApiError';
             let ae: boolean = axios.isAxiosError(error);
+            let errData:any=error.response?.data || {}
+            let errObject:ErrorObject={
+                "is_oauth":false,
+                "id":"",
+                "request_id":"",
+                "status_code":0
+            }
             if (ae) {
-                const axError:axios.AxiosError =error
-                if (axError.response) {
+                
+                if (error.response) {
                     // The request was made and the server responded with a status code
                     // that falls out of the range of 2xx
-        
-                    if(axError.response.data) {
-                        let dm:any= error.response.data.message
-                        message += dm ? '. '+dm:''
-                        errName = error.response.data.id || errName    
+
+                    if (error.response.data) {
+                        errData=error.response.data
+                        let dm: any = error.response.data.message;
+                        message += dm ? '. ' + dm : '';
+                        errName = error.response.data.id || errName;
+                        errObject.status_code=errData.status_code
+                        errObject.id=errData.id,
+                        errObject.request_id=errData.request_id
                     }
-                
-                } else if (axError.request) {
-                   
+                } else if (error.request) {
                 }
             } else {
-                
             }
-            let apiError: Error = new Error(message);
-            apiError.name=errName
-            this.myLogger.fatal(
-                `${method}  ${endpoint} message: ${apiError.message}`,
-            );
-            throw apiError;
+
+            let clientError = new ClientError(message,method, endpoint, errData,errObject)
+            clientError.name = errName;
+            this.myLogger.fatal('%s %s message: %s',method,endpoint,message)
+            throw clientError;
         }
     }
 
     private async send(
-        method: axios.Method,
+        method: Method,
         endpoint: string,
         data?: any,
         auth: boolean = true,
@@ -168,25 +175,20 @@ export class ClientWebsocket extends EventEmitter {
         if (this.client.token === null) {
             throw new Error('Cannot open websocket without access token');
         }
-        const wsUrl=`ws${this.client.domain.slice(4)}/api/v4/websocket`
-        this.ws = new WebSocket(
-            wsUrl,
-            {
-                followRedirects: true,
-            },
-        );
+        const wsUrl = `ws${this.client.domain.slice(4)}/api/v4/websocket`;
+        this.ws = new WebSocket(wsUrl, {
+            followRedirects: true,
+        });
         this.seq = 0;
         this.promises = [];
         let resolve;
         this.openPromise = new Promise(r => (resolve = r));
 
         this.ws.on('open', async () => {
-            
             await this.send('authentication_challenge', {
                 token: this.client.token,
             });
             resolve();
-            
         });
         this.ws.on('message', m => {
             const ev = JSON.parse(m);
@@ -208,11 +210,10 @@ export class ClientWebsocket extends EventEmitter {
                 this.emit('message', ev);
             }
         });
-        this.ws.on('close', e => this.emit('close',e));
+        this.ws.on('close', e => this.emit('close', e));
         this.ws.on('error', e => this.emit('error', e));
     }
 
-  
     public async close(): Promise<void> {
         // If the websocket is already closed, we will not receive a close event.
         if (this.ws.readyState === WebSocket.CLOSED) {
@@ -242,24 +243,27 @@ export class ClientWebsocket extends EventEmitter {
 
 export class ClientError extends Error {
     constructor(
+        message:string,
         public readonly method: Method,
         public readonly endpoint: string,
-        public readonly data: unknown,
+        public readonly data: any,
         public readonly m: ErrorObject,
     ) {
-        super();
+        super(message);
+        this.message+=`status_code:${this.m.status_code} method:${method} endpoint:${endpoint}`
+        /*
         this.message = `${this.m.status_code} ${this.method} ${
             this.endpoint
         }: ${JSON.stringify(this.m)}`;
         if (this.data !== undefined) {
             this.message += `\nData: ${JSON.stringify(this.data)}`;
         }
+        */
     }
 }
 
 export interface ErrorObject {
     id: string;
-    message: string;
     status_code: number;
     request_id: string;
     is_oauth: boolean;

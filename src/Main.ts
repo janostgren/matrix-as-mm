@@ -158,7 +158,7 @@ export default class Main extends EventEmitter {
             process.argv,
         );
         await this.setupDataSource();
-
+        
         this.ws = this.client.websocket();
         this.ws.on('error', e => {
             this.myLogger.error(
@@ -172,7 +172,6 @@ export default class Main extends EventEmitter {
             );
             this.killBridge(1);
         });
-      
 
         this.mattermostQueue = new EventQueue({
             emitter: this.ws,
@@ -216,6 +215,8 @@ export default class Main extends EventEmitter {
         const botProfile = this.updateBotProfile().catch(e =>
             this.myLogger.warn(`Error when updating bot profile\n${e.stack}`),
         );
+
+       
 
         const appservice = this.appService.listen(
             config().appservice.port,
@@ -294,7 +295,7 @@ export default class Main extends EventEmitter {
 
         await botProfile;
         await appservice;
-       // await this.ws.openPromise;
+        await this.ws.openPromise;
         log.timeEnd.info('Bridge initialized');
 
         void notifySystemd();
@@ -314,8 +315,8 @@ export default class Main extends EventEmitter {
         db['entities'] = [User, Post];
         db['synchronize'] = false;
         db['logging'] = ['query', 'error'];
-        db.logger = 'file';
-        //db.port = 5432
+        db.logger = 'advanced-console';
+       
         let dataSource: DataSource = new DataSource(db);
         try {
             this.dataSource = await dataSource.initialize();

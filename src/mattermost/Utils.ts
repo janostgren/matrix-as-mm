@@ -38,10 +38,11 @@ async function retryJoinMattermostChannel(
     let retry = 10;
     while (true) {
         try {
-            return await client.post(`/channels/${channelid}/members`, {
+            let post=await client.post(`/channels/${channelid}/members`, {
                 user_id: userid,
             });
-        } catch (e: unknown) {
+            return post;
+        } catch (e:any) {
             if (
                 retry > 1280 ||
                 !(e instanceof ClientError && e.m.status_code === 500)
@@ -68,8 +69,8 @@ export async function joinMattermostChannel(
             userid,
         );
     } catch (e) {
-        if (
-            e instanceof ClientError &&
+        let ce:boolean=e instanceof ClientError
+        if ( ce &&
             (e.m.id === 'store.sql_team.get_member.missing.app_error' ||
                 e.m.id === 'app.team.get_member.missing.app_error' ||
                 e.m.id ===
