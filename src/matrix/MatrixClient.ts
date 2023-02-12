@@ -3,6 +3,7 @@ import { getLogger } from '../Logging';
 
 import * as axios from 'axios';
 import * as https from 'https';
+import * as http from 'http';
 
 export interface MatrixClientCreateOpts {
     userId: string;
@@ -41,6 +42,9 @@ export class MatrixClient {
         let httpsAgent = new https.Agent({
             keepAlive: true,
         });
+        let httpAgent = new http.Agent({
+            keepAlive: true,
+        });
 
         const bearer: string = this.accessToken
             ? `Bearer ${options.accessToken}`
@@ -48,6 +52,7 @@ export class MatrixClient {
         this.client = axios.default.create({
             baseURL: options.baseUrl,
             httpsAgent: httpsAgent,
+            httpAgent:httpAgent,
             headers: {
                 Authorization: bearer,
             },

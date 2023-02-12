@@ -1,6 +1,7 @@
 // import fetch, { Response } from 'node-fetch';
 import * as axios from 'axios';
 import * as https from 'https';
+import * as http from 'http';
 import * as WebSocket from 'ws';
 import { EventEmitter } from 'events';
 
@@ -26,11 +27,16 @@ export class Client {
         let httpsAgent = new https.Agent({
             keepAlive: true,
         });
+        let httpAgent = new http.Agent({
+            keepAlive: true,
+        });
+
 
         const bearer: string = this.token ? `Bearer ${this.token}` : '';
         this.client = axios.default.create({
             baseURL: this.domain,
             httpsAgent: httpsAgent,
+            httpAgent:httpAgent,
             headers: {
                 Authorization: bearer,
             },
@@ -175,7 +181,11 @@ export class ClientWebsocket extends EventEmitter {
         if (this.client.token === null) {
             throw new Error('Cannot open websocket without access token');
         }
-        const wsUrl = `ws${this.client.domain.slice(4)}/api/v4/websocket`;
+        const parts=this.client.domain.split(':')
+        
+        let wsProto=parts[0] === "http" ? "ws":"wss"
+        const wsUrl = `${wsProto}${this.client.domain.slice(4)}/api/v4/websocket`;
+        
         this.ws = new WebSocket(wsUrl, {
             followRedirects: true,
         });
