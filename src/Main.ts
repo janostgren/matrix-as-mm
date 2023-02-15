@@ -145,8 +145,6 @@ export default class Main extends EventEmitter {
         }
     }
 
-
-
     public async init(): Promise<void> {
         log.time.info('Bridge initialized');
         const packInfo = getPackageInfo();
@@ -158,19 +156,41 @@ export default class Main extends EventEmitter {
             process.argv,
         );
         await this.setupDataSource();
-        
+
+        await registerAppService(
+            this.botClient,
+            config().matrix_bot.username,
+            this.myLogger,
+        );
+        /*
+        let info =await loginAppService(
+            this.botClient,
+            config().matrix_bot.username
+        );        
+        this.myLogger.info("Login as app service: %s",info)
+        this.botClient.setAccessToken(info.access_token)
+        */
+
+        try {
+            await this.updateBotProfile();
+        } catch (e) {
+            this.myLogger.warn(`Error when updating bot profile\n${e.stack}`);
+        }
+
         this.ws = this.client.websocket();
+        
         this.ws.on('error', e => {
             this.myLogger.error(
                 `Error when initializing websocket connection.\n${e.stack}`,
             );
         });
 
-        this.ws.on('close', e => {
+        this.ws.on('close', async e => {
             this.myLogger.error(
-                'Mattermost websocket closed. Shutting down bridge. Code=%d',e
+                'Mattermost websocket closed. Shutting down bridge. Code=%d',
+                e,
             );
-            this.killBridge(1);
+            await this.killBridge(1);
         });
 
         this.mattermostQueue = new EventQueue({
@@ -196,27 +216,6 @@ export default class Main extends EventEmitter {
             filter: async e => this.isRemoteUser(e.sender),
             parent: this,
         });
-
-        /*
-        let info =await loginAppService(
-            this.botClient,
-            config().matrix_bot.username
-        );        
-        this.myLogger.info("Login as app service: %s",info)
-        this.botClient.setAccessToken(info.access_token)
-        */
-
-        await registerAppService(
-            this.botClient,
-            config().matrix_bot.username,
-            this.myLogger,
-        );
-
-        const botProfile = this.updateBotProfile().catch(e =>
-            this.myLogger.warn(`Error when updating bot profile\n${e.stack}`),
-        );
-
-       
 
         const appservice = this.appService.listen(
             config().appservice.port,
@@ -293,7 +292,7 @@ export default class Main extends EventEmitter {
             return;
         }
 
-        await botProfile;
+        //await botProfile;
         await appservice;
         await this.ws.openPromise;
         log.timeEnd.info('Bridge initialized');
@@ -316,7 +315,7 @@ export default class Main extends EventEmitter {
         db['synchronize'] = false;
         db['logging'] = ['query', 'error'];
         db.logger = 'advanced-console';
-       
+
         let dataSource: DataSource = new DataSource(db);
         try {
             this.dataSource = await dataSource.initialize();
@@ -427,6 +426,18 @@ export default class Main extends EventEmitter {
         if (killed) {
             return;
         }
+        try {
+            if (this.botClient.isSessionValid()) {
+                await this.botClient.logout();
+            }
+            this.myLogger.info('MatrixClient logged out. Session invalidated.');
+        } catch (ignore) {}
+
+        // Destroy DataSource
+        if (this.dataSource && this.dataSource.isInitialized) {
+            await this.dataSource.destroy();
+        }
+
         // Otherwise, closing the websocket connection will initiate
         // the shutdown sequence again.
         this.ws.removeAllListeners('close');
@@ -437,10 +448,7 @@ export default class Main extends EventEmitter {
             this.matrixQueue.kill(),
             this.mattermostQueue.kill(),
         ]);
-        // Destroy DataSource
-        if (this.dataSource && this.dataSource.isInitialized) {
-            await this.dataSource.destroy();
-        }
+
         for (const result of results) {
             if (result.status === 'rejected') {
                 this.myLogger.error(
@@ -449,10 +457,6 @@ export default class Main extends EventEmitter {
                 exitCode = 1;
             }
         }
-        try {
-            await this.botClient.logout();
-            this.myLogger.info('MatrixClient logged out. Session invalidated.');
-        } catch (ignore) {}
 
         if (this.exitOnFail) {
             process.exit(exitCode);

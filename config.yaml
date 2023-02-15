@@ -27,7 +27,7 @@ mattermost_url: http://localhost:8065/
 
 # If true, the bridge exits if it fails to bridge any channel. Otherwise, it
 # will go on bridging the channels it can bridge. The default is false.
-forbid_bridge_failure: false
+forbid_bridge_failure: true
 
 # Mappings between mattermost channels and matrix rooms.
 mappings:
@@ -73,7 +73,7 @@ matrix_bot:
 # Try with special matrix.bridge a user with system admin role
 #
 mattermost_bot_userid: 'geds3gxhdf81dccdrm8bfx37ry'
-mattermost_bot_access_token: '6oc63eojpnixbdwy78ycte4qa'
+mattermost_bot_access_token: 'hq5gpaq1d7fotdnc945qfg1hsc'
 
 # Database configuration. Currently, only postgres and sqlite are supported.
 # The configuration is the arguments supplied to TypeORM's createConnection:

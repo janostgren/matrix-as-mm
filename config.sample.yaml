@@ -78,8 +78,8 @@ mattermost_bot_access_token: 's537n3t8zib1tx7eyd44qzqnbr'
 database:
   type: postgres
   host: localhost
-  database:mm-matrix-bridge
-  username:mm-matrix-bridge
+  database: mm-matrix-bridge
+  username: mm-matrix-bridge
   password: hunter2
 
 logging: debug # Valid values are trace, debug, info, warn, error and silent

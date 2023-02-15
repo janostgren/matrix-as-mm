@@ -55,11 +55,15 @@ export class MatrixClient {
             httpAgent:httpAgent,
             headers: {
                 Authorization: bearer,
+                
             },
         });
         this.myLogger.debug('New matrix client created for userId=%s, baseUrl=%s,accessToken=%s',
           this.userId,this.baseUrl,this.accessToken
         )
+    }
+    public isSessionValid ():boolean {
+        return this.sessionIsValid
     }
 
     public getSessionCreateMethod(): SessionCreatedWith {
@@ -367,19 +371,6 @@ export class MatrixClient {
 
     private async doRequest(options: axios.AxiosRequestConfig): Promise<any> {
         let method = options.method || 'GET';
-        /*
-        if (!this.logoutDone && !this.sessionIsValid) {
-            this.myLogger.fatal(
-                `${method} ${
-                    options.url
-                } active userId=${this.getUserId()}. Session is not valid`,
-            );
-            let err = new Error('Matrix Client Session not valid');
-            err.name = 'MatrixClient Error';
-            throw err;
-        }
-        */
-
         this.myLogger.trace(
             `${method} ${options.url} active userId=${this.getUserId()}. Valid Session= ${this.sessionIsValid}`,
         );
