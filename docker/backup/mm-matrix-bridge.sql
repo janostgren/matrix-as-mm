@@ -71,6 +71,7 @@ ALTER TABLE public.users OWNER TO "mm-matrix-bridge";
 --
 
 COPY public.posts (eventid, postid, rootid) FROM stdin;
+$ws9UuWLPn8VzHbofyg3g8AQK-aYsdD2iv6woyWt3sEw	qpybi5a1tff9u81mgtngeuhkro	qpybi5a1tff9u81mgtngeuhkro
 \.
 
 
@@ -87,6 +88,8 @@ COPY public.typeorm_metadata (type, database, schema, "table", name, value) FROM
 --
 
 COPY public.users (matrix_userid, mattermost_userid, access_token, is_matrix_user, mattermost_username, matrix_displayname) FROM stdin;
+@user1.matrix:localhost	bgct5icpib883fx619bh3cfu6h	zbobs1dw5jgrtby9hkcz3dkpjy	t	matrix_user1.matrix	user1.matrix
+@mm_user1.mm:localhost	ygmycw6rnff7igko8gwbqchujr	deges64nuprjdrke65zqfp7fkw	f	user1.mm	user1.mm [mm]
 \.
 
 
