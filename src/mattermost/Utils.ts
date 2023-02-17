@@ -12,10 +12,14 @@ export async function getMattermostUsers(
     client: Client,
     channel: string,
 ): Promise<Set<string>> {
+    try {
     const query = await client.get(
         `/channels/${channel}/members?page=0&per_page=${MAX_MEMBERS}`,
     );
     return new Set(query.map(member => member.user_id));
+    } catch (err) {
+        throw err
+    }
 }
 
 /* Joining a mattermost channel that we have already joined should not result

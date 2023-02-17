@@ -77,7 +77,7 @@ export default class Channel {
                             true,
                         );
                     matrixUsers.remote.delete(user.matrix_userid);
-                    const client = this.main.mattermostUserStore.client(user);
+                    const client = await this.main.mattermostUserStore.client(user);
                     await joinMatrixRoom(client, this.matrixRoom);
                 }
             }),

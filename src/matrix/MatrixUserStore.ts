@@ -46,9 +46,9 @@ export default class MatrixUserStore {
 
         let user2 = await User.findOne({
             //matrix_userid,
-            "where":{"matrix_userid":matrix_userid}
+            where: { matrix_userid: matrix_userid },
         });
-        
+
         if (user2) {
             this.mutex.unlock();
             if (!user2.is_matrix_user) {
@@ -57,7 +57,7 @@ export default class MatrixUserStore {
                 );
             }
             await this.updateUser(user2);
-            user=user2
+            user = user2;
         } else {
             const client = this.main.client;
             const localpart_ = localpart(matrix_userid);
@@ -99,7 +99,7 @@ export default class MatrixUserStore {
             );
             this.mutex.unlock();
         }
-        
+
         this.byMatrixUserId.set(matrix_userid, user);
         this.byMattermostUserId.set(user.mattermost_userid, user);
 
@@ -142,14 +142,20 @@ export default class MatrixUserStore {
         if (cached !== undefined) {
             return cached;
         }
-        const response = await User.findOne({
-            //mattermost_userid: mattermostUserId,
-            "where":{"mattermost_userid":mattermostUserId}
+
+        let count = await User.count({
+            where: { mattermost_userid: mattermostUserId },
         });
-        if (response === null || response.is_matrix_user === false) {
-            return null;
-        } else {
-            return response;
+        if (count > 0) {
+            const response = await User.findOne({
+                where: { mattermost_userid: mattermostUserId },
+            });
+            if (response === null || response.is_matrix_user === false) {
+                ;
+            } else {
+                return response;
+            }
         }
+        return null
     }
 }

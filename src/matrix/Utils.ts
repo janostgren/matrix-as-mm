@@ -40,11 +40,13 @@ export async function getMatrixUsers(
 export function getMatrixClient(
     registration: Registration,
     userId: string,
+    apiTrace:boolean=false
 ): mxClient.MatrixClient {
     const client = new mxClient.MatrixClient({
         userId: userId,
         baseUrl: config().homeserver.url,
         accessToken: registration.as_token,
+        apiTrace:apiTrace
     });
     return client;
 }
@@ -72,7 +74,9 @@ export async function loginAppService(
     client: mxClient.MatrixClient,
     username: string,
 ): Promise<any> {
-    return await client.loginAppService(username);
+    const info =await client.loginAppService(username);
+    client.setAccessToken(info.access_token)
+    return info
 }
 
 export async function joinMatrixRoom(

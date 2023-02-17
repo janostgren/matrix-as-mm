@@ -5,10 +5,13 @@ import * as axios from 'axios';
 import * as https from 'https';
 import * as http from 'http';
 
+const TRACE_ENV_NAME='API_TRACE'
+
 export interface MatrixClientCreateOpts {
     userId: string;
     baseUrl: string;
     accessToken?: string;
+    apiTrace?:boolean
 }
 
 export enum SessionCreatedWith {
@@ -32,10 +35,17 @@ export class MatrixClient {
     private sessionCreateMethod: SessionCreatedWith = SessionCreatedWith.None;
     private sessionIsValid: boolean = false;
     private logoutDone: boolean = false;
+    readonly apiTrace
 
     constructor(options: MatrixClientCreateOpts) {
         //super()
-        this.myLogger = getLogger('MatrixClient', 'trace');
+        this.apiTrace=options.apiTrace || false
+        if(!this.apiTrace) {
+            let apiTraceEnv = process.env[TRACE_ENV_NAME];
+             this.apiTrace=apiTraceEnv && apiTraceEnv === 'true'
+
+        }
+        this.myLogger = getLogger('MatrixClient', this.apiTrace?'trace':'debug');
 
         this.accessToken = options.accessToken || '';
         (this.userId = options.userId), (this.baseUrl = options.baseUrl);
@@ -52,18 +62,20 @@ export class MatrixClient {
         this.client = axios.default.create({
             baseURL: options.baseUrl,
             httpsAgent: httpsAgent,
-            httpAgent:httpAgent,
+            httpAgent: httpAgent,
             headers: {
                 Authorization: bearer,
-                
             },
         });
-        this.myLogger.debug('New matrix client created for userId=%s, baseUrl=%s,accessToken=%s',
-          this.userId,this.baseUrl,this.accessToken
-        )
+        this.myLogger.trace(
+            'New matrix client created for userId=%s, baseUrl=%s,accessToken=%s',
+            this.userId,
+            this.baseUrl,
+            this.accessToken,
+        );
     }
-    public isSessionValid ():boolean {
-        return this.sessionIsValid
+    public isSessionValid(): boolean {
+        return this.sessionIsValid;
     }
 
     public getSessionCreateMethod(): SessionCreatedWith {
@@ -337,42 +349,41 @@ export class MatrixClient {
         });
     }
 
-    private setResponseType(contentType: string): axios.ResponseType {
-        let responseType: axios.ResponseType = 'text';
-        if (
-            contentType.startsWith('image') ||
-            contentType.startsWith('audio') ||
-            contentType.startsWith('video') ||
-            contentType.includes('pkc8') ||
-            contentType.includes('pdf') ||
-            contentType.includes('zip')
-        ) {
-            responseType = 'arraybuffer';
+    public async upload(
+        fileName: string,
+        extension: string,
+        contentType: string,
+        data,
+    ): Promise<any> {
+        let responseType: axios.ResponseType = 'arraybuffer';
+        try {
+            let content = await this.doRequest({
+                method: 'POST',
+                url: '_matrix/media/v3/upload',
+                responseType: responseType,
+                headers: {
+                    'Content-Type': contentType,
+                },
+                params: {
+                    filename: fileName,
+                },
+                data: data,
+            });
+            return content.content_uri;
+        } catch (error) {
+            this.myLogger.fatal("Failed to upload content file=%s , contentType=%s",fileName,contentType)
+            throw error;
         }
-
-        return responseType;
-    }
-
-    public async upload(fileName: string, contentType: string): Promise<any> {
-        let responseType: axios.ResponseType =
-            this.setResponseType(contentType);
-        return await this.doRequest({
-            method: 'POST',
-            url: '_matrix/media/v3/upload',
-            responseType: responseType,
-            headers: {
-                'Content-Type': contentType,
-            },
-            params: {
-                filename: fileName,
-            },
-        });
     }
 
     private async doRequest(options: axios.AxiosRequestConfig): Promise<any> {
         let method = options.method || 'GET';
         this.myLogger.trace(
-            `${method} ${options.url} active userId=${this.getUserId()}. Valid Session= ${this.sessionIsValid}`,
+            `${method} ${
+                options.url
+            } active userId=${this.getUserId()}. Valid Session= ${
+                this.sessionIsValid
+            }`,
         );
         try {
             let response: axios.AxiosResponse = await this.client.request(

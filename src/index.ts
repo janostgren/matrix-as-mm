@@ -14,12 +14,14 @@ import log, { getLogger } from './Logging';
 //import { run } from './db-test';
 
 console.time('Bridge loaded');
+const TRACE_ENV_NAME='API_TRACE'
 
 const argv = yargs
     .scriptName('matrix-as-mm')
     .help('help')
     .alias('h', 'help')
     .option('r', { describe: 'generate registration file' })
+    .option('--at', { describe: 'extended tracing of API calls' })
     .option('c', { describe: 'configuration file', nargs: 1, demand: true })
     .option('f', {
         describe: 'registration file',
@@ -28,8 +30,20 @@ const argv = yargs
     }).argv;
 
 if (argv.r === undefined) {
-    const main = new Main(loadYaml(argv.c), argv.f);
     const myLogger: log4js.Logger = getLogger('index.js');
+    let apiTraceEnv = process.env[TRACE_ENV_NAME];
+    let traceApi: boolean =
+        argv.at ||
+        (apiTraceEnv && apiTraceEnv.toLocaleLowerCase() === 'true'
+            ? true
+            : false);
+    if (traceApi) {
+        process.env[TRACE_ENV_NAME] = 'true';
+        myLogger.info('Extend API trace=%s', process.env[TRACE_ENV_NAME]);
+    }
+
+    const main = new Main(loadYaml(argv.c), argv.f,true,traceApi);
+
     log.timeEnd.info('Bridge loaded');
     void main.init();
     process.on('SIGTERM', () => {

@@ -75,6 +75,7 @@ export default class Main extends EventEmitter {
         config: Config,
         registrationPath: string,
         private readonly exitOnFail: boolean = true,
+        private readonly traceApi: boolean = false,
     ) {
         super();
         setConfig(config);
@@ -86,11 +87,12 @@ export default class Main extends EventEmitter {
 
         this.registration = loadYaml(registrationPath);
 
-        this.appService = new AppService(this);
+        this.appService = new AppService(this)
 
         this.botClient = getMatrixClient(
             this.registration,
             `@${config.matrix_bot.username}:${config.homeserver.server_name}`,
+            this.traceApi
         );
 
         this.initialized = false;
@@ -99,6 +101,7 @@ export default class Main extends EventEmitter {
             config.mattermost_url,
             config.mattermost_bot_userid,
             config.mattermost_bot_access_token,
+           
         );
         //this.ws = this.client.websocket();
 
@@ -155,6 +158,8 @@ export default class Main extends EventEmitter {
             packInfo.version,
             process.argv,
         );
+        this.ws = this.client.websocket();
+
         await this.setupDataSource();
 
         await registerAppService(
@@ -177,8 +182,6 @@ export default class Main extends EventEmitter {
             this.myLogger.warn(`Error when updating bot profile\n${e.stack}`);
         }
 
-        this.ws = this.client.websocket();
-        
         this.ws.on('error', e => {
             this.myLogger.error(
                 `Error when initializing websocket connection.\n${e.stack}`,
@@ -224,7 +227,7 @@ export default class Main extends EventEmitter {
 
         const onChannelError = async (e: Error, channel: Channel) => {
             this.myLogger.error(
-                `Error when syncing ${channel.matrixRoom} with ${channel.mattermostChannel}\n${e.stack}`,
+                `Error when syncing ${channel.matrixRoom} with ${channel.mattermostChannel}\n error=${e}`,
             );
             if (config().forbid_bridge_failure) {
                 await this.killBridge(1);
@@ -292,9 +295,9 @@ export default class Main extends EventEmitter {
             return;
         }
 
-        //await botProfile;
         await appservice;
-        await this.ws.openPromise;
+        await this.ws.open();
+
         log.timeEnd.info('Bridge initialized');
 
         void notifySystemd();
@@ -309,12 +312,14 @@ export default class Main extends EventEmitter {
         ]);
     }
 
-    private async setupDataSource(): Promise<DataSource> {
+    private async setupDataSource(): Promise<void> {
         const db: any = Object.assign({}, config().database);
         db['entities'] = [User, Post];
         db['synchronize'] = false;
-        db['logging'] = ['query', 'error'];
-        db.logger = 'advanced-console';
+        if (this.traceApi) {
+            db['logging'] = ['query', 'error'];
+            db.logger = 'advanced-console';
+        }
 
         let dataSource: DataSource = new DataSource(db);
         try {
@@ -325,10 +330,14 @@ export default class Main extends EventEmitter {
                 db.host,
                 db.database,
             );
-            return this.dataSource;
+            //return this.dataSource;
         } catch (error) {
-            this.myLogger.fatal(error);
-            throw error;
+            this.myLogger.fatal(
+                'Failed to setup data source to meta database=%s. Error=%s ',
+                db.database,
+                error.message,
+            );
+            this.killBridge(1);
         }
     }
 
@@ -440,21 +449,24 @@ export default class Main extends EventEmitter {
 
         // Otherwise, closing the websocket connection will initiate
         // the shutdown sequence again.
-        this.ws.removeAllListeners('close');
+        if (this.ws && this.ws.initialized()) {
+            this.ws.removeAllListeners('close');
+            await this.ws.close();
+        }
+        if (this.initialized) {
+            const results = await allSettled([
+                this.appService.close(),
+                this.matrixQueue.kill(),
+                this.mattermostQueue.kill(),
+            ]);
 
-        const results = await allSettled([
-            this.ws.close(),
-            this.appService.close(),
-            this.matrixQueue.kill(),
-            this.mattermostQueue.kill(),
-        ]);
-
-        for (const result of results) {
-            if (result.status === 'rejected') {
-                this.myLogger.error(
-                    `Error when killing bridge: ${result.reason.stack}`,
-                );
-                exitCode = 1;
+            for (const result of results) {
+                if (result.status === 'rejected') {
+                    this.myLogger.warn(
+                        `Warning when killing bridge: ${result.reason}`,
+                    );
+                    exitCode = 1;
+                }
             }
         }
 
@@ -502,7 +514,9 @@ export default class Main extends EventEmitter {
     }
 
     private async onMattermostMessage(m: MattermostMessage): Promise<void> {
-        this.myLogger.debug(`Mattermost message: ${JSON.stringify(m)}`);
+        this.
+        
+        myLogger.debug(`Mattermost message: ${JSON.stringify(m)}`);
         const handler = MattermostMainHandlers[m.event];
         if (handler !== undefined) {
             await handler.bind(this)(m);

@@ -73,13 +73,15 @@ const MattermostPostHandlers = {
         if (post.metadata.files !== undefined) {
             for (const file of post.metadata.files) {
                 // Read everything into memory to compute content-length
-                const body = await (
-                    await this.main.client.get(`/files/${file.id}`)
-                ).buffer();
+                const body= await (
+                    await this.main.client.get(`/files/${file.id}`,undefined,true)
+                );
                 const mimetype = file.mime_type;
 
-                let fileName = `${file.name}.${file.extension}`;
-                const url = await client.upload(fileName, mimetype);
+                //let fileName = `${file.name}.${file.extension}`;
+                let fileName = `${file.name}`;
+                var arrByte = Uint8Array.from(body)
+                const url = await client.upload(fileName,file.extension, mimetype,arrByte);
 
                 let msgtype = 'm.file';
                 if (mimetype.startsWith('image/')) {
@@ -155,7 +157,7 @@ export const MattermostHandlers = {
             return;
         }
 
-        const client = this.main.mattermostUserStore.getClient(post.user_id);
+        const client = await this.main.mattermostUserStore.getClient(post.user_id);
         if (client === undefined) {
             return;
         }
@@ -280,7 +282,7 @@ export const MattermostHandlers = {
         this: Channel,
         m: MattermostMessage,
     ): Promise<void> {
-        const client = this.main.mattermostUserStore.getClient(m.data.user_id);
+        const client = await this.main.mattermostUserStore.getClient(m.data.user_id);
         if (client !== undefined) {
             await client.leave(this.matrixRoom);
         }
@@ -295,7 +297,7 @@ export const MattermostHandlers = {
         this: Channel,
         m: MattermostMessage,
     ): Promise<void> {
-        const client = this.main.mattermostUserStore.getClient(m.data.user_id);
+        const client = await this.main.mattermostUserStore.getClient(m.data.user_id);
         if (client !== undefined) {
             client
                 .sendTyping(this.matrixRoom, client.getUserId(), true, 6000)

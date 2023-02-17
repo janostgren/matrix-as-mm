@@ -8,12 +8,14 @@ import { EventEmitter } from "events";
 import * as log4js from "log4js";
 import * as FormData from "form-data";
 
-export type Method = "GET" | "POST" | "PUT" | "DELETE";
+//export type Method = "GET" | "POST" | "PUT" | "DELETE";
+const TRACE_ENV_NAME='API_TRACE'
 
 export class Client {
   private joinTeamPromises: Map<string, Promise<any>>;
   private myLogger: log4js.Logger;
   private client: axios.AxiosInstance;
+  readonly logLevel:string='debug'
 
   constructor(
     readonly domain: string,
@@ -22,8 +24,12 @@ export class Client {
   ) {
     this.domain = domain.replace(/\/*$/, "");
     this.joinTeamPromises = new Map();
+   
+    let apiTraceEnv = process.env[TRACE_ENV_NAME];
+    this.logLevel =apiTraceEnv && apiTraceEnv === 'true'?'trace':'debug'
     this.myLogger = log4js.getLogger("MM Client");
-    this.myLogger.level = "trace";
+    this.myLogger.level =this.logLevel
+   
     let httpsAgent = new https.Agent({
       keepAlive: true,
     });
@@ -43,22 +49,25 @@ export class Client {
   }
 
   private async send_raw(
-    method: Method,
+    method: axios.Method,
     endpoint: string,
     data?: any | FormData,
-    auth: boolean = true
-  ): Promise<any> {
-    if (auth && this.token === undefined) {
-      throw new Error("Cannot send request without access token");
-    }
 
+    raw: boolean = false
+  ): Promise<any> {
+    
+   
     const options: axios.AxiosRequestConfig = {
       method: method,
       url: `/api/v4${endpoint}`,
       data: data,
+      
     };
+    if(raw) {
+      options.responseType='arraybuffer'
+    }
 
-    this.myLogger.trace(`${method}  ${endpoint} user_id: ${this.userid}`);
+    this.myLogger.trace(`${method}  ${endpoint} `);
     try {
       let response: axios.AxiosResponse = await this.client.request(options);
       return response.data;
@@ -106,41 +115,50 @@ export class Client {
   }
 
   private async send(
-    method: Method,
+    method: axios.Method,
     endpoint: string,
     data?: any,
-    auth: boolean = true
+    raw: boolean = false
   ): Promise<any> {
-    return await this.send_raw(method, endpoint, data, auth);
+    return await this.send_raw(method, endpoint, data, raw);
   }
 
   public async get(
     endpoint: string,
     data?: any,
-    auth: boolean = true
+    raw: boolean = false
   ): Promise<any> {
-    return await this.send("GET", endpoint, data, auth);
+    return await this.send("GET", endpoint, data, raw);
   }
   public async post(
     endpoint: string,
     data?: any,
-    auth: boolean = true
+    raw: boolean = false
   ): Promise<any> {
-    return await this.send("POST", endpoint, data, auth);
+    return await this.send("POST", endpoint, data, raw);
   }
   public async put(
     endpoint: string,
     data?: any,
-    auth: boolean = true
+    raw: boolean = false
   ): Promise<any> {
-    return await this.send("PUT", endpoint, data, auth);
+    return await this.send("PUT", endpoint, data, raw);
   }
+
+  public async patch(
+    endpoint: string,
+    data?: any,
+    raw: boolean = false
+  ): Promise<any> {
+    return await this.send("PATCH", endpoint, data, raw);
+  }
+
   public async delete(
     endpoint: string,
     data?: any,
-    auth: boolean = true
+    raw: boolean = false
   ): Promise<any> {
-    return await this.send("DELETE", endpoint, data, auth);
+    return await this.send("DELETE", endpoint, data, raw);
   }
 
   public websocket(): ClientWebsocket {
@@ -175,17 +193,21 @@ export class ClientWebsocket extends EventEmitter {
   private ws: WebSocket;
   private seq: number;
   private promises: PromiseCallbacks[];
+  private isInitialized:boolean
 
   constructor(private client: Client) {
     super();
     this.myLogger = log4js.getLogger("Websocket");
-    this.myLogger.level = "trace";
+    this.myLogger.level = client.logLevel
     if (this.client.token === null) {
       throw new Error("Cannot open websocket without access token");
     }
-
+    this.isInitialized=false
     this.seq = 0;
     this.promises = [];
+  }
+  public initialized():boolean {
+    return this.isInitialized
   }
 
   public async open() {
@@ -197,7 +219,7 @@ export class ClientWebsocket extends EventEmitter {
       followRedirects: true,
       /*
       headers: {
-        Authorization: "Bearer " + this.client.token,
+        raworization: "Bearer " + this.client.token,
       },
       */
     };
@@ -205,13 +227,14 @@ export class ClientWebsocket extends EventEmitter {
     this.ws = new WebSocket(wsUrl, [],options);
 
     this.ws.on("open", async () => {
-      this.myLogger.debug("ws open event ");
+     
       try {
         await this.send("authentication_challenge", {
           token: this.client.token,
         });
+        this.isInitialized=true
       } catch (error) {
-        this.myLogger.debug("ws open event error %s",error.message);
+        this.myLogger.error("ws open event error %s",error.message);
       }
     });
 
@@ -273,7 +296,7 @@ export class ClientWebsocket extends EventEmitter {
 export class ClientError extends Error {
   constructor(
     message: string,
-    public readonly method: Method,
+    public readonly method: axios.Method,
     public readonly endpoint: string,
     public readonly data: any,
     public readonly m: ErrorObject
