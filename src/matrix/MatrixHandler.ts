@@ -1,5 +1,4 @@
 import * as log4js from 'log4js';
-import * as mxClient from './MatrixClient';
 import Channel from '../Channel';
 import { User } from '../entities/User';
 import { Post } from '../entities/Post';
@@ -156,7 +155,7 @@ const MatrixMembershipHandler = {
     leave: async function (this: Channel, userid: string) {
         const user = await this.main.matrixUserStore.get(userid);
         if (user === undefined) {
-            myLogger.info(`Removing untracked matrix user ${userid}`);
+            myLogger.info(`Found untracked matrix user ${userid}`);
             return;
         }
         await leaveMattermostChannel(

@@ -84,6 +84,7 @@ database:
   database: mm-matrix-bridge
   username: mm-matrix-bridge
   password: hunter2
+  # port: 5432
 
 logging: debug # Valid values are trace, debug, info, warn, error and silent
 

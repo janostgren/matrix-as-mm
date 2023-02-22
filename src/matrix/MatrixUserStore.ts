@@ -1,5 +1,5 @@
 import * as log4js from 'log4js';
-import * as mxClient from '../matrix/MatrixClient';
+
 import { User } from '../entities/User';
 import Mutex from '../utils/Mutex';
 import Main from '../Main';

@@ -73,9 +73,9 @@ export async function registerAppService(
 export async function loginAppService(
     client: mxClient.MatrixClient,
     username: string,
+    setToken:boolean
 ): Promise<any> {
-    const info =await client.loginAppService(username);
-    client.setAccessToken(info.access_token)
+    const info =await client.loginAppService(username,setToken);
     return info
 }
 

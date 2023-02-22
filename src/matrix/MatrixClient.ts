@@ -5,13 +5,13 @@ import * as axios from 'axios';
 import * as https from 'https';
 import * as http from 'http';
 
-const TRACE_ENV_NAME='API_TRACE'
+const TRACE_ENV_NAME = 'API_TRACE';
 
 export interface MatrixClientCreateOpts {
     userId: string;
     baseUrl: string;
     accessToken?: string;
-    apiTrace?:boolean
+    apiTrace?: boolean;
 }
 
 export enum SessionCreatedWith {
@@ -35,17 +35,19 @@ export class MatrixClient {
     private sessionCreateMethod: SessionCreatedWith = SessionCreatedWith.None;
     private sessionIsValid: boolean = false;
     private logoutDone: boolean = false;
-    readonly apiTrace
+    readonly apiTrace;
 
     constructor(options: MatrixClientCreateOpts) {
         //super()
-        this.apiTrace=options.apiTrace || false
-        if(!this.apiTrace) {
+        this.apiTrace = options.apiTrace || false;
+        if (!this.apiTrace) {
             let apiTraceEnv = process.env[TRACE_ENV_NAME];
-             this.apiTrace=apiTraceEnv && apiTraceEnv === 'true'
-
+            this.apiTrace = apiTraceEnv && apiTraceEnv === 'true';
         }
-        this.myLogger = getLogger('MatrixClient', this.apiTrace?'trace':'debug');
+        this.myLogger = getLogger(
+            'MatrixClient',
+            this.apiTrace ? 'trace' : 'debug',
+        );
 
         this.accessToken = options.accessToken || '';
         (this.userId = options.userId), (this.baseUrl = options.baseUrl);
@@ -110,10 +112,9 @@ export class MatrixClient {
     }
 
     public async whoAmI(): Promise<any> {
-        const resp: axios.AxiosResponse = await this.client.get(
-            '_matrix/client/v3/account/whoami',
-        );
-        return resp.data;
+        return this.doRequest({
+            url: '_matrix/client/r0/account/whoami',
+        });
     }
 
     public async getPublicRooms(limit: number = 100): Promise<any> {
@@ -226,7 +227,7 @@ export class MatrixClient {
             const resp: axios.AxiosResponse = await this.client.post(
                 '/_matrix/client/r0/register',
                 {
-                    username: userName,
+                    username: userName || this.userId,
                     type: 'm.login.application_service',
                 },
                 {
@@ -248,10 +249,15 @@ export class MatrixClient {
         return retValue;
     }
 
-    public async loginAppService(userName: string): Promise<any> {
-        const resp: axios.AxiosResponse = await this.client.post(
-            '/_matrix/client/r0/login',
-            {
+    public async loginAppService(
+        userName: string,
+        setToken: boolean = false,
+    ): Promise<any> {
+        const responseData = await this.doRequest({
+            method: 'POST',
+            url: '/_matrix/client/r0/login',
+
+            data: {
                 username: userName,
                 type: 'm.login.application_service',
                 identifier: {
@@ -259,18 +265,24 @@ export class MatrixClient {
                     user: userName,
                 },
             },
-        );
+        });
+        if(setToken) {
+            this.setAccessToken(responseData.access_token);
+        }
         this.sessionCreateMethod = SessionCreatedWith.LoginAppService;
         this.sessionIsValid = true;
-        return resp.data;
+        return responseData;
     }
+
     public async loginWithPassword(
         userName: string,
         password: string,
     ): Promise<any> {
-        const resp: axios.AxiosResponse = await this.client.post(
-            '/_matrix/client/r0/login',
-            {
+        const responseData = await this.doRequest({
+            method: 'POST',
+            url: '/_matrix/client/r0/login',
+
+            data: {
                 identifier: {
                     type: 'm.id.user',
                     user: userName,
@@ -279,11 +291,11 @@ export class MatrixClient {
                 password: password,
                 type: 'm.login.password',
             },
-        );
+        });
         this.sessionCreateMethod = SessionCreatedWith.LoginPassword;
         this.sessionIsValid = true;
-        this.setAccessToken(resp.data.access_token);
-        return resp.data;
+        this.setAccessToken(responseData.access_token);
+        return responseData;
     }
 
     public async logout() {
@@ -371,13 +383,21 @@ export class MatrixClient {
             });
             return content.content_uri;
         } catch (error) {
-            this.myLogger.fatal("Failed to upload content file=%s , contentType=%s",fileName,contentType)
+            this.myLogger.fatal(
+                'Failed to upload content file=%s , contentType=%s',
+                fileName,
+                contentType,
+            );
             throw error;
         }
     }
 
     private async doRequest(options: axios.AxiosRequestConfig): Promise<any> {
+        let myOptions: axios.AxiosRequestConfig = {
+            headers: { Authorization: `Bearer ${this.accessToken}` },
+        };
         let method = options.method || 'GET';
+        myOptions = Object.assign(myOptions, options);
         this.myLogger.trace(
             `${method} ${
                 options.url
@@ -387,7 +407,7 @@ export class MatrixClient {
         );
         try {
             let response: axios.AxiosResponse = await this.client.request(
-                options,
+                myOptions,
             );
             return response.data;
         } catch (e: any) {

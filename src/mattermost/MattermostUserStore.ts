@@ -82,12 +82,15 @@ export default class MattermostUserStore {
                     `${config().matrix_localpart_prefix}${data.username}`,
                     async userName => {
                         try {
-                            //await loginAppService(this.main.botClient,userName);
+                            await loginAppService(this.main.botClient,userName,false);
+                            /*
                             await registerAppService(
                                 this.main.botClient,
                                 userName,
                                 this.myLogger,
                             );
+                            */
+                            
                             return true;
                         } catch (e) {
                             throw e;
@@ -95,7 +98,7 @@ export default class MattermostUserStore {
                     },
                 );
                 this.myLogger.debug(
-                    `Creating matrix puppet @${localpart}:${server_name} for ${userid}`,
+                    `Creating matrix puppet @${localpart}:${server_name} for Mattermost userid: ${userid}`,
                 );
                 user = await User.createMattermostUser(
                     this.main.client,
@@ -113,13 +116,13 @@ export default class MattermostUserStore {
                 }
             } catch (error) {
                 this.myLogger.fatal(
-                    `Failed to create new Matrix puppet user for matrix userid ${userid} error=${error.message}`,
+                    `Failed to create new Matrix puppet user for Mattermost userid ${userid} error=${error.message}`,
                 );
                 throw error;
             }
            
         }
-        throw `Failed to create new Matrix puppet user for matrix userid ${userid}`;
+        throw `Failed to create new Matrix puppet user for Mattermost userid ${userid}`;
     }
 
     public async updateUser(
@@ -153,14 +156,17 @@ export default class MattermostUserStore {
 
     public async client(user: User): Promise<mxClient.MatrixClient> {
         let client = this.clients.get(user.matrix_userid);
+        //let userName= user.matrix_userid.slice(1,user.matrix_userid.indexOf(':'))
         if (client === undefined) {
             client = getMatrixClient(
                 this.main.registration,
                 user.matrix_userid,
             );
             //await registerAppService(client,client.getUserId(),this.myLogger)
-            await loginAppService(client,client.getUserId())
+            await loginAppService(client,client.getUserId(),true)
             this.clients.set(user.matrix_userid, client);
+            let me=await client.whoAmI()
+            this.myLogger.debug("Matrix client user = %",me)
         }
         return client;
     }

@@ -87,12 +87,12 @@ export default class Main extends EventEmitter {
 
         this.registration = loadYaml(registrationPath);
 
-        this.appService = new AppService(this)
+        this.appService = new AppService(this);
 
         this.botClient = getMatrixClient(
             this.registration,
             `@${config.matrix_bot.username}:${config.homeserver.server_name}`,
-            this.traceApi
+            this.traceApi,
         );
 
         this.initialized = false;
@@ -101,7 +101,6 @@ export default class Main extends EventEmitter {
             config.mattermost_url,
             config.mattermost_bot_userid,
             config.mattermost_bot_access_token,
-           
         );
         //this.ws = this.client.websocket();
 
@@ -225,6 +224,8 @@ export default class Main extends EventEmitter {
             config().appservice.bind || config().appservice.hostname,
         );
 
+        let rooms = await this.botClient.getJoinedRooms();
+
         const onChannelError = async (e: Error, channel: Channel) => {
             this.myLogger.error(
                 `Error when syncing ${channel.matrixRoom} with ${channel.mattermostChannel}\n error=${e}`,
@@ -239,18 +240,22 @@ export default class Main extends EventEmitter {
         // joinMattermostChannel on actual users queries the status of the
         // corresponding matrix room. Thus, we must make sure our bot has
         // already joined.
+
         await Promise.all(
             Array.from(this.channelsByMattermost, async ([, channel]) => {
                 try {
-                    await Promise.all([
-                        this.botClient.joinRoom(channel.matrixRoom),
-                        joinMattermostChannel(
-                            channel,
-                            User.create({
-                                mattermost_userid: this.client.userid,
-                            }),
-                        ),
-                    ]);
+                    let foundRoom = rooms.joined_rooms.find(room => {
+                        return room === channel.matrixRoom;
+                    });
+                    if (!foundRoom) {
+                        await this.botClient.joinRoom(channel.matrixRoom);
+                    }
+                    await joinMattermostChannel(
+                        channel,
+                        User.create({
+                            mattermost_userid: this.client.userid,
+                        }),
+                    );
                 } catch (e) {
                     await onChannelError(e, channel);
                 }
@@ -322,12 +327,14 @@ export default class Main extends EventEmitter {
         }
 
         let dataSource: DataSource = new DataSource(db);
+
         try {
             this.dataSource = await dataSource.initialize();
             this.myLogger.info(
                 'Data source to %s at %s database=%s ',
                 db.type,
                 db.host,
+
                 db.database,
             );
             //return this.dataSource;
@@ -514,9 +521,9 @@ export default class Main extends EventEmitter {
     }
 
     private async onMattermostMessage(m: MattermostMessage): Promise<void> {
-        this.
+        this.myLogger.debug(`Mattermost message: ${JSON.stringify(m)}`);
         
-        myLogger.debug(`Mattermost message: ${JSON.stringify(m)}`);
+
         const handler = MattermostMainHandlers[m.event];
         if (handler !== undefined) {
             await handler.bind(this)(m);

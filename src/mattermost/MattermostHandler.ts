@@ -297,8 +297,21 @@ export const MattermostHandlers = {
         this: Channel,
         m: MattermostMessage,
     ): Promise<void> {
+       
         const client = await this.main.mattermostUserStore.getClient(m.data.user_id);
+        
         if (client !== undefined) {
+            const userId= client.getUserId() || ''
+            const asClient=this.main.botClient
+            let members=await asClient.getRoomMembers(this.matrixRoom)
+            let isMember=members.chunk.find(member =>{
+                return (member === userId)
+    
+            })
+            if(!isMember) {
+                const inv=await asClient.invite(this.matrixRoom,userId,"Needed for Matrix Bridge")
+            }
+
             client
                 .sendTyping(this.matrixRoom, client.getUserId(), true, 6000)
                 .catch(e =>
