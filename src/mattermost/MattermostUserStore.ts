@@ -72,9 +72,8 @@ export default class MattermostUserStore {
             throw new Error(
                 `Trying to get Matrix user ${userid} from MattermostUserStore `,
             );*/
-            
-        } 
-        if(count === 0 || user) {
+        }
+        if (count === 0 || user) {
             try {
                 const data = await this.main.client.get(`/users/${userid}`);
                 const server_name = config().homeserver.server_name;
@@ -82,7 +81,11 @@ export default class MattermostUserStore {
                     `${config().matrix_localpart_prefix}${data.username}`,
                     async userName => {
                         try {
-                            await loginAppService(this.main.botClient,userName,false);
+                            await loginAppService(
+                                this.main.botClient,
+                                userName,
+                                false,
+                            );
                             /*
                             await registerAppService(
                                 this.main.botClient,
@@ -90,7 +93,7 @@ export default class MattermostUserStore {
                                 this.myLogger,
                             );
                             */
-                            
+
                             return true;
                         } catch (e) {
                             throw e;
@@ -120,7 +123,6 @@ export default class MattermostUserStore {
                 );
                 throw error;
             }
-           
         }
         throw `Failed to create new Matrix puppet user for Mattermost userid ${userid}`;
     }
@@ -154,6 +156,19 @@ export default class MattermostUserStore {
         //await this.client.(user).setDisplayName(displayName);
     }
 
+    public async logoutClients() {
+        this.myLogger.info("Logging out Matrix clients. Number of clients=%d",this.clients.size)
+        try {
+            await Promise.all(
+                Array.from(this.clients.entries(), async ([,client]) => {
+                    client.logout()
+                }),
+            );
+        } catch (e) {
+            this.myLogger.error("Error when logging out Matrix clients %s",e.message)
+        }
+    }
+
     public async client(user: User): Promise<mxClient.MatrixClient> {
         let client = this.clients.get(user.matrix_userid);
         //let userName= user.matrix_userid.slice(1,user.matrix_userid.indexOf(':'))
@@ -163,10 +178,10 @@ export default class MattermostUserStore {
                 user.matrix_userid,
             );
             //await registerAppService(client,client.getUserId(),this.myLogger)
-            await loginAppService(client,client.getUserId(),true)
+            await loginAppService(client, client.getUserId(), true);
             this.clients.set(user.matrix_userid, client);
-            let me=await client.whoAmI()
-            this.myLogger.debug("Matrix client user = %",me)
+            let me = await client.whoAmI();
+            this.myLogger.debug('Matrix client user = %', me);
         }
         return client;
     }
@@ -178,7 +193,9 @@ export default class MattermostUserStore {
         return this.client(await this.getOrCreate(userid, sync));
     }
 
-    public async getClient(userid: string):Promise<mxClient.MatrixClient|undefined> {
+    public async getClient(
+        userid: string,
+    ): Promise<mxClient.MatrixClient | undefined> {
         const user = this.get(userid);
         if (user === undefined) {
             this.myLogger.error('Failed to get Matrix client for %s', userid);

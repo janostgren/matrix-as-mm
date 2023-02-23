@@ -23,6 +23,22 @@ interface Metadata {
     };
 }
 
+async function joinUserToMatrixRoom(
+    client: mxClient.MatrixClient,
+    roomId: string,
+    adminClient: mxClient.MatrixClient,
+) {
+    const userId = client.getUserId() || '';
+    const rooms = await client.getJoinedRooms();
+    const foundRoom = rooms.joined_rooms.find(room => {
+        return room === roomId;
+    });
+    if (!foundRoom) {
+        const inv = await adminClient.invite(roomId, userId);
+        const join = await client.joinRoom(roomId);
+    }
+}
+
 async function sendMatrixMessage(
     client: mxClient.MatrixClient,
     room: string,
@@ -38,7 +54,7 @@ async function sendMatrixMessage(
 
         try {
             original = await client.getRoomEvent(room, replyTo.matrix);
-        } catch (e) { }
+        } catch (e) {}
         if (original !== undefined) {
             constructMatrixReply(original, message);
         }
@@ -73,15 +89,22 @@ const MattermostPostHandlers = {
         if (post.metadata.files !== undefined) {
             for (const file of post.metadata.files) {
                 // Read everything into memory to compute content-length
-                const body = await (
-                    await this.main.client.get(`/files/${file.id}`, undefined, true)
+                const body = await await this.main.client.get(
+                    `/files/${file.id}`,
+                    undefined,
+                    true,
                 );
                 const mimetype = file.mime_type;
 
                 //let fileName = `${file.name}.${file.extension}`;
                 let fileName = `${file.name}`;
-                var arrByte = Uint8Array.from(body)
-                const url = await client.upload(fileName, file.extension, mimetype, arrByte);
+                var arrByte = Uint8Array.from(body);
+                const url = await client.upload(
+                    fileName,
+                    file.extension,
+                    mimetype,
+                    arrByte,
+                );
 
                 let msgtype = 'm.file';
                 if (mimetype.startsWith('image/')) {
@@ -157,7 +180,9 @@ export const MattermostHandlers = {
             return;
         }
 
-        const client = await this.main.mattermostUserStore.getClient(post.user_id);
+        const client = await this.main.mattermostUserStore.getClient(
+            post.user_id,
+        );
         if (client === undefined) {
             return;
         }
@@ -175,12 +200,10 @@ export const MattermostHandlers = {
 
                 const thisIndex = threads.indexOf(post.id);
                 const id = threads[thisIndex - 1] as string;
-                const replyTo = await Post.findOne(
-                    {
-                        //postid: id
-                        "where": { "postid": id }
-                    }
-                );
+                const replyTo = await Post.findOne({
+                    //postid: id
+                    where: { postid: id },
+                });
                 if (replyTo) {
                     metadata.replyTo = {
                         matrix: replyTo.eventid,
@@ -213,7 +236,7 @@ export const MattermostHandlers = {
 
         const matrixEvent = await Post.findOne({
             //postid: post.id,
-            "where": { "postid": post.id }
+            where: { postid: post.id },
         });
         const msgtype = post.type === '' ? 'm.text' : 'm.emote';
 
@@ -282,7 +305,9 @@ export const MattermostHandlers = {
         this: Channel,
         m: MattermostMessage,
     ): Promise<void> {
-        const client = await this.main.mattermostUserStore.getClient(m.data.user_id);
+        const client = await this.main.mattermostUserStore.getClient(
+            m.data.user_id,
+        );
         if (client !== undefined) {
             await client.leave(this.matrixRoom);
         }
@@ -297,20 +322,16 @@ export const MattermostHandlers = {
         this: Channel,
         m: MattermostMessage,
     ): Promise<void> {
-
-        const client = await this.main.mattermostUserStore.getClient(m.data.user_id);
+        const client = await this.main.mattermostUserStore.getClient(
+            m.data.user_id,
+        );
 
         if (client !== undefined) {
-            const userId = client.getUserId() || ''
-            const rooms = await client.getJoinedRooms()
-            const foundRoom = rooms.joined_rooms.find(room => {
-                return (room === this.matrixRoom)
-
-            })
-            if (!foundRoom) {
-                const inv = await this.main.adminClient.invite(this.matrixRoom, userId)
-                const join = await client.joinRoom(this.matrixRoom)
-            }
+            await joinUserToMatrixRoom(
+                client,
+                this.matrixRoom,
+                this.main.adminClient,
+            );
             client
                 .sendTyping(this.matrixRoom, client.getUserId(), true, 6000)
                 .catch(e =>

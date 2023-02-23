@@ -462,6 +462,8 @@ export default class Main extends EventEmitter {
         if (this.dataSource && this.dataSource.isInitialized) {
             await this.dataSource.destroy();
         }
+        // Logout all Matrix Clients
+        await this.mattermostUserStore.logoutClients()
 
         // Otherwise, closing the websocket connection will initiate
         // the shutdown sequence again.
