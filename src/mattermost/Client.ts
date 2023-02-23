@@ -4,6 +4,7 @@ import * as https from "https";
 import * as http from "http";
 import * as WebSocket from "ws";
 import { EventEmitter } from "events";
+import * as util from "util";
 
 import * as log4js from "log4js";
 import * as FormData from "form-data";
@@ -244,7 +245,11 @@ export class ClientWebsocket extends EventEmitter {
 
     this.ws.on("message", (m) => {
       const ev = JSON.parse(m);
-      this.myLogger.trace("Message: %s", m.toString());
+      this.myLogger.trace("Message: ",  util.inspect(ev, {
+        showHidden: false,
+        depth: 4,
+        colors: true,
+      }));
       if (ev.seq_reply !== undefined) {
         const promise = this.promises[ev.seq_reply];
         if (promise === null) {

@@ -15,10 +15,10 @@ appservice:
   # The hostname the homeserver uses to talk to the appservice. This hostname
   # should be accessible from the homeserver. If they are on the same server,
   # set it to localhost.
-  hostname: appservice
+  hostname: host.docker.internal
 
   # The host the appservice server should bind to. Defaults to hostname
-  bind: localhost
+  bind: 0.0.0.0
 
   schema: http
 
@@ -32,11 +32,11 @@ forbid_bridge_failure: true
 # Mappings between mattermost channels and matrix rooms.
 mappings:
   # Town Square
-  - mattermost: 'cxtmz3ubz3gfigd5m6prendmsw'
-    matrix: '!kmbTYjjsDRDHGgVqUP:localhost'
+  - mattermost: 'p7retz8iwtgzdrdceqw13fwmbr'
+    matrix: '!FzTtpSkXWMPYBKHUQN:localhost'
   # Off-Topic
-  - mattermost: '73uy6kj1jb8wdqrf3ti6zies6r'
-    matrix: '!dKcbdDATuwwphjRPQP:localhost'
+  - mattermost: 'giyj94p1fp86p8zs9z6u5b3ujh'
+    matrix: '!pYSbiOyjMFsKNxSMyi:localhost'
 
 # A puppet matrix user of a real mattermost user with have matrix localpart
 # with this prefix.
@@ -68,9 +68,15 @@ matrix_bot:
 
 # The mattermost bot used by the bridge. This has to be an existing user with
 # system administration privileges, in order to verify the emails of the puppet
-# users.
-mattermost_bot_userid: 'bmq7jiumpib3xdz3mx5iyo99ro'
-mattermost_bot_access_token: 's537n3t8zib1tx7eyd44qzqnbr'
+# users. 
+#
+# Try with special matrix.bridge a user with system admin role
+#
+mattermost_bot_userid: 'geds3gxhdf81dccdrm8bfx37ry'
+mattermost_bot_access_token: 'bxfcapjqiina9xayxw6y65ubwh'
+matrix_admin: 
+  username: '@admin:localhost'
+  access_token: 'syt_YWRtaW4_ESjBoGLaWtscFgZHsBhJ_027WFj'
 
 # Database configuration. Currently, only postgres and sqlite are supported.
 # The configuration is the arguments supplied to TypeORM's createConnection:
@@ -81,6 +87,7 @@ database:
   database: mm-matrix-bridge
   username: mm-matrix-bridge
   password: hunter2
+  # port: 5432
 
 logging: debug # Valid values are trace, debug, info, warn, error and silent
 
@@ -92,7 +99,7 @@ ignored_matrix_users:
 
 # Same as above. The mattermost bot is also automatically included.
 ignored_mattermost_users:
-  - '0z4okgmv5lfhx3p0tf6pnpk8sk'
+  - 'whida44gqpyfierua1wfrnbxtr'
 
 # Email template used for puppet users, with [RANDOM] replaced by a random
 # string. These do not have to be valid emails, as the users have their emails

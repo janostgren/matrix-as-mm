@@ -7,6 +7,14 @@ import * as http from 'http';
 
 const TRACE_ENV_NAME = 'API_TRACE';
 
+export enum Membership {
+    "join",
+    "leave",
+    "invite",
+    "knock",
+    "ban"
+}
+
 export interface MatrixClientCreateOpts {
     userId: string;
     baseUrl: string;
@@ -168,16 +176,24 @@ export class MatrixClient {
         });
     }
 
-    public async getRoomMembers(roomId: string): Promise<any> {
+    public async getRoomMembers(roomId: string,membership:Membership=Membership.join): Promise<any> {
+        return await this.doRequest({
+            url: `_matrix/client/v3/rooms/${roomId}/joined_members`,
+            params:{"membership":membership}
+        });
+    }
+
+    public async getJoinedMembers(roomId: string): Promise<any> {
         return await this.doRequest({
             url: `_matrix/client/v3/rooms/${roomId}/members`,
+        
         });
     }
 
     public async invite(
         roomId: string,
         userId: string,
-        reason: string,
+        reason: string='Invited to room',
     ): Promise<any> {
         return await this.doRequest({
             url: `_matrix/client/v3/rooms/${roomId}/invite`,
@@ -237,7 +253,7 @@ export class MatrixClient {
             retValue = resp.statusText;
         } catch (error: any) {
             const me = MatrixClient.getMatrixError(error);
-            const code = me.errcode;
+            const code = me.data.errcode;
             if (code && code === 'M_USER_IN_USE') {
                 retValue = code;
             } else {
@@ -425,7 +441,14 @@ export class MatrixClient {
     }
 
     public static getMatrixError(error: any): any {
-        let me = error?.response?.data || {};
+        let er= error?.response;
+        let me:any ={}
+        if(er) {
+            me.data=er.data
+            me.status=er.status
+            me.statusText=er.statusText
+        }
+
         return me;
     }
 }

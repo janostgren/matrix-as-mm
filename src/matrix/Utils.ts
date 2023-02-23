@@ -20,8 +20,9 @@ export async function getMatrixUsers(
     */
     const allMatrixUsers: string[] = [];
     let resp = await main.botClient.getRoomMembers(roomid);
-    for (let member of resp.chunk) {
-        allMatrixUsers.push(member.user_id);
+    let members =Object.keys(resp.joined)
+    for (let member of members) {
+        allMatrixUsers.push(member);
     }
 
     for (const matrixUser of allMatrixUsers) {
@@ -40,13 +41,13 @@ export async function getMatrixUsers(
 export function getMatrixClient(
     registration: Registration,
     userId: string,
-    apiTrace:boolean=false
+    apiTrace: boolean = false,
 ): mxClient.MatrixClient {
     const client = new mxClient.MatrixClient({
         userId: userId,
         baseUrl: config().homeserver.url,
         accessToken: registration.as_token,
-        apiTrace:apiTrace
+        apiTrace: apiTrace,
     });
     return client;
 }
@@ -73,10 +74,10 @@ export async function registerAppService(
 export async function loginAppService(
     client: mxClient.MatrixClient,
     username: string,
-    setToken:boolean
+    setToken: boolean,
 ): Promise<any> {
-    const info =await client.loginAppService(username,setToken);
-    return info
+    const info = await client.loginAppService(username, setToken);
+    return info;
 }
 
 export async function joinMatrixRoom(
