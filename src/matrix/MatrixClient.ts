@@ -29,10 +29,21 @@ export enum SessionCreatedWith {
     LoginPassword,
 }
 
-export interface SendRoomContent {
-    body: string;
-    msgtype: string;
+export interface MessageContent {
+    body:string,
+    msgtype:string,
+    format?:string,
+    formatted_body?:string
+    [propName: string]: unknown;
+   
 }
+
+/*
+export interface SendRoomContent {
+    content:MessageContent;
+   
+}
+*/
 
 export class MatrixClient {
     private myLogger: log4js.Logger;
@@ -367,7 +378,7 @@ export class MatrixClient {
     public async sendMessage(
         roomId: string,
         eventType: string,
-        content: SendRoomContent,
+        content: MessageContent,
     ): Promise<any> {
         let txnId: string = 'm' + Date.now();
         return await this.doRequest({
@@ -376,6 +387,21 @@ export class MatrixClient {
             data: content,
         });
     }
+
+    public async download (
+        serverName:string,
+        mediaId:string,
+        fileName:string
+    )
+    {
+        const content=await this.doRequest({
+            url: `/_matrix/media/v3/download/${serverName}/${mediaId}/${fileName}`,
+            responseType:"arraybuffer"
+        });
+        return content
+
+    }
+
 
     public async upload(
         fileName: string,
@@ -388,9 +414,9 @@ export class MatrixClient {
             let content = await this.doRequest({
                 method: 'POST',
                 url: '_matrix/media/v3/upload',
-                responseType: responseType,
+                //responseType: responseType,
                 headers: {
-                    'Content-Type': contentType,
+                    'Content-Type': contentType || 'application/json',
                 },
                 params: {
                     filename: fileName,

@@ -60,8 +60,12 @@ async function sendMatrixMessage(
         }
     }
     const event = await client.sendMessage(room, 'm.room.message', {
-        body: message.body,
-        msgtype: message.msgtype,
+        "body":message.body,
+        "msgtype":message.msgtype,
+        "format":message.format,
+        "formatted_body":message.formatted_body,
+        "info":message.info
+        
     });
     await Post.create({
         postid,
@@ -78,11 +82,13 @@ const MattermostPostHandlers = {
         post: MattermostPost,
         metadata: Metadata,
     ) {
+        const postMessage=await mattermostToMatrix(post.message)
         await sendMatrixMessage(
             client,
             this.matrixRoom,
             post.id,
-            await mattermostToMatrix(post.message),
+            //await mattermostToMatrix(post.message),
+            postMessage,
             metadata,
         );
 
@@ -92,18 +98,17 @@ const MattermostPostHandlers = {
                 const body = await await this.main.client.get(
                     `/files/${file.id}`,
                     undefined,
-                    true,
+                    false,
                 );
                 const mimetype = file.mime_type;
 
                 //let fileName = `${file.name}.${file.extension}`;
                 let fileName = `${file.name}`;
-                var arrByte = Uint8Array.from(body);
                 const url = await client.upload(
                     fileName,
                     file.extension,
                     mimetype,
-                    arrByte,
+                    body,
                 );
 
                 let msgtype = 'm.file';

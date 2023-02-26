@@ -6,6 +6,7 @@ import { ClientError } from '../mattermost/Client';
 import {
     joinMattermostChannel,
     leaveMattermostChannel,
+    
 } from '../mattermost/Utils';
 import { handlePostError, none } from '../utils/Functions';
 import { matrixToMattermost } from '../utils/Formatting';
@@ -13,6 +14,7 @@ import { MatrixEvent } from '../Interfaces';
 import * as FormData from 'form-data';
 import { getLogger } from '../Logging';
 import fetch from 'node-fetch';
+import { MatrixClient } from './MatrixClient';
 
 const myLogger: log4js.Logger = getLogger('MatrixHandler');
 
@@ -25,20 +27,29 @@ async function uploadFile(
     user: User,
     event: MatrixEvent,
     metadata: Metadata,
-) {
-    const mxc = event.content.url;
 
+) {
+    const main=this.main
+    const client =main.botClient
+    const mxc:string = event.content.url;
+    let parts = mxc.split('/')
+    
+    /*
     const body = await fetch(
         `${this.main.botClient.getBaseUrl()}/_matrix/media/r0/download/${mxc.slice(
             6,
         )}`,
     );
-    if (body.body === null) {
+    */
+    
+    const body = await client.download(parts[2],parts[3],event.content.body)
+    
+    if (!body) {
         throw new Error(`Downloaded empty file: ${mxc}`);
     }
 
     const form = new FormData();
-    form.append('files', body.body, {
+    form.append('files', body, {
         filename: event.content.body,
         contentType: event.content.info?.mimetype,
     });
@@ -48,7 +59,7 @@ async function uploadFile(
     const fileid = fileInfos.file_infos[0].id;
     const post = await user.client.post('/posts', {
         channel_id: this.mattermostChannel,
-        message: event.content.filename,
+        message: event.content.body,
         root_id: metadata.root_id,
         file_ids: [fileid],
     });
