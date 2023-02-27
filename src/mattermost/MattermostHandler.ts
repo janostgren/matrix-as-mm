@@ -59,14 +59,9 @@ async function sendMatrixMessage(
             constructMatrixReply(original, message);
         }
     }
-    const event = await client.sendMessage(room, 'm.room.message', {
-        "body":message.body,
-        "msgtype":message.msgtype,
-        "format":message.format,
-        "formatted_body":message.formatted_body,
-        "info":message.info
-        
-    });
+
+    const event = await client.sendMessage(room, 'm.room.message', message);
+
     await Post.create({
         postid,
         rootid,
@@ -82,7 +77,7 @@ const MattermostPostHandlers = {
         post: MattermostPost,
         metadata: Metadata,
     ) {
-        const postMessage=await mattermostToMatrix(post.message)
+        const postMessage = await mattermostToMatrix(post.message);
         await sendMatrixMessage(
             client,
             this.matrixRoom,
@@ -95,23 +90,16 @@ const MattermostPostHandlers = {
         if (post.metadata.files !== undefined) {
             for (const file of post.metadata.files) {
                 // Read everything into memory to compute content-length
-                const body = await await this.main.client.get(
+                const body = await this.main.client.get(
                     `/files/${file.id}`,
-                    undefined,
-                    false,
+                    //undefined,
+                    //false,
                 );
                 const mimetype = file.mime_type;
-
-                //let fileName = `${file.name}.${file.extension}`;
                 let fileName = `${file.name}`;
-                const url = await client.upload(
-                    fileName,
-                    file.extension,
-                    mimetype,
-                    body,
-                );
 
                 let msgtype = 'm.file';
+
                 if (mimetype.startsWith('image/')) {
                     msgtype = 'm.image';
                 } else if (mimetype.startsWith('audio/')) {
@@ -119,6 +107,14 @@ const MattermostPostHandlers = {
                 } else if (mimetype.startsWith('video/')) {
                     msgtype = 'm.video';
                 }
+
+                const url = await client.upload(
+                    fileName,
+                    file.extension,
+                    mimetype,
+                    body,
+                );
+
                 myLogger.debug(
                     `Sending to Matrix ${msgtype} ${mimetype} ${url}`,
                 );

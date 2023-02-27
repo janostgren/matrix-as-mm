@@ -8,11 +8,11 @@ import * as http from 'http';
 const TRACE_ENV_NAME = 'API_TRACE';
 
 export enum Membership {
-    "join",
-    "leave",
-    "invite",
-    "knock",
-    "ban"
+    'join',
+    'leave',
+    'invite',
+    'knock',
+    'ban',
 }
 
 export interface MatrixClientCreateOpts {
@@ -30,12 +30,11 @@ export enum SessionCreatedWith {
 }
 
 export interface MessageContent {
-    body:string,
-    msgtype:string,
-    format?:string,
-    formatted_body?:string
+    body: string;
+    msgtype: string;
+    format?: string;
+    formatted_body?: string;
     [propName: string]: unknown;
-   
 }
 
 /*
@@ -187,24 +186,26 @@ export class MatrixClient {
         });
     }
 
-    public async getRoomMembers(roomId: string,membership:Membership=Membership.join): Promise<any> {
+    public async getRoomMembers(
+        roomId: string,
+        membership: Membership = Membership.join,
+    ): Promise<any> {
         return await this.doRequest({
             url: `_matrix/client/v3/rooms/${roomId}/joined_members`,
-            params:{"membership":membership}
+            params: { membership: membership },
         });
     }
 
     public async getJoinedMembers(roomId: string): Promise<any> {
         return await this.doRequest({
             url: `_matrix/client/v3/rooms/${roomId}/members`,
-        
         });
     }
 
     public async invite(
         roomId: string,
         userId: string,
-        reason: string='Invited to room',
+        reason: string = 'Invited to room',
     ): Promise<any> {
         return await this.doRequest({
             url: `_matrix/client/v3/rooms/${roomId}/invite`,
@@ -293,7 +294,7 @@ export class MatrixClient {
                 },
             },
         });
-        if(setToken) {
+        if (setToken) {
             this.setAccessToken(responseData.access_token);
         }
         this.sessionCreateMethod = SessionCreatedWith.LoginAppService;
@@ -388,20 +389,17 @@ export class MatrixClient {
         });
     }
 
-    public async download (
-        serverName:string,
-        mediaId:string,
-        fileName:string
-    )
-    {
-        const content=await this.doRequest({
+    public async download(
+        serverName: string,
+        mediaId: string,
+        fileName: string,
+    ) {
+        const content = await this.doRequest({
             url: `/_matrix/media/v3/download/${serverName}/${mediaId}/${fileName}`,
-            responseType:"arraybuffer"
+            responseType: 'arraybuffer',
         });
-        return content
-
+        return content;
     }
-
 
     public async upload(
         fileName: string,
@@ -409,14 +407,21 @@ export class MatrixClient {
         contentType: string,
         data,
     ): Promise<any> {
-        let responseType: axios.ResponseType = 'arraybuffer';
+        const responseType: axios.ResponseType = 'arraybuffer';
+
+        let headers: any = {};
+        if (contentType) {
+            headers = {
+                'Content-Type': contentType,
+            };
+        }
         try {
             let content = await this.doRequest({
                 method: 'POST',
                 url: '_matrix/media/v3/upload',
                 //responseType: responseType,
                 headers: {
-                    'Content-Type': contentType || 'application/json',
+                    headers,
                 },
                 params: {
                     filename: fileName,
@@ -467,12 +472,12 @@ export class MatrixClient {
     }
 
     public static getMatrixError(error: any): any {
-        let er= error?.response;
-        let me:any ={}
-        if(er) {
-            me.data=er.data
-            me.status=er.status
-            me.statusText=er.statusText
+        let er = error?.response;
+        let me: any = {};
+        if (er) {
+            me.data = er.data;
+            me.status = er.status;
+            me.statusText = er.statusText;
         }
 
         return me;

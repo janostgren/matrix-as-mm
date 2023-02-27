@@ -68,13 +68,13 @@ matrix_bot:
 
 # The mattermost bot used by the bridge. This has to be an existing user with
 # system administration privileges, in order to verify the emails of the puppet
-# users. 
+# users.
 #
 # Try with special matrix.bridge a user with system admin role
 #
 mattermost_bot_userid: 'geds3gxhdf81dccdrm8bfx37ry'
 mattermost_bot_access_token: 'bxfcapjqiina9xayxw6y65ubwh'
-matrix_admin: 
+matrix_admin:
   username: '@admin:localhost'
   access_token: 'syt_YWRtaW4_ESjBoGLaWtscFgZHsBhJ_027WFj'
 

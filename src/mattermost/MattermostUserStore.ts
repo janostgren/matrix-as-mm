@@ -157,15 +157,21 @@ export default class MattermostUserStore {
     }
 
     public async logoutClients() {
-        this.myLogger.info("Logging out Matrix clients. Number of clients=%d",this.clients.size)
+        this.myLogger.info(
+            'Logging out Matrix clients. Number of clients=%d',
+            this.clients.size,
+        );
         try {
             await Promise.all(
-                Array.from(this.clients.entries(), async ([,client]) => {
-                    client.logout()
+                Array.from(this.clients.entries(), async ([, client]) => {
+                    client.logout();
                 }),
             );
         } catch (e) {
-            this.myLogger.error("Error when logging out Matrix clients %s",e.message)
+            this.myLogger.error(
+                'Error when logging out Matrix clients %s',
+                e.message,
+            );
         }
     }
 

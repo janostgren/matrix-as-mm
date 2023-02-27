@@ -23,12 +23,12 @@ test('display name', async t => {
 
     const user = (await User.findOne({
         //matrix_userid: '@mm_mmuser:matrix.org',
-        "where":{"matrix_displayname":"@mm_mmuser:matrix.org"}
+        where: { matrix_displayname: '@mm_mmuser:matrix.org' },
     })) as User;
     const check = async (name: string) => {
         t.equal(displayName, name);
         const dbUser = (await User.findOne({
-            "where":{"matrix_userid":"@mm_mmuser:matrix.org"}
+            where: { matrix_userid: '@mm_mmuser:matrix.org' },
             //matrix_userid: '@mm_mmuser:matrix.org',
         })) as User;
         t.equal(dbUser.matrix_displayname, name);
@@ -81,7 +81,7 @@ test('display name', async t => {
 
     const dbUser = (await User.findOne({
         //matrix_userid: '@mm_mmuser:matrix.org',
-        "where":{"matrix_userid":"@mm_mmuser:matrix.org"}
+        where: { matrix_userid: '@mm_mmuser:matrix.org' },
     })) as User;
     t.equal(dbUser.mattermost_username, 'mmuser2');
 

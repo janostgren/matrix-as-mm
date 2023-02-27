@@ -97,11 +97,11 @@ export default class AppService extends EventEmitter {
 
     private async onGetUsers(req: Request, res: Response): Promise<void> {
         const userid = req.params.userId;
-        
+
         const count = await User.count({
             //matrix_userid: userid,
             //is_matrix_user: false,
-            "where":{"matrix_userid":userid ,"is_matrix_user":false}
+            where: { matrix_userid: userid, is_matrix_user: false },
         });
 
         if (count > 0) {
@@ -177,10 +177,9 @@ export default class AppService extends EventEmitter {
 
         const user = await User.findOne({
             //mattermost_username: oldName,
-            "where":{
-                "mattermost_username":oldName
-            }
-            
+            where: {
+                mattermost_username: oldName,
+            },
         });
         if (user === undefined) {
             res.status(400).send(

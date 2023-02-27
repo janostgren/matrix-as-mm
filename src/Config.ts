@@ -83,10 +83,10 @@ export interface Config {
         username: string;
         display_name?: string;
     };
-    matrix_admin:{
-        username:string,
-        access_token:string
-    }
+    matrix_admin: {
+        username: string;
+        access_token: string;
+    };
     mattermost_bot_userid: string;
     mattermost_bot_access_token: string;
     homeserver: {

@@ -151,11 +151,10 @@ export default class MatrixUserStore {
                 where: { mattermost_userid: mattermostUserId },
             });
             if (response === null || response.is_matrix_user === false) {
-                ;
             } else {
                 return response;
             }
         }
-        return null
+        return null;
     }
 }

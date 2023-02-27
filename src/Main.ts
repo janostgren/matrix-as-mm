@@ -21,7 +21,7 @@ import {
 } from './utils/Functions';
 import { User } from './entities/User';
 import { Post } from './entities/Post';
-import {MatrixClient} from './matrix/MatrixClient'
+import { MatrixClient } from './matrix/MatrixClient';
 import * as log4js from 'log4js';
 import {
     MattermostMessage,
@@ -96,13 +96,12 @@ export default class Main extends EventEmitter {
             `@${config.matrix_bot.username}:${config.homeserver.server_name}`,
             this.traceApi,
         );
-        this.adminClient=new MatrixClient({
-            "accessToken":config.matrix_admin.access_token,
-            "userId":config.matrix_admin.username,
-            "apiTrace":this.traceApi,
-            "baseUrl":config.homeserver.url
-        })
-    
+        this.adminClient = new MatrixClient({
+            accessToken: config.matrix_admin.access_token,
+            userId: config.matrix_admin.username,
+            apiTrace: this.traceApi,
+            baseUrl: config.homeserver.url,
+        });
 
         this.initialized = false;
 
@@ -369,11 +368,11 @@ export default class Main extends EventEmitter {
 
                 //const members: string[] = [];
                 let resp = await this.botClient.getRoomMembers(room);
-                const members =Object.keys(resp.joined)
-                    for (let member of members) {
-                        members.push(member);
-                    }
-                
+                const members = Object.keys(resp.joined);
+                for (let member of members) {
+                    members.push(member);
+                }
+
                 await Promise.all(
                     members.map(async userid => {
                         if (this.isRemoteUser(userid)) {
@@ -463,7 +462,7 @@ export default class Main extends EventEmitter {
             await this.dataSource.destroy();
         }
         // Logout all Matrix Clients
-        await this.mattermostUserStore.logoutClients()
+        await this.mattermostUserStore.logoutClients();
 
         // Otherwise, closing the websocket connection will initiate
         // the shutdown sequence again.
@@ -533,7 +532,6 @@ export default class Main extends EventEmitter {
 
     private async onMattermostMessage(m: MattermostMessage): Promise<void> {
         this.myLogger.debug(`Mattermost message: ${JSON.stringify(m)}`);
-
 
         const handler = MattermostMainHandlers[m.event];
         if (handler !== undefined) {

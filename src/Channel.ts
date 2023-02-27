@@ -83,7 +83,7 @@ export default class Channel {
                         user,
                     );
                     */
-                    const client= this.main.botClient
+                    const client = this.main.botClient;
                     await joinMatrixRoom(client, this.matrixRoom);
                 }
             }),
@@ -99,7 +99,9 @@ export default class Channel {
                         matrix_userid,
                     );
                     */
-                    const client=await this.main.mattermostUserStore.client(user)
+                    const client = await this.main.mattermostUserStore.client(
+                        user,
+                    );
 
                     await client.leave(this.matrixRoom);
                 }
@@ -109,7 +111,7 @@ export default class Channel {
 
     public async onMattermostMessage(m: MattermostMessage): Promise<void> {
         const handler = MattermostHandlers[m.event];
-       
+
         if (handler === undefined) {
             this.myLogger.debug(`Unknown mattermost message type: ${m.event}`);
         } else {

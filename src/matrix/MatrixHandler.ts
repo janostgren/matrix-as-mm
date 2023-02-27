@@ -6,7 +6,6 @@ import { ClientError } from '../mattermost/Client';
 import {
     joinMattermostChannel,
     leaveMattermostChannel,
-    
 } from '../mattermost/Utils';
 import { handlePostError, none } from '../utils/Functions';
 import { matrixToMattermost } from '../utils/Formatting';
@@ -27,13 +26,12 @@ async function uploadFile(
     user: User,
     event: MatrixEvent,
     metadata: Metadata,
-
 ) {
-    const main=this.main
-    const client =main.botClient
-    const mxc:string = event.content.url;
-    let parts = mxc.split('/')
-    
+    const main = this.main;
+    const client = main.botClient;
+    const mxc: string = event.content.url;
+    let parts = mxc.split('/');
+
     /*
     const body = await fetch(
         `${this.main.botClient.getBaseUrl()}/_matrix/media/r0/download/${mxc.slice(
@@ -41,9 +39,9 @@ async function uploadFile(
         )}`,
     );
     */
-    
-    const body = await client.download(parts[2],parts[3],event.content.body)
-    
+
+    const body = await client.download(parts[2], parts[3], event.content.body);
+
     if (!body) {
         throw new Error(`Downloaded empty file: ${mxc}`);
     }
@@ -277,11 +275,11 @@ const MatrixHandlers = {
         if (event.sender === botid) {
             return;
         }
-        const r:any= event["redacts"]
-        const redacts:string = r || ''
+        const r: any = event['redacts'];
+        const redacts: string = r || '';
         const post = await Post.findOne({
             //eventid: event.redacts as string,
-            "where": {"eventid":redacts}
+            where: { eventid: redacts },
         });
         if (post === null) {
             return;

@@ -14,7 +14,7 @@ import log, { getLogger } from './Logging';
 //import { run } from './db-test';
 
 console.time('Bridge loaded');
-const TRACE_ENV_NAME='API_TRACE'
+const TRACE_ENV_NAME = 'API_TRACE';
 
 const argv = yargs
     .scriptName('matrix-as-mm')
@@ -42,7 +42,7 @@ if (argv.r === undefined) {
         myLogger.info('Extend API trace=%s', process.env[TRACE_ENV_NAME]);
     }
 
-    const main = new Main(loadYaml(argv.c), argv.f,true,traceApi);
+    const main = new Main(loadYaml(argv.c), argv.f, true, traceApi);
 
     log.timeEnd.info('Bridge loaded');
     void main.init();

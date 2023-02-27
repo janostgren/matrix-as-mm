@@ -13,12 +13,12 @@ export async function getMattermostUsers(
     channel: string,
 ): Promise<Set<string>> {
     try {
-    const query = await client.get(
-        `/channels/${channel}/members?page=0&per_page=${MAX_MEMBERS}`,
-    );
-    return new Set(query.map(member => member.user_id));
+        const query = await client.get(
+            `/channels/${channel}/members?page=0&per_page=${MAX_MEMBERS}`,
+        );
+        return new Set(query.map(member => member.user_id));
     } catch (err) {
-        throw err
+        throw err;
     }
 }
 
@@ -42,11 +42,11 @@ async function retryJoinMattermostChannel(
     let retry = 10;
     while (true) {
         try {
-            let post=await client.post(`/channels/${channelid}/members`, {
+            let post = await client.post(`/channels/${channelid}/members`, {
                 user_id: userid,
             });
             return post;
-        } catch (e:any) {
+        } catch (e: any) {
             if (
                 retry > 1280 ||
                 !(e instanceof ClientError && e.m.status_code === 500)
@@ -73,8 +73,9 @@ export async function joinMattermostChannel(
             userid,
         );
     } catch (e) {
-        let ce:boolean=e instanceof ClientError
-        if ( ce &&
+        let ce: boolean = e instanceof ClientError;
+        if (
+            ce &&
             (e.m.id === 'store.sql_team.get_member.missing.app_error' ||
                 e.m.id === 'app.team.get_member.missing.app_error' ||
                 e.m.id ===

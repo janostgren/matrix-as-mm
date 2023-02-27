@@ -20,7 +20,7 @@ export async function getMatrixUsers(
     */
     const allMatrixUsers: string[] = [];
     let resp = await main.botClient.getRoomMembers(roomid);
-    let members =Object.keys(resp.joined)
+    let members = Object.keys(resp.joined);
     for (let member of members) {
         allMatrixUsers.push(member);
     }
