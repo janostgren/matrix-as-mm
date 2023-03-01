@@ -60,6 +60,14 @@ services:
       - my_net
     depends_on:
       - matrix
+  mailhog:
+    image: mailhog/mailhog:latest
+    restart: always
+    ports:
+      - 1025:1025
+      - 8025:8025
+    networks:
+      - my_net
 
 networks:
   my_net:

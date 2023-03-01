@@ -1,5 +1,4 @@
 import AppService from './matrix/AppService';
-import { run } from './db-test/index';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { Client, ClientWebsocket } from './mattermost/Client';
 import * as logLevel from 'loglevel';
@@ -450,6 +449,8 @@ export default class Main extends EventEmitter {
         if (killed) {
             return;
         }
+        // Logout all Matrix Clients
+        await this.mattermostUserStore.logoutClients();
         try {
             if (this.botClient.isSessionValid()) {
                 await this.botClient.logout();
@@ -461,8 +462,7 @@ export default class Main extends EventEmitter {
         if (this.dataSource && this.dataSource.isInitialized) {
             await this.dataSource.destroy();
         }
-        // Logout all Matrix Clients
-        await this.mattermostUserStore.logoutClients();
+        
 
         // Otherwise, closing the websocket connection will initiate
         // the shutdown sequence again.

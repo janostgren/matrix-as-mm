@@ -9,10 +9,29 @@ import {
     MattermostPost,
     MatrixMessage,
     MatrixEvent,
+    MattermostFileInfo,
 } from '../Interfaces';
 import { joinMatrixRoom } from '../matrix/Utils';
 import { handlePostError, none } from '../utils/Functions';
 import { mattermostToMatrix, constructMatrixReply } from '../utils/Formatting';
+import * as fs from 'fs'
+import * as path from 'path';
+import * as util from 'util';
+
+/*
+ * This function is for debugging
+*/
+
+function saveFile(file: MattermostFileInfo, content: Buffer) {
+    const fileName = path.resolve('./tmp', file.name)
+    try {
+        fs.writeFileSync(fileName, content)
+        myLogger.info("Saving file for debugging %s", fileName)
+    }
+    catch (error) {
+        myLogger.error("Failed to save file  %s", fileName)
+    }
+}
 
 const myLogger: log4js.Logger = getLogger('MattermostHandler');
 
@@ -54,7 +73,7 @@ async function sendMatrixMessage(
 
         try {
             original = await client.getRoomEvent(room, replyTo.matrix);
-        } catch (e) {}
+        } catch (e) { }
         if (original !== undefined) {
             constructMatrixReply(original, message);
         }
@@ -69,6 +88,8 @@ async function sendMatrixMessage(
     }).save();
     return event.event_id;
 }
+
+
 
 const MattermostPostHandlers = {
     '': async function (
@@ -90,10 +111,10 @@ const MattermostPostHandlers = {
         if (post.metadata.files !== undefined) {
             for (const file of post.metadata.files) {
                 // Read everything into memory to compute content-length
-                const body = await this.main.client.get(
+                const body:Buffer = await this.main.client.get(
                     `/files/${file.id}`,
-                    //undefined,
-                    //false,
+                    undefined,
+                    false,
                 );
                 const mimetype = file.mime_type;
                 let fileName = `${file.name}`;
@@ -107,6 +128,8 @@ const MattermostPostHandlers = {
                 } else if (mimetype.startsWith('video/')) {
                     msgtype = 'm.video';
                 }
+
+                saveFile(file,body)
 
                 const url = await client.upload(
                     fileName,

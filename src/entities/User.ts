@@ -43,7 +43,7 @@ export class User extends BaseEntity {
         username: string,
         displayname: string,
     ): Promise<User> {
-        await client.post('/users', {
+        const mmUser=await client.post('/users', {
             username: username,
             password: randomString(45) + 'aA#2',
             first_name: displayname,
@@ -55,7 +55,7 @@ export class User extends BaseEntity {
                 .replace('[RANDOM]', randomString(16)),
         });
         const resp = (await client.post('/users/usernames', [username]))[0];
-        await client.post(`/users/${resp.id}/email/verify/member`);
+        const verifyEmail=await client.post(`/users/${resp.id}/email/verify/member`);
 
         const token = await client.post(`/users/${resp.id}/tokens`, {
             description: PERSONAL_ACCESS_TOKEN_NAME,
@@ -81,12 +81,31 @@ export class User extends BaseEntity {
         username: string,
         displayname: string,
     ): Promise<User> {
+        const myTokens: any = await client.get(
+            `/users/${mattermost_userid}/tokens`,
+        );
+        let haveToken = myTokens.find(token => {
+            return (
+                token.description === PERSONAL_ACCESS_TOKEN_NAME && token.is_active
+            );
+        });
+        if (haveToken) {
+            let user = await User.findOne({
+                //mattermost_userid: userid,
+                where: { mattermost_username: username },
+            });
+            if (user) {
+                return user;
+            }
+        }
+
         let token: any = await client.post(
             `/users/${mattermost_userid}/tokens`,
             {
                 description: PERSONAL_ACCESS_TOKEN_NAME,
             },
         );
+
         const user = User.create({
             matrix_userid,
             mattermost_userid,
