@@ -94,6 +94,9 @@ export class MatrixClient {
             this.accessToken,
         );
     }
+    public getClient(): axios.AxiosInstance {
+        return this.client;
+    }
     public isSessionValid(): boolean {
         return this.sessionIsValid;
     }
