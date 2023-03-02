@@ -2,26 +2,26 @@ import { Entity, PrimaryColumn, Column, BaseEntity } from 'typeorm';
 import { Client } from '../mattermost/Client';
 import { config } from '../Config';
 import { randomString } from '../utils/Functions';
-const PERSONAL_ACCESS_TOKEN_NAME='For the bridge' 
+const PERSONAL_ACCESS_TOKEN_NAME = 'For the bridge';
 
 @Entity('users')
 export class User extends BaseEntity {
     @PrimaryColumn('text')
     public matrix_userid!: string;
 
-    @Column('character', { length: '26' })
+    @Column('character', { length: '26', nullable: false })
     public mattermost_userid!: string;
 
-    @Column('text')
+    @Column('text', { nullable: false })
     public access_token!: string;
 
-    @Column('boolean')
+    @Column('boolean', { nullable: false })
     public is_matrix_user!: boolean;
 
-    @Column('text')
+    @Column('text', { nullable: false })
     public mattermost_username!: string;
 
-    @Column('text')
+    @Column('text', { nullable: false })
     public matrix_displayname!: string;
 
     private _client?: Client;
@@ -43,7 +43,7 @@ export class User extends BaseEntity {
         username: string,
         displayname: string,
     ): Promise<User> {
-        await client.post('/users', {
+        const mmUser=await client.post('/users', {
             username: username,
             password: randomString(45) + 'aA#2',
             first_name: displayname,
@@ -55,10 +55,10 @@ export class User extends BaseEntity {
                 .replace('[RANDOM]', randomString(16)),
         });
         const resp = (await client.post('/users/usernames', [username]))[0];
-        await client.post(`/users/${resp.id}/email/verify/member`);
+        const verifyEmail=await client.post(`/users/${resp.id}/email/verify/member`);
 
         const token = await client.post(`/users/${resp.id}/tokens`, {
-            description: 'bridge',
+            description: PERSONAL_ACCESS_TOKEN_NAME,
         });
 
         const user = User.create({
@@ -81,13 +81,35 @@ export class User extends BaseEntity {
         username: string,
         displayname: string,
     ): Promise<User> {
-        let token:any =await client.post(`/users/${mattermost_userid}/tokens`,{
-            "description": PERSONAL_ACCESS_TOKEN_NAME
-        })
+        const myTokens: any = await client.get(
+            `/users/${mattermost_userid}/tokens`,
+        );
+        let haveToken = myTokens.find(token => {
+            return (
+                token.description === PERSONAL_ACCESS_TOKEN_NAME && token.is_active
+            );
+        });
+        if (haveToken) {
+            let user = await User.findOne({
+                //mattermost_userid: userid,
+                where: { mattermost_username: username },
+            });
+            if (user) {
+                return user;
+            }
+        }
+
+        let token: any = await client.post(
+            `/users/${mattermost_userid}/tokens`,
+            {
+                description: PERSONAL_ACCESS_TOKEN_NAME,
+            },
+        );
+
         const user = User.create({
             matrix_userid,
             mattermost_userid,
-            access_token: token?.token ||'',
+            access_token: token?.token || '',
             is_matrix_user: false,
             mattermost_username: username,
             matrix_displayname: displayname,

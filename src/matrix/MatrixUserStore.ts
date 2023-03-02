@@ -1,5 +1,5 @@
 import * as log4js from 'log4js';
-import * as sdk  from 'matrix-js-sdk'
+
 import { User } from '../entities/User';
 import Mutex from '../utils/Mutex';
 import Main from '../Main';
@@ -38,37 +38,38 @@ export default class MatrixUserStore {
         await this.mutex.lock();
         // Try again. it might have been created in another call.
         user = this.get(matrix_userid);
-        if (user !== undefined) {
+        if (user) {
             this.mutex.unlock();
             if (sync) await this.updateUser(user);
             return user;
         }
 
-        user = await User.findOne({
-            matrix_userid,
+        let user2 = await User.findOne({
+            //matrix_userid,
+            where: { matrix_userid: matrix_userid },
         });
-        if (user !== undefined) {
+
+        if (user2) {
             this.mutex.unlock();
-            if (!user.is_matrix_user) {
+            if (!user2.is_matrix_user) {
                 throw new Error(
                     'Trying to get Mattermost user from MatrixUserStore',
                 );
             }
-            await this.updateUser(user);
+            await this.updateUser(user2);
+            user = user2;
         } else {
             const client = this.main.client;
             const localpart_ = localpart(matrix_userid);
             const template = config().mattermost_username_template;
-            let realUserName=matrix_userid.split('.')[0].substring(1)
+            let realUserName = matrix_userid.split('.')[0].substring(1);
 
-            let displayname = 
-            '';
+            let displayname = '';
 
             if (template.includes('[DISPLAY]')) {
                 try {
                     const resp = await this.main.botClient.getProfileInfo(
                         matrix_userid,
-                        'displayname',
                     );
                     if (resp.displayname) {
                         displayname = resp.displayname;
@@ -111,7 +112,6 @@ export default class MatrixUserStore {
         try {
             const resp = await this.main.botClient.getProfileInfo(
                 user.matrix_userid,
-                'displayname',
             );
             if (resp.displayname) {
                 displayname = resp.displayname;
@@ -142,13 +142,19 @@ export default class MatrixUserStore {
         if (cached !== undefined) {
             return cached;
         }
-        const response = await User.findOne({
-            mattermost_userid: mattermostUserId,
+
+        let count = await User.count({
+            where: { mattermost_userid: mattermostUserId },
         });
-        if (response === undefined || response.is_matrix_user === false) {
-            return null;
-        } else {
-            return response;
+        if (count > 0) {
+            const response = await User.findOne({
+                where: { mattermost_userid: mattermostUserId },
+            });
+            if (response === null || response.is_matrix_user === false) {
+            } else {
+                return response;
+            }
         }
+        return null;
     }
 }

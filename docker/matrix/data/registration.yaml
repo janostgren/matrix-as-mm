@@ -5,9 +5,9 @@ namespaces:
   users:
     - exclusive: true
       regex: '@mm_.*:localhost'
-  rooms:
-    - exclusive: true
-      regex: '.+:localhost'
+  #rooms:
+  #  - exclusive: true
+  #    regex: '.+:localhost'
 
 url: http://host.docker.internal:9995
 sender_localpart: matterbot

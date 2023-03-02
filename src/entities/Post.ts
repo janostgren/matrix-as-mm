@@ -15,13 +15,13 @@ import {
  */
 @Entity('posts')
 export class Post extends BaseEntity {
-    @PrimaryColumn('text')
+    @PrimaryColumn('text', { nullable: false })
     public eventid!: string;
 
-    @Column('character', { length: '26' })
+    @Column('character', { length: '26', nullable: false })
     public postid!: string;
 
-    @Column('character', { length: '26' })
+    @Column('character', { length: '26', nullable: false })
     public rootid!: string;
 
     public static async removeAll(postid: string): Promise<void> {

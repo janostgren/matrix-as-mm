@@ -7,7 +7,7 @@ services:
       - ./postgres/setup-synapse.sql:/docker-entrypoint-initdb.d/01-setup-synapse.sql
       - ./backup/synapse.sql:/docker-entrypoint-initdb.d/02-synapse.sql
       - ./postgres/setup-bridge.sql:/docker-entrypoint-initdb.d/03-setup-bridge.sql
-      - ./backup/matrix-mattermost.sql:/docker-entrypoint-initdb.d/04-matrix-mattermost.sql
+      - ./backup/mm-matrix-bridge.sql:/docker-entrypoint-initdb.d/04-mm-matrix-bridge.sql
       - ./docker-scripts/dump_db.sh:/dump_db.sh
 
     environment:
@@ -29,7 +29,7 @@ services:
     ports:
       - '8008:8008'
     volumes:
-     - ./matrix/data:/data
+      - ./matrix/data:/data
     extra_hosts:
       - 'host.docker.internal:host-gateway'
 
@@ -60,6 +60,14 @@ services:
       - my_net
     depends_on:
       - matrix
+  mailhog:
+    image: mailhog/mailhog:latest
+    restart: always
+    ports:
+      - 1025:1025
+      - 8025:8025
+    networks:
+      - my_net
 
 networks:
   my_net:

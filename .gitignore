@@ -13,3 +13,4 @@ log
 /playwright/.cache/
 *.tgz
 *.zip
+tmp

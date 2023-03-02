@@ -1,6 +1,7 @@
 import * as log4js from 'log4js';
-import * as sdk  from 'matrix-js-sdk'
-import { MattermostMessage } from './Interfaces';
+import * as mxClient from './matrix/MatrixClient';
+import { MattermostMessage, MatrixEvent } from './Interfaces';
+
 import { getLogger } from './Logging';
 import Main from './Main';
 import MatrixHandlers from './matrix/MatrixHandler';
@@ -77,29 +78,40 @@ export default class Channel {
                             true,
                         );
                     matrixUsers.remote.delete(user.matrix_userid);
-                    const client = this.main.mattermostUserStore.client(user);
-                    await joinMatrixRoom(
-                        this.main.botClient,
-                        this.matrixRoom,
+                    /*
+                    const client = await this.main.mattermostUserStore.client(
+                        user,
                     );
+                    */
+                    const client = this.main.botClient;
+                    await joinMatrixRoom(client, this.matrixRoom);
                 }
             }),
         );
 
         await Promise.all(
             Array.from(matrixUsers.remote, async matrix_userid => {
-                const client = getMatrixClient(
-   
-                    this.main.registration,
-                    matrix_userid,
-                );
-                await client.leave(this.matrixRoom);
+                let user = this.main.mattermostUserStore.get(matrix_userid);
+                if (user) {
+                    /*
+                    const client = getMatrixClient(
+                        this.main.registration,
+                        matrix_userid,
+                    );
+                    */
+                    const client = await this.main.mattermostUserStore.client(
+                        user,
+                    );
+
+                    await client.leave(this.matrixRoom);
+                }
             }),
         );
     }
 
     public async onMattermostMessage(m: MattermostMessage): Promise<void> {
         const handler = MattermostHandlers[m.event];
+
         if (handler === undefined) {
             this.myLogger.debug(`Unknown mattermost message type: ${m.event}`);
         } else {
@@ -107,7 +119,7 @@ export default class Channel {
         }
     }
 
-    public async onMatrixEvent(event: sdk.IEvent): Promise<void> {
+    public async onMatrixEvent(event: MatrixEvent): Promise<void> {
         const handler = MatrixHandlers[event.type];
         if (handler === undefined) {
             this.myLogger.debug(`Unknown matrix event type: ${event.type}`);

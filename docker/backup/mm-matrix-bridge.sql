@@ -1,4 +1,4 @@
-\c matrix-mattermost
+\c  mm-matrix-bridge
 --
 -- PostgreSQL database dump
 --
@@ -22,7 +22,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: posts; Type: TABLE; Schema: public; Owner: matrix-mattermost
+-- Name: posts; Type: TABLE; Schema: public; Owner: mm-matrix-bridge
 --
 
 CREATE TABLE public.posts (
@@ -32,10 +32,10 @@ CREATE TABLE public.posts (
 );
 
 
-ALTER TABLE public.posts OWNER TO "matrix-mattermost";
+ALTER TABLE public.posts OWNER TO "mm-matrix-bridge";
 
 --
--- Name: typeorm_metadata; Type: TABLE; Schema: public; Owner: matrix-mattermost
+-- Name: typeorm_metadata; Type: TABLE; Schema: public; Owner: mm-matrix-bridge
 --
 
 CREATE TABLE public.typeorm_metadata (
@@ -48,10 +48,10 @@ CREATE TABLE public.typeorm_metadata (
 );
 
 
-ALTER TABLE public.typeorm_metadata OWNER TO "matrix-mattermost";
+ALTER TABLE public.typeorm_metadata OWNER TO "mm-matrix-bridge";
 
 --
--- Name: users; Type: TABLE; Schema: public; Owner: matrix-mattermost
+-- Name: users; Type: TABLE; Schema: public; Owner: mm-matrix-bridge
 --
 
 CREATE TABLE public.users (
@@ -64,18 +64,19 @@ CREATE TABLE public.users (
 );
 
 
-ALTER TABLE public.users OWNER TO "matrix-mattermost";
+ALTER TABLE public.users OWNER TO "mm-matrix-bridge";
 
 --
--- Data for Name: posts; Type: TABLE DATA; Schema: public; Owner: matrix-mattermost
+-- Data for Name: posts; Type: TABLE DATA; Schema: public; Owner: mm-matrix-bridge
 --
 
 COPY public.posts (eventid, postid, rootid) FROM stdin;
+$ws9UuWLPn8VzHbofyg3g8AQK-aYsdD2iv6woyWt3sEw	qpybi5a1tff9u81mgtngeuhkro	qpybi5a1tff9u81mgtngeuhkro
 \.
 
 
 --
--- Data for Name: typeorm_metadata; Type: TABLE DATA; Schema: public; Owner: matrix-mattermost
+-- Data for Name: typeorm_metadata; Type: TABLE DATA; Schema: public; Owner: mm-matrix-bridge
 --
 
 COPY public.typeorm_metadata (type, database, schema, "table", name, value) FROM stdin;
@@ -83,16 +84,17 @@ COPY public.typeorm_metadata (type, database, schema, "table", name, value) FROM
 
 
 --
--- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: matrix-mattermost
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: mm-matrix-bridge
 --
 
 COPY public.users (matrix_userid, mattermost_userid, access_token, is_matrix_user, mattermost_username, matrix_displayname) FROM stdin;
-@mm_admin:localhost	tkzqirh7h78opxqwk5a4bt3fkw		f	admin	admin [mm]
+@user1.matrix:localhost	bgct5icpib883fx619bh3cfu6h	zbobs1dw5jgrtby9hkcz3dkpjy	t	matrix_user1.matrix	user1.matrix
+@mm_user1.mm:localhost	ygmycw6rnff7igko8gwbqchujr	deges64nuprjdrke65zqfp7fkw	f	user1.mm	user1.mm [mm]
 \.
 
 
 --
--- Name: posts PK_4c80ebd45fc8d2779b82a183713; Type: CONSTRAINT; Schema: public; Owner: matrix-mattermost
+-- Name: posts PK_4c80ebd45fc8d2779b82a183713; Type: CONSTRAINT; Schema: public; Owner: mm-matrix-bridge
 --
 
 ALTER TABLE ONLY public.posts
@@ -100,7 +102,7 @@ ALTER TABLE ONLY public.posts
 
 
 --
--- Name: users PK_a857f41bae47ffe29abb14bc31d; Type: CONSTRAINT; Schema: public; Owner: matrix-mattermost
+-- Name: users PK_a857f41bae47ffe29abb14bc31d; Type: CONSTRAINT; Schema: public; Owner: mm-matrix-bridge
 --
 
 ALTER TABLE ONLY public.users

@@ -8,11 +8,12 @@ test('test testutils setupDb', async t => {
     await setupDb();
 
     const user = await User.findOne({
-        matrix_userid: '@mm_mmuser:matrix.org',
+        //matrix_userid: '@mm_mmuser:matrix.org',
+        where: { matrix_userid: '@mm_mmuser:matrix.org' },
     });
     t.notEqual(user, undefined);
     // This is always true by the previous line, but typescript doesn't know that
-    if (user !== undefined) {
+    if (user) {
         t.equal(user.matrix_displayname, 'mdisplay');
         t.equal(user.is_matrix_user, false);
     }

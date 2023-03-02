@@ -1,8 +1,8 @@
 import AppService from './matrix/AppService';
-import { createConnection, ConnectionOptions, getConnection } from 'typeorm';
+import { DataSource, DataSourceOptions } from 'typeorm';
 import { Client, ClientWebsocket } from './mattermost/Client';
 import * as logLevel from 'loglevel';
-import * as sdk  from 'matrix-js-sdk'
+import * as mxClient from './matrix/MatrixClient';
 
 import {
     Config,
@@ -20,13 +20,20 @@ import {
 } from './utils/Functions';
 import { User } from './entities/User';
 import { Post } from './entities/Post';
+import { MatrixClient } from './matrix/MatrixClient';
 import * as log4js from 'log4js';
 import {
     MattermostMessage,
     Registration,
+    MatrixMessage,
+    MatrixEvent,
 } from './Interfaces';
 import MatrixUserStore from './matrix/MatrixUserStore';
-import { getMatrixClient, loginAppService,registerAppService } from './matrix/Utils';
+import {
+    getMatrixClient,
+    loginAppService,
+    registerAppService,
+} from './matrix/Utils';
 import MattermostUserStore from './mattermost/MattermostUserStore';
 import { joinMattermostChannel } from './mattermost/Utils';
 import Channel from './Channel';
@@ -36,15 +43,17 @@ import { EventEmitter } from 'events';
 import { MattermostMainHandlers } from './mattermost/MattermostHandler';
 
 export default class Main extends EventEmitter {
-    private readonly ws: ClientWebsocket;
+    private ws: ClientWebsocket = undefined as any;
     private readonly appService: AppService;
     public readonly registration: Registration;
+    public dataSource: DataSource = undefined as any;
 
-    private matrixQueue: EventQueue<sdk.IEvent>;
-    private mattermostQueue: EventQueue<MattermostMessage>;
+    private matrixQueue: EventQueue<MatrixEvent> = undefined as any;
+    private mattermostQueue: EventQueue<MattermostMessage> = undefined as any;
     private myLogger: log4js.Logger;
 
-    public botClient: sdk.MatrixClient;
+    public botClient: mxClient.MatrixClient;
+    public adminClient: mxClient.MatrixClient;
 
     public initialized: boolean;
     public killed: boolean;
@@ -67,6 +76,7 @@ export default class Main extends EventEmitter {
         config: Config,
         registrationPath: string,
         private readonly exitOnFail: boolean = true,
+        private readonly traceApi: boolean = false,
     ) {
         super();
         setConfig(config);
@@ -83,7 +93,14 @@ export default class Main extends EventEmitter {
         this.botClient = getMatrixClient(
             this.registration,
             `@${config.matrix_bot.username}:${config.homeserver.server_name}`,
+            this.traceApi,
         );
+        this.adminClient = new MatrixClient({
+            accessToken: config.matrix_admin.access_token,
+            userId: config.matrix_admin.username,
+            apiTrace: this.traceApi,
+            baseUrl: config.homeserver.url,
+        });
 
         this.initialized = false;
 
@@ -92,32 +109,7 @@ export default class Main extends EventEmitter {
             config.mattermost_bot_userid,
             config.mattermost_bot_access_token,
         );
-        this.ws = this.client.websocket();
-
-        this.mattermostQueue = new EventQueue({
-            emitter: this.ws,
-            event: 'message',
-            description: 'mattermost',
-            callback: this.onMattermostMessage.bind(this),
-            filter: async m => {
-                const userid = m.data.user_id ?? m.data.user?.id;
-                return (
-                    userid &&
-                    (this.skipMattermostUser(userid) ||
-                        !(await this.isMattermostUser(userid)))
-                );
-            },
-            parent: this,
-        });
-
-        this.matrixQueue = new EventQueue({
-            emitter: this.appService,
-            event: 'event',
-            description: 'matrix',
-            callback: this.onMatrixEvent.bind(this),
-            filter: async e => this.isRemoteUser(e.sender),
-            parent: this,
-        });
+        //this.ws = this.client.websocket();
 
         this.channelsByMatrix = new Map();
         this.channelsByMattermost = new Map();
@@ -160,19 +152,6 @@ export default class Main extends EventEmitter {
             this.mappingsByMattermost.set(map.mattermost, map);
             this.mappingsByMatrix.set(map.matrix, map);
         }
-
-        this.ws.on('error', e => {
-            this.myLogger.error(
-                `Error when initializing websocket connection\n${e.stack}`,
-            );
-        });
-
-        this.ws.on('close', () => {
-            this.myLogger.error(
-                'Mattermost websocket closed. Shutting down bridge',
-            );
-            void this.killBridge(1);
-        });
     }
 
     public async init(): Promise<void> {
@@ -185,42 +164,78 @@ export default class Main extends EventEmitter {
             packInfo.version,
             process.argv,
         );
-        
+        this.ws = this.client.websocket();
+
+        await this.setupDataSource();
+
+        await registerAppService(
+            this.botClient,
+            config().matrix_bot.username,
+            this.myLogger,
+        );
         /*
         let info =await loginAppService(
             this.botClient,
             config().matrix_bot.username
-        );
-        
+        );        
         this.myLogger.info("Login as app service: %s",info)
         this.botClient.setAccessToken(info.access_token)
         */
-        
-        await registerAppService(
-            this.botClient,
-            config().matrix_bot.username,
-            this.myLogger
-        );
-        
 
-        const botProfile = this.updateBotProfile().catch(e =>
-            this.myLogger.warn(`Error when updating bot profile\n${e.stack}`),
-        );
+        try {
+            await this.updateBotProfile();
+        } catch (e) {
+            this.myLogger.warn(`Error when updating bot profile\n${e.stack}`);
+        }
+
+        this.ws.on('error', e => {
+            this.myLogger.error(
+                `Error when initializing websocket connection.\n${e.stack}`,
+            );
+        });
+
+        this.ws.on('close', async e => {
+            this.myLogger.error(
+                'Mattermost websocket closed. Shutting down bridge. Code=%d',
+                e,
+            );
+            await this.killBridge(1);
+        });
+
+        this.mattermostQueue = new EventQueue({
+            emitter: this.ws,
+            event: 'message',
+            description: 'mattermost',
+            callback: this.onMattermostMessage.bind(this),
+            filter: async m => {
+                const userid = m.data.user_id ?? m.data.user?.id;
+                return (
+                    userid &&
+                    (this.skipMattermostUser(userid) ||
+                        !(await this.isMattermostUser(userid)))
+                );
+            },
+            parent: this,
+        });
+        this.matrixQueue = new EventQueue({
+            emitter: this.appService,
+            event: 'event',
+            description: 'matrix',
+            callback: this.onMatrixEvent.bind(this),
+            filter: async e => this.isRemoteUser(e.sender),
+            parent: this,
+        });
+
         const appservice = this.appService.listen(
             config().appservice.port,
             config().appservice.bind || config().appservice.hostname,
         );
 
-        const db = Object.assign({}, config().database);
-        db['entities'] = [User, Post];
-        db['synchronize'] = true;
-        db['logging'] = false;
-
-        await createConnection(db as ConnectionOptions);
+        let rooms = await this.botClient.getJoinedRooms();
 
         const onChannelError = async (e: Error, channel: Channel) => {
             this.myLogger.error(
-                `Error when syncing ${channel.matrixRoom} with ${channel.mattermostChannel}\n${e.stack}`,
+                `Error when syncing ${channel.matrixRoom} with ${channel.mattermostChannel}\n error=${e}`,
             );
             if (config().forbid_bridge_failure) {
                 await this.killBridge(1);
@@ -232,18 +247,22 @@ export default class Main extends EventEmitter {
         // joinMattermostChannel on actual users queries the status of the
         // corresponding matrix room. Thus, we must make sure our bot has
         // already joined.
+
         await Promise.all(
             Array.from(this.channelsByMattermost, async ([, channel]) => {
                 try {
-                    await Promise.all([
-                        this.botClient.joinRoom(channel.matrixRoom),
-                        joinMattermostChannel(
-                            channel,
-                            User.create({
-                                mattermost_userid: this.client.userid,
-                            }),
-                        ),
-                    ]);
+                    let foundRoom = rooms.joined_rooms.find(room => {
+                        return room === channel.matrixRoom;
+                    });
+                    if (!foundRoom) {
+                        await this.botClient.joinRoom(channel.matrixRoom);
+                    }
+                    await joinMattermostChannel(
+                        channel,
+                        User.create({
+                            mattermost_userid: this.client.userid,
+                        }),
+                    );
                 } catch (e) {
                     await onChannelError(e, channel);
                 }
@@ -267,7 +286,6 @@ export default class Main extends EventEmitter {
             }),
         );
 
-        /*
         try {
             await this.leaveUnbridgedChannels();
         } catch (e) {
@@ -278,7 +296,6 @@ export default class Main extends EventEmitter {
                 await this.killBridge(1);
             }
         }
-        */
 
         if (this.channelsByMattermost.size === 0) {
             this.myLogger.info(
@@ -290,9 +307,9 @@ export default class Main extends EventEmitter {
             return;
         }
 
-        await this.ws.openPromise;
-        await botProfile;
         await appservice;
+        await this.ws.open();
+
         log.timeEnd.info('Bridge initialized');
 
         void notifySystemd();
@@ -307,17 +324,54 @@ export default class Main extends EventEmitter {
         ]);
     }
 
+    private async setupDataSource(): Promise<void> {
+        const db: any = Object.assign({}, config().database);
+        db['entities'] = [User, Post];
+        db['synchronize'] = false;
+        if (this.traceApi) {
+            db['logging'] = ['query', 'error'];
+            db.logger = 'advanced-console';
+        }
+
+        let dataSource: DataSource = new DataSource(db);
+
+        try {
+            this.dataSource = await dataSource.initialize();
+            this.myLogger.info(
+                'Data source to %s at %s database=%s ',
+                db.type,
+                db.host,
+
+                db.database,
+            );
+            //return this.dataSource;
+        } catch (error) {
+            this.myLogger.fatal(
+                'Failed to setup data source to meta database=%s. Error=%s ',
+                db.database,
+                error.message,
+            );
+            this.killBridge(1);
+        }
+    }
+
     private async leaveUnbridgedMatrixRooms(): Promise<void> {
-        const rooms = (await this.botClient.getJoinedRooms()).joined_rooms;
+        const resp = await this.botClient.getJoinedRooms();
+        const rooms = resp.joined_rooms;
 
         await Promise.all(
             rooms.map(async room => {
                 if (this.mappingsByMatrix.has(room)) {
                     return;
                 }
-                const members = Object.keys(
-                    (await this.botClient.getJoinedRoomMembers(room)).joined,
-                );
+
+                //const members: string[] = [];
+                let resp = await this.botClient.getRoomMembers(room);
+                const members = Object.keys(resp.joined);
+                for (let member of members) {
+                    members.push(member);
+                }
+
                 await Promise.all(
                     members.map(async userid => {
                         if (this.isRemoteUser(userid)) {
@@ -395,25 +449,44 @@ export default class Main extends EventEmitter {
         if (killed) {
             return;
         }
+        // Logout all Matrix Clients
+        await this.mattermostUserStore.logoutClients();
+        try {
+            if (this.botClient.isSessionValid()) {
+                await this.botClient.logout();
+            }
+            this.myLogger.info('MatrixClient logged out. Session invalidated.');
+        } catch (ignore) {}
+
+        // Destroy DataSource
+        if (this.dataSource && this.dataSource.isInitialized) {
+            await this.dataSource.destroy();
+        }
+        
+
         // Otherwise, closing the websocket connection will initiate
         // the shutdown sequence again.
-        this.ws.removeAllListeners('close');
+        if (this.ws && this.ws.initialized()) {
+            this.ws.removeAllListeners('close');
+            await this.ws.close();
+        }
+        if (this.initialized) {
+            const results = await allSettled([
+                this.appService.close(),
+                this.matrixQueue.kill(),
+                this.mattermostQueue.kill(),
+            ]);
 
-        const results = await allSettled([
-            this.ws.close(),
-            this.appService.close(),
-            this.matrixQueue.kill(),
-            this.mattermostQueue.kill(),
-            getConnection().close(),
-        ]);
-        for (const result of results) {
-            if (result.status === 'rejected') {
-                this.myLogger.error(
-                    `Error when killing bridge: ${result.reason.stack}`,
-                );
-                exitCode = 1;
+            for (const result of results) {
+                if (result.status === 'rejected') {
+                    this.myLogger.warn(
+                        `Warning when killing bridge: ${result.reason}`,
+                    );
+                    exitCode = 1;
+                }
             }
         }
+
         if (this.exitOnFail) {
             process.exit(exitCode);
         }
@@ -443,19 +516,23 @@ export default class Main extends EventEmitter {
 
     private async updateBotProfile(): Promise<void> {
         const targetProfile = config().matrix_bot;
-        const profile:any = await this.botClient
+        const profile: any = await this.botClient
             .getProfileInfo(this.botClient.getUserId() || '')
             .catch(() => ({ display_name: '' }));
         if (
             targetProfile.display_name &&
             profile.displayname !== targetProfile.display_name
         ) {
-            await this.botClient.setDisplayName(targetProfile.display_name);
+            await this.botClient.setUserDisplayName(
+                this.botClient.getUserId(),
+                targetProfile.display_name,
+            );
         }
     }
 
     private async onMattermostMessage(m: MattermostMessage): Promise<void> {
         this.myLogger.debug(`Mattermost message: ${JSON.stringify(m)}`);
+
         const handler = MattermostMainHandlers[m.event];
         if (handler !== undefined) {
             await handler.bind(this)(m);
@@ -485,9 +562,8 @@ export default class Main extends EventEmitter {
         }
     }
 
-    private async onMatrixEvent(event: sdk.IEvent): Promise<void> {
+    private async onMatrixEvent(event: MatrixEvent): Promise<void> {
         this.myLogger.debug(`Matrix event: ${JSON.stringify(event)}`);
-
         const channel = this.channelsByMatrix.get(event.room_id || '');
         if (channel !== undefined) {
             await channel.onMatrixEvent(event);

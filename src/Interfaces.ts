@@ -1,5 +1,3 @@
-import * as sdk from 'matrix-js-sdk';
-
 export interface MattermostMessage {
     event: string;
     data: any;
@@ -55,12 +53,10 @@ export interface MatrixMessage {
     msgtype: string;
     format?: string;
     formatted_body?: string;
-    //content: sdk.IContent
-    
+
     [propName: string]: unknown;
 }
 
-/*
 export interface MatrixEvent {
     content: any;
     type: string;
@@ -75,13 +71,11 @@ export interface MatrixEvent {
     [propName: string]: unknown;
 }
 
-
 export interface UnsignedData {
     age?: number;
     redacted_because?: MatrixEvent;
     transaction_id?: string;
 }
-*/
 
 export interface MattermostUserInfo {
     username: string;

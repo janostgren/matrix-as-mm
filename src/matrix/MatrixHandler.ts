@@ -1,5 +1,4 @@
 import * as log4js from 'log4js';
-import * as sdk from 'matrix-js-sdk'
 import Channel from '../Channel';
 import { User } from '../entities/User';
 import { Post } from '../entities/Post';
@@ -10,10 +9,11 @@ import {
 } from '../mattermost/Utils';
 import { handlePostError, none } from '../utils/Functions';
 import { matrixToMattermost } from '../utils/Formatting';
-//import { MatrixEvent } from '../Interfaces';
+import { MatrixEvent } from '../Interfaces';
 import * as FormData from 'form-data';
 import { getLogger } from '../Logging';
 import fetch from 'node-fetch';
+import { MatrixClient } from './MatrixClient';
 
 const myLogger: log4js.Logger = getLogger('MatrixHandler');
 
@@ -24,22 +24,30 @@ interface Metadata {
 async function uploadFile(
     this: Channel,
     user: User,
-    event: sdk.IEvent,
+    event: MatrixEvent,
     metadata: Metadata,
 ) {
-    const mxc = event.content.url;
+    const main = this.main;
+    const client = main.botClient;
+    const mxc: string = event.content.url;
+    let parts = mxc.split('/');
 
+    /*
     const body = await fetch(
-        `${this.main.botClient.baseUrl}/_matrix/media/r0/download/${mxc.slice(
+        `${this.main.botClient.getBaseUrl()}/_matrix/media/r0/download/${mxc.slice(
             6,
         )}`,
     );
-    if (body.body === null) {
+    */
+
+    const body = await client.download(parts[2], parts[3], event.content.body);
+
+    if (!body) {
         throw new Error(`Downloaded empty file: ${mxc}`);
     }
 
     const form = new FormData();
-    form.append('files', body.body, {
+    form.append('files', body, {
         filename: event.content.body,
         contentType: event.content.info?.mimetype,
     });
@@ -49,7 +57,7 @@ async function uploadFile(
     const fileid = fileInfos.file_infos[0].id;
     const post = await user.client.post('/posts', {
         channel_id: this.mattermostChannel,
-        message: event.content.filename,
+        message: event.content.body,
         root_id: metadata.root_id,
         file_ids: [fileid],
     });
@@ -64,7 +72,7 @@ const MatrixMessageHandlers = {
     'm.text': async function (
         this: Channel,
         user: User,
-        event: sdk.IEvent,
+        event: MatrixEvent,
         metadata: Metadata,
     ) {
         if (metadata.edits) {
@@ -93,7 +101,7 @@ const MatrixMessageHandlers = {
     'm.emote': async function (
         this: Channel,
         user: User,
-        event: sdk.IEvent,
+        event: MatrixEvent,
         metadata: Metadata,
     ) {
         if (metadata.edits) {
@@ -156,7 +164,7 @@ const MatrixMembershipHandler = {
     leave: async function (this: Channel, userid: string) {
         const user = await this.main.matrixUserStore.get(userid);
         if (user === undefined) {
-            myLogger.info(`Removing untracked matrix user ${userid}`);
+            myLogger.info(`Found untracked matrix user ${userid}`);
             return;
         }
         await leaveMattermostChannel(
@@ -173,7 +181,7 @@ const MatrixMembershipHandler = {
 
         const joined = await Promise.all(
             channels.map(async channel => {
-                const members = await this.main.botClient.getJoinedRoomMembers(
+                const members = await this.main.botClient.getRoomMembers(
                     channel.matrixRoom,
                 );
                 return Object.keys(members.joined).includes(user.matrix_userid);
@@ -194,7 +202,7 @@ const MatrixMembershipHandler = {
 const MatrixHandlers = {
     'm.room.message': async function (
         this: Channel,
-        event: sdk.IEvent,
+        event: MatrixEvent,
     ): Promise<void> {
         const content = event.content;
         const user = await this.main.matrixUserStore.get(event.sender);
@@ -210,29 +218,35 @@ const MatrixHandlers = {
         if (relatesTo !== undefined) {
             if (relatesTo.rel_type === 'm.replace') {
                 const post = await Post.findOne({
-                    eventid: relatesTo.event_id,
+                    //eventid: relatesTo.event_id,
+                    where: { eventid: relatesTo.event_id },
                 });
                 if (post !== undefined) {
-                    metadata.edits = post.postid;
+                    metadata.edits = post?.postid;
                 }
             } else if (relatesTo['m.in_reply_to'] !== undefined) {
                 const post = await Post.findOne({
-                    eventid: relatesTo['m.in_reply_to'].event_id,
+                    //eventid: relatesTo['m.in_reply_to'].event_id,
+                    where: { eventid: relatesTo['m.in_reply_to'].event_id },
                 });
-                if (post !== undefined) {
+                if (post !== null) {
                     try {
                         const props = await user.client.get(
                             `/posts/${post.postid}`,
                         );
-                        metadata.root_id = props.root_id || post.postid;
+                        metadata.root_id = props.root_id || post?.postid;
                     } catch (e) {
-                        await handlePostError(e, post.postid);
+                        if (post?.postid != null)
+                            await handlePostError(e, post.postid);
+                        else {
+                            throw e;
+                        }
                     }
                 }
             }
         }
-        let msgType:string = content.msgtype || "not found"
-        let handler = MatrixMessageHandlers[msgType]; 
+        let msgType: string = content.msgtype || 'not found';
+        let handler = MatrixMessageHandlers[msgType];
         if (handler === undefined) {
             handler = MatrixMessageHandlers['m.text'];
         }
@@ -240,9 +254,9 @@ const MatrixHandlers = {
     },
     'm.room.member': async function (
         this: Channel,
-        event: sdk.IEvent,
+        event: MatrixEvent,
     ): Promise<void> {
-        const membership:string= event.content.membership || "not found"
+        const membership: string = event.content.membership || 'not found';
         const handler = MatrixMembershipHandler[membership];
         if (handler === undefined) {
             myLogger.warn(
@@ -254,17 +268,20 @@ const MatrixHandlers = {
     },
     'm.room.redaction': async function (
         this: Channel,
-        event: sdk.IEvent,
+        event: MatrixEvent,
     ): Promise<void> {
         const botid = this.main.botClient.getUserId();
         // Matrix loop detection doesn't catch redactions.
         if (event.sender === botid) {
             return;
         }
+        const r: any = event['redacts'];
+        const redacts: string = r || '';
         const post = await Post.findOne({
-            eventid: event.redacts as string,
+            //eventid: event.redacts as string,
+            where: { eventid: redacts },
         });
-        if (post === undefined) {
+        if (post === null) {
             return;
         }
 

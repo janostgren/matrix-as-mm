@@ -1,10 +1,9 @@
-import { MatrixMessage} from '../Interfaces';
+import { MatrixMessage, MatrixEvent } from '../Interfaces';
 import { User } from '../entities/User';
 import { replaceAsync } from './Functions';
 import { config } from '../Config';
 import { marked } from 'marked';
 import * as Turndown from 'turndown';
-import * as sdk  from 'matrix-js-sdk'
 
 const MARKED_OPTIONS = {
     gfm: true,
@@ -42,9 +41,10 @@ async function translateMattermostUsername(body: string, html: boolean) {
         let tail = '';
         while (true) {
             const user = await User.findOne({
-                mattermost_username: s.slice(1),
+                where: { mattermost_username: s.slice(1) },
+                //mattermost_username: s.slice(1),
             });
-            if (user !== undefined) {
+            if (user) {
                 if (html) {
                     return `<a href='https://matrix.to/#/${user.matrix_userid}'>${user.matrix_displayname}</a>${tail}`;
                 } else {
@@ -63,7 +63,7 @@ async function translateMattermostUsername(body: string, html: boolean) {
 }
 
 export async function matrixToMattermost(
-    content: sdk.IContent,
+    content: MatrixMessage,
 ): Promise<string> {
     if (content.formatted_body === undefined) {
         return content.body;
@@ -76,9 +76,10 @@ export async function matrixToMattermost(
     return await replaceAsync(formatted, match, async (s, p1, p2) => {
         if (p1[0] === '@') {
             const user = await User.findOne({
-                matrix_userid: p1,
+                //matrix_userid: p1,
+                where: { matrix_userid: p1 },
             });
-            if (user !== undefined) {
+            if (user) {
                 return `@${user.mattermost_username}`;
             } else {
                 return p2;
@@ -118,7 +119,7 @@ export async function mattermostToMatrix(
 }
 
 export function constructMatrixReply(
-    original: sdk.IEvent,
+    original: MatrixEvent,
     message: MatrixMessage,
 ): void {
     message['m.relates_to'] = {
@@ -126,7 +127,7 @@ export function constructMatrixReply(
             event_id: original.event_id,
         },
     };
-    let content = original.type
+    let content = original.type;
     const block = `<mx-reply><blockquote><a href="https://matrix.to/#/${
         original.room_id
     }/${original.event_id}?via=${

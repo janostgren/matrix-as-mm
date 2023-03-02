@@ -12,10 +12,14 @@ export async function getMattermostUsers(
     client: Client,
     channel: string,
 ): Promise<Set<string>> {
-    const query = await client.get(
-        `/channels/${channel}/members?page=0&per_page=${MAX_MEMBERS}`,
-    );
-    return new Set(query.map(member => member.user_id));
+    try {
+        const query = await client.get(
+            `/channels/${channel}/members?page=0&per_page=${MAX_MEMBERS}`,
+        );
+        return new Set(query.map(member => member.user_id));
+    } catch (err) {
+        throw err;
+    }
 }
 
 /* Joining a mattermost channel that we have already joined should not result
@@ -38,10 +42,11 @@ async function retryJoinMattermostChannel(
     let retry = 10;
     while (true) {
         try {
-            return await client.post(`/channels/${channelid}/members`, {
+            let post = await client.post(`/channels/${channelid}/members`, {
                 user_id: userid,
             });
-        } catch (e: unknown) {
+            return post;
+        } catch (e: any) {
             if (
                 retry > 1280 ||
                 !(e instanceof ClientError && e.m.status_code === 500)
@@ -68,8 +73,9 @@ export async function joinMattermostChannel(
             userid,
         );
     } catch (e) {
+        let ce: boolean = e instanceof ClientError;
         if (
-            e instanceof ClientError &&
+            ce &&
             (e.m.id === 'store.sql_team.get_member.missing.app_error' ||
                 e.m.id === 'app.team.get_member.missing.app_error' ||
                 e.m.id ===
@@ -121,7 +127,7 @@ export async function joinMattermostChannel(
                     // leave followed by a join, which is not disasterous.
                     const matrixMembers = Object.keys(
                         (
-                            await channel.main.botClient.getJoinedRoomMembers(
+                            await channel.main.botClient.getRoomMembers(
                                 matrixRoom,
                             )
                         ).joined,

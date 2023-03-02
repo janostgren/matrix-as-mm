@@ -1,107 +1,194 @@
-import fetch, { Response } from 'node-fetch';
+// import fetch, { Response } from 'node-fetch';
+import * as axios from 'axios';
+import * as https from 'https';
+import * as http from 'http';
 import * as WebSocket from 'ws';
 import { EventEmitter } from 'events';
+import * as util from 'util';
 
-import log, { getLogger } from '../Logging';
 import * as log4js from 'log4js';
 import * as FormData from 'form-data';
 
-export type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
+//export type Method = "GET" | "POST" | "PUT" | "DELETE";
+const TRACE_ENV_NAME = 'API_TRACE';
 
 export class Client {
     private joinTeamPromises: Map<string, Promise<any>>;
     private myLogger: log4js.Logger;
+    private client: axios.AxiosInstance;
+    readonly logLevel: string = 'debug';
 
     constructor(
-        public domain: string,
-        public userid: string,
-        public token: string,
+        readonly domain: string,
+        readonly userid: string,
+        readonly token: string,
     ) {
         this.domain = domain.replace(/\/*$/, '');
         this.joinTeamPromises = new Map();
-        this.myLogger = getLogger('MM Client', 'trace');
+
+        let apiTraceEnv = process.env[TRACE_ENV_NAME];
+        this.logLevel =
+            apiTraceEnv && apiTraceEnv === 'true' ? 'trace' : 'debug';
+        this.myLogger = log4js.getLogger('MM Client');
+        this.myLogger.level = this.logLevel;
+
+        let httpsAgent = new https.Agent({
+            keepAlive: true,
+        });
+        let httpAgent = new http.Agent({
+            keepAlive: true,
+        });
+
+        const bearer: string = this.token ? `Bearer ${this.token}` : '';
+        this.client = axios.default.create({
+            baseURL: this.domain,
+            httpsAgent: httpsAgent,
+            httpAgent: httpAgent,
+            headers: {
+                Authorization: bearer,
+            },
+        });
     }
 
-    private async send_raw(
-        method: Method,
-        endpoint: string,
-        data?: unknown | FormData,
-        auth: boolean = true,
-    ): Promise<any> {
-        if (auth && this.token === undefined) {
-            throw new Error('Cannot send request without access token');
-        }
-        const options = {
-            method: method,
-            headers: {},
-        };
-
-        if (auth) {
-            options['headers']['Authorization'] = `Bearer ${this.token}`;
-        }
-        if (data) {
-            if (data instanceof FormData) {
-                options['body'] = data;
-            } else {
-                options['headers']['Content-Type'] = 'application/json';
-                options['body'] = JSON.stringify(data);
+    public async getFile(fileId:string ):Promise<Buffer>{
+        const endpoint=`/files/${fileId}`
+        try {
+        this.myLogger.trace("GetFile %s",fileId)
+       
+        const response:axios.AxiosResponse =await this.client.get(
+            `/api/v4/${endpoint}`,
+            {
+                headers:{
+                    "Accept-Encoding":"gzip, deflate, br"
+                },
+                responseType:'arraybuffer'     
             }
+
+        )
+        return response.data
         }
-        this.myLogger.trace(`${method}  ${endpoint} user_id: ${this.userid}`);
-        let response: Response = await fetch(
-            `${this.domain}/api/v4${endpoint}`,
-            options,
+        catch(error) {
+            throw this.clientError(error,endpoint,"GET")
+            
+        }
+    }
+
+    private clientError(error:any,endpoint:string,method:axios.Method):ClientError {
+        let message: string = error.message;
+        let errName = 'ApiError';
+        let ae: boolean = axios.isAxiosError(error);
+        let errData: any = error.response?.data || {};
+        let errObject: ErrorObject = {
+            is_oauth: false,
+            id: '',
+            request_id: '',
+            status_code: 0,
+        };
+        if (ae) {
+            if (error.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+
+                if (error.response.data) {
+                    errData = error.response.data;
+                    let dm: any = error.response.data.message;
+                    message += dm ? '. ' + dm : '';
+                    errName = error.response.data.id || errName;
+                    errObject.status_code = errData.status_code;
+                    (errObject.id = errData.id),
+                        (errObject.request_id = errData.request_id);
+                }
+            } else if (error.request) {
+            }
+        } else {
+        }
+
+        let clientError = new ClientError(
+            message,
+            method,
+            endpoint,
+            errData,
+            errObject,
         );
-        return response;
+        clientError.name = errName;
+        this.myLogger.fatal('%s %s message: %s', method, endpoint, message);
+        return clientError
+    }
+
+
+    private async send_raw(
+        method: axios.Method,
+        endpoint: string,
+        data?: any | FormData,
+
+        raw: boolean = false,
+    ): Promise<any> {
+        const options: axios.AxiosRequestConfig = {
+            method: method,
+            url: `/api/v4${endpoint}`,
+            data: data,
+        };
+        if (raw) {
+            options.responseType = 'arraybuffer';
+        }
+
+        this.myLogger.trace(`${method}  ${endpoint} `);
+        try {
+            let response: axios.AxiosResponse = await this.client.request(
+                options,
+            );
+            return response.data;
+        } catch (error: any) {
+            throw this.clientError(error,endpoint,method)
+        }
+            
     }
 
     private async send(
-        method: Method,
+        method: axios.Method,
         endpoint: string,
-        data?: unknown,
-        auth: boolean = true,
+        data?: any,
+        raw: boolean = false,
     ): Promise<any> {
-        const response = await this.send_raw(method, endpoint, data, auth);
-        if (response.ok) {
-            return await response.json();
-        } else {
-            const error = new ClientError(
-                method,
-                endpoint,
-                data,
-                await response.json(),
-            );
-            throw error;
-        }
+        return await this.send_raw(method, endpoint, data, raw);
     }
 
     public async get(
         endpoint: string,
-        data?: unknown,
-        auth: boolean = true,
+        data?: any,
+        raw: boolean = false,
     ): Promise<any> {
-        return await this.send('GET', endpoint, data, auth);
+        return await this.send('GET', endpoint, data, raw);
     }
     public async post(
         endpoint: string,
-        data?: unknown,
-        auth: boolean = true,
+        data?: any,
+        raw: boolean = false,
     ): Promise<any> {
-        return await this.send('POST', endpoint, data, auth);
+        return await this.send('POST', endpoint, data, raw);
     }
     public async put(
         endpoint: string,
-        data?: unknown,
-        auth: boolean = true,
+        data?: any,
+        raw: boolean = false,
     ): Promise<any> {
-        return await this.send('PUT', endpoint, data, auth);
+        return await this.send('PUT', endpoint, data, raw);
     }
+
+    public async patch(
+        endpoint: string,
+        data?: any,
+        raw: boolean = false,
+    ): Promise<any> {
+        return await this.send('PATCH', endpoint, data, raw);
+    }
+
     public async delete(
         endpoint: string,
-        data?: unknown,
-        auth: boolean = true,
+        data?: any,
+        raw: boolean = false,
     ): Promise<any> {
-        return await this.send('DELETE', endpoint, data, auth);
+        return await this.send('DELETE', endpoint, data, raw);
     }
 
     public websocket(): ClientWebsocket {
@@ -136,38 +223,70 @@ export class ClientWebsocket extends EventEmitter {
     private ws: WebSocket;
     private seq: number;
     private promises: PromiseCallbacks[];
-    public openPromise: Promise<void>;
+    private isInitialized: boolean;
 
     constructor(private client: Client) {
         super();
-        this.myLogger = getLogger('Websocket');
+        this.myLogger = log4js.getLogger('Websocket');
+        this.myLogger.level = client.logLevel;
         if (this.client.token === null) {
             throw new Error('Cannot open websocket without access token');
         }
-        this.ws = new WebSocket(
-            `ws${this.client.domain.slice(4)}/api/v4/websocket`,
-            {
-                followRedirects: true,
-            },
-        );
+        this.isInitialized = false;
         this.seq = 0;
         this.promises = [];
-        let resolve;
-        this.openPromise = new Promise(r => (resolve = r));
+    }
+    public initialized(): boolean {
+        return this.isInitialized;
+    }
+
+    public async open() {
+        const parts = this.client.domain.split(':');
+
+        let wsProto = parts[0] === 'http' ? 'ws' : 'wss';
+        const wsUrl = `${wsProto}${this.client.domain.slice(
+            4,
+        )}/api/v4/websocket`;
+        const options = {
+            followRedirects: true,
+            /*
+      headers: {
+        raworization: "Bearer " + this.client.token,
+      },
+      */
+        };
+
+        this.ws = new WebSocket(wsUrl, [], options);
 
         this.ws.on('open', async () => {
-            await this.send('authentication_challenge', {
-                token: this.client.token,
-            });
-            resolve();
+            try {
+                await this.send('authentication_challenge', {
+                    token: this.client.token,
+                });
+                this.isInitialized = true;
+            } catch (error) {
+                this.myLogger.error('ws open event error %s', error.message);
+            }
         });
+
+        this.ws.on('unexpected-response', resp => {
+            this.myLogger.error('Unexpected response %s', resp);
+        });
+
         this.ws.on('message', m => {
             const ev = JSON.parse(m);
-            this.myLogger.trace('Message: %s', m.toString());
+            this.myLogger.trace(
+                'Message: ',
+                util.inspect(ev, {
+                    showHidden: false,
+                    depth: 4,
+                    colors: true,
+                }),
+            );
             if (ev.seq_reply !== undefined) {
                 const promise = this.promises[ev.seq_reply];
                 if (promise === null) {
-                    log.warn(
+                    this.myLogger.warn(
                         `websocket: Received reply with unknown sequence number: ${m}`,
                     );
                 }
@@ -181,7 +300,7 @@ export class ClientWebsocket extends EventEmitter {
                 this.emit('message', ev);
             }
         });
-        this.ws.on('close', () => this.emit('close'));
+        this.ws.on('close', (code, reason) => this.emit('close', code, reason));
         this.ws.on('error', e => this.emit('error', e));
     }
 
@@ -214,24 +333,19 @@ export class ClientWebsocket extends EventEmitter {
 
 export class ClientError extends Error {
     constructor(
-        public readonly method: Method,
+        message: string,
+        public readonly method: axios.Method,
         public readonly endpoint: string,
-        public readonly data: unknown,
+        public readonly data: any,
         public readonly m: ErrorObject,
     ) {
-        super();
-        this.message = `${this.m.status_code} ${this.method} ${
-            this.endpoint
-        }: ${JSON.stringify(this.m)}`;
-        if (this.data !== undefined) {
-            this.message += `\nData: ${JSON.stringify(this.data)}`;
-        }
+        super(message);
+        this.message += `status_code:${this.m.status_code} method:${method} endpoint:${endpoint}`;
     }
 }
 
 export interface ErrorObject {
     id: string;
-    message: string;
     status_code: number;
     request_id: string;
     is_oauth: boolean;

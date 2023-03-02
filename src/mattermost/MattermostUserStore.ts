@@ -1,17 +1,21 @@
 import * as log4js from 'log4js';
-import * as sdk from 'matrix-js-sdk';
+import * as mxClient from '../matrix/MatrixClient';
 import { User } from '../entities/User';
 import { config } from '../Config';
 import Mutex from '../utils/Mutex';
 import Main from '../Main';
 import { findFirstAvailable } from '../utils/Functions';
-import { MattermostUserInfo} from '../Interfaces';
-import { getMatrixClient,loginAppService,registerAppService} from '../matrix/Utils';
+import { MattermostUserInfo } from '../Interfaces';
+import {
+    getMatrixClient,
+    loginAppService,
+    registerAppService,
+} from '../matrix/Utils';
 import { getLogger } from '../Logging';
 
 export default class MattermostUserStore {
     private users: Map<string, User>;
-    private clients: Map<string, sdk.MatrixClient>;
+    private clients: Map<string, mxClient.MatrixClient>;
     private mutex: Mutex;
     private myLogger: log4js.Logger;
     constructor(private readonly main: Main) {
@@ -29,8 +33,8 @@ export default class MattermostUserStore {
         userid: string,
         sync: boolean = false,
     ): Promise<User> {
-        let user = this.users.get(userid);
-        if (user !== undefined) {
+        let user = this.users.get(userid) || null;
+        if (user) {
             if (sync) await this.updateUser(undefined, user);
             return user;
         }
@@ -38,55 +42,89 @@ export default class MattermostUserStore {
         // Lock mutex
         await this.mutex.lock();
         // Try again. it might have been created in another call.
-        user = this.users.get(userid);
-        if (user !== undefined) {
+        user = this.users.get(userid) || null;
+        if (user) {
             this.mutex.unlock();
             if (sync) await this.updateUser(undefined, user);
             return user;
         }
 
-        const data_promise = this.main.client.get(`/users/${userid}`);
-        user = await User.findOne({
-            mattermost_userid: userid,
+        let count = await User.count({
+            //mattermost_userid: userid,
+            where: { mattermost_userid: userid },
         });
-        if (user?.is_matrix_user) {
+        if (count > 0) {
+            user = await User.findOne({
+                //mattermost_userid: userid,
+                where: { mattermost_userid: userid },
+            });
+            if (user && user?.is_matrix_user) {
+                throw new Error(
+                    `Trying to get Matrix user ${userid} from MattermostUserStore`,
+                );
+            }
+            /*
+            if (user) {
+                this.updateUser(undefined, user);
+                return user
+            }
+            else 
             throw new Error(
-                'Trying to get Matrix user from MattermostUserStore',
-            );
+                `Trying to get Matrix user ${userid} from MattermostUserStore `,
+            );*/
         }
-        const data = await data_promise;
-        const server_name = config().homeserver.server_name;
+        if (count === 0 || user) {
+            try {
+                const data = await this.main.client.get(`/users/${userid}`);
+                const server_name = config().homeserver.server_name;
+                const localpart = await findFirstAvailable(
+                    `${config().matrix_localpart_prefix}${data.username}`,
+                    async userName => {
+                        try {
+                            await loginAppService(
+                                this.main.botClient,
+                                userName,
+                                false,
+                            );
+                            /*
+                            await registerAppService(
+                                this.main.botClient,
+                                userName,
+                                this.myLogger,
+                            );
+                            */
 
-        if (user === undefined) {
-            const localpart = await findFirstAvailable(
-                `${config().matrix_localpart_prefix}${data.username}`,
-                async userName => {
-                    try {
-                        //await loginAppService(this.main.botClient,userName);
-                        await registerAppService(this.main.botClient,userName,this.myLogger)
-                        return true
-                    } catch (e) {
-                        throw e;
-                    }
-                },
-            );
-            this.myLogger.debug(
-                `Creating matrix puppet @${localpart}:${server_name} for ${userid}`,
-            );
-            user = await User.createMattermostUser(
-                this.main.client,
-                `@${localpart}:${server_name}`,
-                userid,
-                data.username,
-                '', // Set the displayname to be '' for now. It will be updated in updateUser
-            );
+                            return true;
+                        } catch (e) {
+                            throw e;
+                        }
+                    },
+                );
+                this.myLogger.debug(
+                    `Creating matrix puppet @${localpart}:${server_name} for Mattermost userid: ${userid}`,
+                );
+                user = await User.createMattermostUser(
+                    this.main.client,
+                    `@${localpart}:${server_name}`,
+                    userid,
+                    data.username,
+                    '', // Set the displayname to be '' for now. It will be updated in updateUser
+                );
+
+                if (user) {
+                    await this.updateUser(data, user);
+                    this.users.set(userid, user);
+                    this.mutex.unlock();
+                    return user;
+                }
+            } catch (error) {
+                this.myLogger.fatal(
+                    `Failed to create new Matrix puppet user for Mattermost userid ${userid} error=${error.message}`,
+                );
+                throw error;
+            }
         }
-        await this.updateUser(data, user);
-        this.users.set(userid, user);
-
-        this.mutex.unlock();
-
-        return user;
+        throw `Failed to create new Matrix puppet user for Mattermost userid ${userid}`;
     }
 
     public async updateUser(
@@ -116,17 +154,40 @@ export default class MattermostUserStore {
             await user.save();
         }
         //await this.client.(user).setDisplayName(displayName);
-   
     }
 
-    public client(user: User): sdk.MatrixClient {
+    public async logoutClients() {
+        this.myLogger.info(
+            'Logging out Matrix clients. Number of clients=%d',
+            this.clients.size,
+        );
+        try {
+            await Promise.all(
+                Array.from(this.clients.entries(), async ([, client]) => {
+                    client.logout();
+                }),
+            );
+        } catch (e) {
+            this.myLogger.error(
+                'Error when logging out Matrix clients %s',
+                e.message,
+            );
+        }
+    }
+
+    public async client(user: User): Promise<mxClient.MatrixClient> {
         let client = this.clients.get(user.matrix_userid);
+        //let userName= user.matrix_userid.slice(1,user.matrix_userid.indexOf(':'))
         if (client === undefined) {
             client = getMatrixClient(
                 this.main.registration,
                 user.matrix_userid,
             );
+            //await registerAppService(client,client.getUserId(),this.myLogger)
+            await loginAppService(client, client.getUserId(), true);
             this.clients.set(user.matrix_userid, client);
+            let me = await client.whoAmI();
+            this.myLogger.debug('Matrix client user = %', me);
         }
         return client;
     }
@@ -134,13 +195,16 @@ export default class MattermostUserStore {
     public async getOrCreateClient(
         userid: string,
         sync: boolean = false,
-    ): Promise<sdk.MatrixClient> {
+    ): Promise<mxClient.MatrixClient> {
         return this.client(await this.getOrCreate(userid, sync));
     }
 
-    public getClient(userid: string): sdk.MatrixClient | undefined {
+    public async getClient(
+        userid: string,
+    ): Promise<mxClient.MatrixClient | undefined> {
         const user = this.get(userid);
         if (user === undefined) {
+            this.myLogger.error('Failed to get Matrix client for %s', userid);
             return undefined;
         } else {
             return this.client(user);

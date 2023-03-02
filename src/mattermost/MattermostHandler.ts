@@ -1,5 +1,5 @@
 import * as log4js from 'log4js';
-import * as sdk from 'matrix-js-sdk'
+import * as mxClient from '../matrix/MatrixClient';
 import Channel from '../Channel';
 import { Post } from '../entities/Post';
 import Main from '../Main';
@@ -7,11 +7,16 @@ import { getLogger } from '../Logging';
 import {
     MattermostMessage,
     MattermostPost,
-    MatrixMessage
+    MatrixMessage,
+    MatrixEvent,
+    MattermostFileInfo,
 } from '../Interfaces';
 import { joinMatrixRoom } from '../matrix/Utils';
 import { handlePostError, none } from '../utils/Functions';
 import { mattermostToMatrix, constructMatrixReply } from '../utils/Formatting';
+import * as fs from 'fs'
+import * as path from 'path';
+import * as util from 'util';
 
 const myLogger: log4js.Logger = getLogger('MattermostHandler');
 
@@ -22,28 +27,45 @@ interface Metadata {
     };
 }
 
+async function joinUserToMatrixRoom(
+    client: mxClient.MatrixClient,
+    roomId: string,
+    adminClient: mxClient.MatrixClient,
+) {
+    const userId = client.getUserId() || '';
+    const rooms = await client.getJoinedRooms();
+    const foundRoom = rooms.joined_rooms.find(room => {
+        return room === roomId;
+    });
+    if (!foundRoom) {
+        const inv = await adminClient.invite(roomId, userId);
+        const join = await client.joinRoom(roomId);
+    }
+}
+
 async function sendMatrixMessage(
-    client: sdk.MatrixClient,
+    client: mxClient.MatrixClient,
     room: string,
     postid: string,
     message: MatrixMessage,
     metadata: Metadata,
 ) {
     let rootid = postid;
+    let original: MatrixEvent = {} as any;
     if (metadata.replyTo !== undefined) {
         const replyTo = metadata.replyTo;
         rootid = replyTo.mattermost;
-        let original: Partial<sdk.IEvent> ={}
-        await client.fetchRelations
+
         try {
-            original = await client.fetchRoomEvent(room, replyTo.matrix)
-        } catch (e) {}
+            original = await client.getRoomEvent(room, replyTo.matrix);
+        } catch (e) { }
         if (original !== undefined) {
-            let event:sdk.IEvent= JSON.parse(JSON.stringify(original))
-            constructMatrixReply(event, message);
+            constructMatrixReply(original, message);
         }
     }
-    const event = await client.sendMessage(room, message);
+
+    const event = await client.sendMessage(room, 'm.room.message', message);
+
     await Post.create({
         postid,
         rootid,
@@ -52,38 +74,34 @@ async function sendMatrixMessage(
     return event.event_id;
 }
 
+
+
 const MattermostPostHandlers = {
     '': async function (
         this: Channel,
-        client: sdk.MatrixClient,
+        client: mxClient.MatrixClient,
         post: MattermostPost,
         metadata: Metadata,
     ) {
+        const postMessage = await mattermostToMatrix(post.message);
         await sendMatrixMessage(
             client,
             this.matrixRoom,
             post.id,
-            await mattermostToMatrix(post.message),
+            //await mattermostToMatrix(post.message),
+            postMessage,
             metadata,
         );
 
         if (post.metadata.files !== undefined) {
             for (const file of post.metadata.files) {
                 // Read everything into memory to compute content-length
-                const body = await (
-                    await this.main.client.get( `/files/${file.id}`)
-                ).buffer();
+                const body:Buffer = await this.main.client.getFile(file.id)
                 const mimetype = file.mime_type;
-
-            
-                const url = await client.uploadContent(body, {
-                    name: file.name,
-                    type: mimetype,
-                    //rawResponse: false,
-                    //onlyContentUri: true,
-                });
+                let fileName = `${file.name}`;
 
                 let msgtype = 'm.file';
+
                 if (mimetype.startsWith('image/')) {
                     msgtype = 'm.image';
                 } else if (mimetype.startsWith('audio/')) {
@@ -91,6 +109,14 @@ const MattermostPostHandlers = {
                 } else if (mimetype.startsWith('video/')) {
                     msgtype = 'm.video';
                 }
+            
+                const url = await client.upload(
+                    fileName,
+                    file.extension,
+                    mimetype,
+                    body,
+                );
+
                 myLogger.debug(
                     `Sending to Matrix ${msgtype} ${mimetype} ${url}`,
                 );
@@ -111,7 +137,9 @@ const MattermostPostHandlers = {
                 );
             }
         }
-        client.sendTyping(this.matrixRoom, false,3000)
+
+        client
+            .sendTyping(this.matrixRoom, client.getUserId(), false, 3000)
             .catch(e =>
                 myLogger.warn(
                     `Error sending typing notification to ${this.matrixRoom}\n${e.stack}`,
@@ -120,7 +148,7 @@ const MattermostPostHandlers = {
     },
     me: async function (
         this: Channel,
-        client: sdk.MatrixClient,
+        client: mxClient.MatrixClient,
         post: MattermostPost,
         metadata: Metadata,
     ) {
@@ -132,7 +160,7 @@ const MattermostPostHandlers = {
             metadata,
         );
         client
-            .sendTyping(this.matrixRoom, false,3000)
+            .sendTyping(this.matrixRoom, client.getUserId(), false, 3000)
             .catch(e =>
                 myLogger.warn(
                     `Error sending typing notification to ${this.matrixRoom}\n${e.stack}`,
@@ -155,7 +183,9 @@ export const MattermostHandlers = {
             return;
         }
 
-        const client = this.main.mattermostUserStore.getClient(post.user_id);
+        const client = await this.main.mattermostUserStore.getClient(
+            post.user_id,
+        );
         if (client === undefined) {
             return;
         }
@@ -173,8 +203,11 @@ export const MattermostHandlers = {
 
                 const thisIndex = threads.indexOf(post.id);
                 const id = threads[thisIndex - 1] as string;
-                const replyTo = await Post.findOne({ postid: id });
-                if (replyTo !== undefined) {
+                const replyTo = await Post.findOne({
+                    //postid: id
+                    where: { postid: id },
+                });
+                if (replyTo) {
                     metadata.replyTo = {
                         matrix: replyTo.eventid,
                         mattermost: post.root_id,
@@ -205,7 +238,8 @@ export const MattermostHandlers = {
         );
 
         const matrixEvent = await Post.findOne({
-            postid: post.id,
+            //postid: post.id,
+            where: { postid: post.id },
         });
         const msgtype = post.type === '' ? 'm.text' : 'm.emote';
 
@@ -215,7 +249,7 @@ export const MattermostHandlers = {
             msg.formatted_body = `* ${msg.formatted_body}`;
         }
 
-        if (matrixEvent !== undefined) {
+        if (matrixEvent) {
             msg['m.new_content'] = await mattermostToMatrix(
                 post.message,
                 msgtype,
@@ -225,7 +259,10 @@ export const MattermostHandlers = {
                 rel_type: 'm.replace',
             };
         }
-        await client.sendMessage(this.matrixRoom, msg);
+        await client.sendMessage(this.matrixRoom, m.event, {
+            msgtype: msg.msgtype,
+            body: msg.body,
+        });
     },
     post_deleted: async function (
         this: Channel,
@@ -244,7 +281,15 @@ export const MattermostHandlers = {
         // It is okay to redact an event already redacted.
         for (const event of matrixEvents) {
             promises.push(
-                this.main.botClient.redactEvent(this.matrixRoom, event.eventid),
+                //this.main.botClient.redactEvent(this.matrixRoom, event.eventid),
+                this.main.botClient.sendStateEvent(
+                    this.matrixRoom,
+                    'm.room.redaction',
+                    this.main.botClient.getUserId(),
+                    {
+                        event_id: event.eventid,
+                    },
+                ),
             );
             promises.push(event.remove());
         }
@@ -257,13 +302,15 @@ export const MattermostHandlers = {
         const client = await this.main.mattermostUserStore.getOrCreateClient(
             m.data.user_id,
         );
-        await joinMatrixRoom(this.main.botClient, this.matrixRoom);
+        await joinMatrixRoom(client, this.matrixRoom);
     },
     user_removed: async function (
         this: Channel,
         m: MattermostMessage,
     ): Promise<void> {
-        const client = this.main.mattermostUserStore.getClient(m.data.user_id);
+        const client = await this.main.mattermostUserStore.getClient(
+            m.data.user_id,
+        );
         if (client !== undefined) {
             await client.leave(this.matrixRoom);
         }
@@ -278,9 +325,18 @@ export const MattermostHandlers = {
         this: Channel,
         m: MattermostMessage,
     ): Promise<void> {
-        const client = this.main.mattermostUserStore.getClient(m.data.user_id);
+        const client = await this.main.mattermostUserStore.getClient(
+            m.data.user_id,
+        );
+
         if (client !== undefined) {
-            client.sendTyping(this.matrixRoom, true, 6000)
+            await joinUserToMatrixRoom(
+                client,
+                this.matrixRoom,
+                this.main.adminClient,
+            );
+            client
+                .sendTyping(this.matrixRoom, client.getUserId(), true, 6000)
                 .catch(e =>
                     myLogger.warn(
                         `Error sending typing notification to ${this.matrixRoom}\n${e.stack}`,
