@@ -50,6 +50,72 @@ export class Client {
         });
     }
 
+    public async getFile(fileId:string ):Promise<Buffer>{
+        const endpoint=`/files/${fileId}`
+        try {
+        this.myLogger.trace("GetFile %s",fileId)
+       
+        const response:axios.AxiosResponse =await this.client.get(
+            `/api/v4/${endpoint}`,
+            {
+                headers:{
+                    "Accept-Encoding":"gzip, deflate, br"
+                },
+                responseType:'arraybuffer'     
+            }
+
+        )
+        return response.data
+        }
+        catch(error) {
+            throw this.clientError(error,endpoint,"GET")
+            
+        }
+    }
+
+    private clientError(error:any,endpoint:string,method:axios.Method):ClientError {
+        let message: string = error.message;
+        let errName = 'ApiError';
+        let ae: boolean = axios.isAxiosError(error);
+        let errData: any = error.response?.data || {};
+        let errObject: ErrorObject = {
+            is_oauth: false,
+            id: '',
+            request_id: '',
+            status_code: 0,
+        };
+        if (ae) {
+            if (error.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+
+                if (error.response.data) {
+                    errData = error.response.data;
+                    let dm: any = error.response.data.message;
+                    message += dm ? '. ' + dm : '';
+                    errName = error.response.data.id || errName;
+                    errObject.status_code = errData.status_code;
+                    (errObject.id = errData.id),
+                        (errObject.request_id = errData.request_id);
+                }
+            } else if (error.request) {
+            }
+        } else {
+        }
+
+        let clientError = new ClientError(
+            message,
+            method,
+            endpoint,
+            errData,
+            errObject,
+        );
+        clientError.name = errName;
+        this.myLogger.fatal('%s %s message: %s', method, endpoint, message);
+        return clientError
+    }
+
+
     private async send_raw(
         method: axios.Method,
         endpoint: string,
@@ -73,46 +139,9 @@ export class Client {
             );
             return response.data;
         } catch (error: any) {
-            let message: string = error.message;
-            let errName = 'ApiError';
-            let ae: boolean = axios.isAxiosError(error);
-            let errData: any = error.response?.data || {};
-            let errObject: ErrorObject = {
-                is_oauth: false,
-                id: '',
-                request_id: '',
-                status_code: 0,
-            };
-            if (ae) {
-                if (error.response) {
-                    // The request was made and the server responded with a status code
-                    // that falls out of the range of 2xx
-
-                    if (error.response.data) {
-                        errData = error.response.data;
-                        let dm: any = error.response.data.message;
-                        message += dm ? '. ' + dm : '';
-                        errName = error.response.data.id || errName;
-                        errObject.status_code = errData.status_code;
-                        (errObject.id = errData.id),
-                            (errObject.request_id = errData.request_id);
-                    }
-                } else if (error.request) {
-                }
-            } else {
-            }
-
-            let clientError = new ClientError(
-                message,
-                method,
-                endpoint,
-                errData,
-                errObject,
-            );
-            clientError.name = errName;
-            this.myLogger.fatal('%s %s message: %s', method, endpoint, message);
-            throw clientError;
+            throw this.clientError(error,endpoint,method)
         }
+            
     }
 
     private async send(

@@ -382,6 +382,7 @@ export class MatrixClient {
         content: MessageContent,
     ): Promise<any> {
         let txnId: string = 'm' + Date.now();
+        this.myLogger.debug("send Message: ",content)
         return await this.doRequest({
             method: 'PUT',
             url: `_matrix/client/v3/rooms/${roomId}/send/${eventType}/${txnId}`,
@@ -405,7 +406,7 @@ export class MatrixClient {
         fileName: string,
         extension: string,
         contentType: string,
-        data,
+        data:Buffer,
     ): Promise<any> {
         const responseType: axios.ResponseType = 'arraybuffer';
 

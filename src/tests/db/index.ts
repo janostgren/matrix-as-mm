@@ -1,6 +1,6 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { User } from '../entities/User';
-import { Post } from '../entities/Post';
+import { User } from '../../entities/User';
+import { Post } from '../../entities/Post';
 //import Main from '../Main'
 
 export const AppDataSource = new DataSource({
