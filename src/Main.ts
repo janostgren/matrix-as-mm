@@ -6,7 +6,6 @@ import * as mxClient from './matrix/MatrixClient';
 
 import {
     Config,
-    Mapping,
     setConfig,
     config,
     RELOADABLE_CONFIG,
@@ -25,8 +24,8 @@ import * as log4js from 'log4js';
 import {
     MattermostMessage,
     Registration,
-    MatrixMessage,
     MatrixEvent,
+    Mapping,
 } from './Interfaces';
 import MatrixUserStore from './matrix/MatrixUserStore';
 import {
@@ -123,36 +122,98 @@ export default class Main extends EventEmitter {
 
         this.killed = false;
 
-        for (const map of config.mappings) {
-            if (this.mappingsByMattermost.has(map.mattermost)) {
-                this.myLogger.error(
-                    `Mattermost channel ${map.mattermost} already bridged. Skipping bridge ${map.mattermost} <-> ${map.matrix}`,
-                );
-                if (config.forbid_bridge_failure) {
-                    void this.killBridge(1);
-                    return;
+    }
+
+    public async mapMattermostToMatrix() {
+
+    }
+
+    public async mapMatrixToMattermost() {
+
+    }
+
+    private async createMatrixRoom(channel:any): Promise<mxClient.RoomCreateContent> {
+        const matrixRoom:mxClient.RoomCreateContent= {
+            preset: "public_chat",
+            is_direct:false,
+            visibility:"public",
+            name:channel.display_name,
+            room_alias_name:channel.name,
+            invite:[this.botClient.getUserId()]
+        }
+        const resp=await this.adminClient.createRoom(matrixRoom)
+        const room_id:string= resp.room_id
+        const map: Mapping = {
+            mattermost: channel.id,
+            matrix: room_id
+        }
+        const ch = new Channel(this, map.matrix, map.mattermost);
+        this.channelsByMattermost.set(map.mattermost, ch);
+        this.channelsByMatrix.set(map.matrix, ch);
+        this.mappingsByMattermost.set(map.mattermost, map);
+        this.mappingsByMatrix.set(map.matrix, map)
+
+        return matrixRoom
+    }
+
+    private async doInitialMapping() {
+
+        const myId = config().mattermost_bot_userid
+        try {
+            let publicRooms = await this.adminClient.getPublicRooms(1000);
+            let myRooms = await this.adminClient.getJoinedRooms();
+            const myTeams = await this.client.get(`/users/${myId}/teams`)
+            let myPublicRooms: any[] = []
+            for (let room of publicRooms.chunk) {
+                let foundRoom = myRooms.joined_rooms.filter(joined => joined == room.room_id)
+                if (foundRoom) {
+                    myPublicRooms.push(room)
                 }
-                continue;
-            }
-            if (this.mappingsByMatrix.has(map.matrix)) {
-                this.myLogger.error(
-                    `Matrix channel ${map.matrix} already bridged. Skipping bridge ${map.mattermost} <-> ${map.matrix}`,
-                );
-                if (config.forbid_bridge_failure) {
-                    void this.killBridge(1);
-                    return;
-                }
-                continue;
             }
 
-            const channel = new Channel(this, map.matrix, map.mattermost);
-            this.channelsByMattermost.set(map.mattermost, channel);
-            this.channelsByMatrix.set(map.matrix, channel);
+            if (myTeams.length > 0) {
+                // We only map channels in the default team now
+                const teamId = myTeams[0].id
+                const teamChannels = await this.client.get(`/users/${myId}/teams/${teamId}/channels`)
+                const publicChannels = teamChannels.filter(channel => {
+                    return channel.type === 'O'
+                }
+                )
+                for (let channel of publicChannels) {
+                    let found=false
+                    
+                    for (let room of publicRooms.chunk) {
+                        if (channel.display_name === room.name) {
+                            const map: Mapping = {
+                                mattermost: channel.id,
+                                matrix: room.room_id
+                            }
+                            const ch = new Channel(this, map.matrix, map.mattermost);
+                            this.channelsByMattermost.set(map.mattermost, ch);
+                            this.channelsByMatrix.set(map.matrix, ch);
+                            this.mappingsByMattermost.set(map.mattermost, map);
+                            this.mappingsByMatrix.set(map.matrix, map)
+                        
+                            found=true
+                        }
+                    }
+                    if(found === false) {
+                        await this.createMatrixRoom(channel)
+                    }
+                }
+              
 
-            this.mappingsByMattermost.set(map.mattermost, map);
-            this.mappingsByMatrix.set(map.matrix, map);
+            } else {
+                this.myLogger.warn("No teams for mattermost bot user")
+            }
+        }
+        catch (error) {
+            this.myLogger.error(error.message);
+
+            this.killBridge(1)
         }
     }
+
 
     public async init(): Promise<void> {
         log.time.info('Bridge initialized');
@@ -202,6 +263,7 @@ export default class Main extends EventEmitter {
             await this.killBridge(1);
         });
 
+
         this.mattermostQueue = new EventQueue({
             emitter: this.ws,
             event: 'message',
@@ -230,9 +292,10 @@ export default class Main extends EventEmitter {
             config().appservice.port,
             config().appservice.bind || config().appservice.hostname,
         );
-
+        await this.doInitialMapping();
+        
         let rooms = await this.botClient.getJoinedRooms();
-
+        
         const onChannelError = async (e: Error, channel: Channel) => {
             this.myLogger.error(
                 `Error when syncing ${channel.matrixRoom} with ${channel.mattermostChannel}\n error=${e}`,
@@ -306,11 +369,14 @@ export default class Main extends EventEmitter {
             await this.killBridge(0);
             return;
         }
+        
+        
 
         await appservice;
         await this.ws.open();
 
         log.timeEnd.info('Bridge initialized');
+
 
         void notifySystemd();
         this.initialized = true;
@@ -456,13 +522,13 @@ export default class Main extends EventEmitter {
                 await this.botClient.logout();
             }
             this.myLogger.info('MatrixClient logged out. Session invalidated.');
-        } catch (ignore) {}
+        } catch (ignore) { }
 
         // Destroy DataSource
         if (this.dataSource && this.dataSource.isInitialized) {
             await this.dataSource.destroy();
         }
-        
+
 
         // Otherwise, closing the websocket connection will initiate
         // the shutdown sequence again.

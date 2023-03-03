@@ -56,7 +56,7 @@ export interface Config {
      * @default false
      */
     forbid_bridge_failure: boolean;
-    mappings: Mapping[];
+   
     appservice: {
         /**
          * @minimum 0
@@ -95,6 +95,7 @@ export interface Config {
          */
         url: string;
         server_name: string;
+        server_type: string;
     };
     database: {
         type: string;
@@ -116,16 +117,6 @@ export interface Config {
     mattermost_email_template: string;
 }
 
-export interface Mapping {
-    /**
-     * @pattern ^[a-z0-9]{26}$
-     */
-    mattermost: string;
-    /**
-     * @pattern ^!.*:.*$
-     */
-    matrix: string;
-}
 export const RELOADABLE_CONFIG: Set<string> = new Set([
     'logging',
     'mattermost_email_template',

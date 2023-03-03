@@ -6,6 +6,7 @@ homeserver:
   # is usually the domain of the url, but may be different if you use an SRV
   # record or a .well-known URI
   server_name: 'localhost'
+  server_type: 'synapse'
 
 appservice:
   # The port the homeserver uses to talk to the appservice (bridge). This can
@@ -28,15 +29,6 @@ mattermost_url: http://localhost:8065/
 # If true, the bridge exits if it fails to bridge any channel. Otherwise, it
 # will go on bridging the channels it can bridge. The default is false.
 forbid_bridge_failure: true
-
-# Mappings between mattermost channels and matrix rooms.
-mappings:
-  # Town Square
-  - mattermost: 'p7retz8iwtgzdrdceqw13fwmbr'
-    matrix: '!FzTtpSkXWMPYBKHUQN:localhost'
-  # Off-Topic
-  - mattermost: 'giyj94p1fp86p8zs9z6u5b3ujh'
-    matrix: '!pYSbiOyjMFsKNxSMyi:localhost'
 
 # A puppet matrix user of a real mattermost user with have matrix localpart
 # with this prefix.

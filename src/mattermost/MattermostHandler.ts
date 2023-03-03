@@ -97,7 +97,7 @@ const MattermostPostHandlers = {
             for (const file of post.metadata.files) {
                 // Read everything into memory to compute content-length
                 const body:Buffer = await this.main.client.getFile(file.id)
-                const mimetype = file.mime_type;
+                let mimetype = file.mime_type;
                 let fileName = `${file.name}`;
 
                 let msgtype = 'm.file';
@@ -108,6 +108,10 @@ const MattermostPostHandlers = {
                     msgtype = 'm.audio';
                 } else if (mimetype.startsWith('video/')) {
                     msgtype = 'm.video';
+                } else if(file.extension === 'mp4') {
+                    mimetype='image/mp4';
+                    msgtype = 'm.video';
+
                 }
             
                 const url = await client.upload(
@@ -120,7 +124,15 @@ const MattermostPostHandlers = {
                 myLogger.debug(
                     `Sending to Matrix ${msgtype} ${mimetype} ${url}`,
                 );
-                await sendMatrixMessage(
+                let info = {
+                    size:file.size,
+                    mimetype:mimetype
+                }
+                if(file.height && file.width) {
+                    info['w']=file.width
+                    info['h']=file.height
+                } 
+            await sendMatrixMessage(
                     client,
                     this.matrixRoom,
                     post.id,
@@ -128,10 +140,7 @@ const MattermostPostHandlers = {
                         msgtype,
                         body: file.name,
                         url,
-                        info: {
-                            mimetype,
-                            size: file.size,
-                        },
+                        info: info
                     },
                     metadata,
                 );
