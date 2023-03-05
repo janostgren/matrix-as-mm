@@ -11,7 +11,7 @@ import {
     MatrixEvent,
     MattermostFileInfo,
 } from '../Interfaces';
-import { joinMatrixRoom } from '../matrix/Utils';
+//import { joinMatrixRoom } from '../matrix/Utils';
 import { handlePostError, none } from '../utils/Functions';
 import { mattermostToMatrix, constructMatrixReply } from '../utils/Formatting';
 import * as fs from 'fs'
@@ -27,21 +27,32 @@ interface Metadata {
     };
 }
 
+const matrixUsersInRoom: Map<string, string> = new Map<string, string>();
+
 async function joinUserToMatrixRoom(
     client: mxClient.MatrixClient,
     roomId: string,
-    adminClient: mxClient.MatrixClient,
+    ownerClient: mxClient.MatrixClient,
 ) {
     const userId = client.getUserId() || '';
-    const rooms = await client.getJoinedRooms();
-    const foundRoom = rooms.joined_rooms.find(room => {
-        return room === roomId;
-    });
-    if (!foundRoom) {
-        const inv = await adminClient.invite(roomId, userId);
-        const join = await client.joinRoom(roomId);
+    const roomKey: string = `${userId}:${roomId}`;
+    if (userId) {
+
+        if (matrixUsersInRoom.get(roomKey) === undefined) {
+            const rooms = await client.getJoinedRooms();
+            const foundRoom = rooms.joined_rooms.find(room => {
+                return room === roomId;
+            });
+            if (!foundRoom) {
+                const inv = await ownerClient.invite(roomId, userId);
+                const join = await client.joinRoom(roomId);
+            }
+            matrixUsersInRoom.set(roomKey, userId)
+
+        }
     }
 }
+
 
 async function sendMatrixMessage(
     client: mxClient.MatrixClient,
@@ -96,7 +107,7 @@ const MattermostPostHandlers = {
         if (post.metadata.files !== undefined) {
             for (const file of post.metadata.files) {
                 // Read everything into memory to compute content-length
-                const body:Buffer = await this.main.client.getFile(file.id)
+                const body: Buffer = await this.main.client.getFile(file.id)
                 let mimetype = file.mime_type;
                 let fileName = `${file.name}`;
 
@@ -108,12 +119,12 @@ const MattermostPostHandlers = {
                     msgtype = 'm.audio';
                 } else if (mimetype.startsWith('video/')) {
                     msgtype = 'm.video';
-                } else if(file.extension === 'mp4') {
-                    mimetype='image/mp4';
+                } else if (file.extension === 'mp4') {
+                    mimetype = 'image/mp4';
                     msgtype = 'm.video';
 
                 }
-            
+
                 const url = await client.upload(
                     fileName,
                     file.extension,
@@ -125,14 +136,14 @@ const MattermostPostHandlers = {
                     `Sending to Matrix ${msgtype} ${mimetype} ${url}`,
                 );
                 let info = {
-                    size:file.size,
-                    mimetype:mimetype
+                    size: file.size,
+                    mimetype: mimetype
                 }
-                if(file.height && file.width) {
-                    info['w']=file.width
-                    info['h']=file.height
-                } 
-            await sendMatrixMessage(
+                if (file.height && file.width) {
+                    info['w'] = file.width
+                    info['h'] = file.height
+                }
+                await sendMatrixMessage(
                     client,
                     this.matrixRoom,
                     post.id,
@@ -311,7 +322,7 @@ export const MattermostHandlers = {
         const client = await this.main.mattermostUserStore.getOrCreateClient(
             m.data.user_id,
         );
-        await joinMatrixRoom(client, this.matrixRoom);
+        await joinUserToMatrixRoom(client, this.matrixRoom, this.main.adminClient);
     },
     user_removed: async function (
         this: Channel,
@@ -322,6 +333,9 @@ export const MattermostHandlers = {
         );
         if (client !== undefined) {
             await client.leave(this.matrixRoom);
+            const roomKey: string = `${client.getUserId()}:${this.matrixRoom}`;
+            matrixUsersInRoom.delete(roomKey)
+
         }
     },
     leave_team: async function (

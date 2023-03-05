@@ -492,6 +492,10 @@ export class MatrixClient {
     private async doRequest(options: axios.AxiosRequestConfig): Promise<any> {
         let myOptions: axios.AxiosRequestConfig = {
             headers: { Authorization: `Bearer ${this.accessToken}` },
+            validateStatus: function (status) {
+                return status >= 200 && status < 300; // default
+              },
+            
         };
         let method = options.method || 'GET';
         myOptions = Object.assign(myOptions, options);

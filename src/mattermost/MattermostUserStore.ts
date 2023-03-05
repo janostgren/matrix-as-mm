@@ -68,44 +68,35 @@ export default class MattermostUserStore {
                 this.updateUser(undefined, user);
                 return user
             }
-            else 
-            throw new Error(
-                `Trying to get Matrix user ${userid} from MattermostUserStore `,
-            );*/
+            */
         }
         if (count === 0 || user) {
+            
             try {
                 const data = await this.main.client.get(`/users/${userid}`);
                 const server_name = config().homeserver.server_name;
-                const localpart = await findFirstAvailable(
-                    `${config().matrix_localpart_prefix}${data.username}`,
-                    async userName => {
-                        try {
-                            await loginAppService(
-                                this.main.botClient,
-                                userName,
-                                false,
-                            );
-                            /*
-                            await registerAppService(
-                                this.main.botClient,
-                                userName,
-                                this.myLogger,
-                            );
-                            */
+                const username=`${config().matrix_localpart_prefix}${data.username}`
+                const matrix_userId: string = `@${username}:${server_name}`;
+                /*
+                        await loginAppService(
+                            this.main.botClient,
+                            userName,
+                            false,
+                        );
+                        */
 
-                            return true;
-                        } catch (e) {
-                            throw e;
-                        }
-                    },
+                let info = await registerAppService(
+                    this.main.botClient,
+                    username,
+                    this.myLogger,
                 );
-                this.myLogger.debug(
-                    `Creating matrix puppet @${localpart}:${server_name} for Mattermost userid: ${userid}`,
+
+                this.myLogger.info(
+                    `Creating matrix puppet ${matrix_userId} Mattermost userid: ${userid}`,
                 );
                 user = await User.createMattermostUser(
                     this.main.client,
-                    `@${localpart}:${server_name}`,
+                    matrix_userId,
                     userid,
                     data.username,
                     '', // Set the displayname to be '' for now. It will be updated in updateUser
@@ -119,7 +110,7 @@ export default class MattermostUserStore {
                 }
             } catch (error) {
                 this.myLogger.fatal(
-                    `Failed to create new Matrix puppet user for Mattermost userid ${userid} error=${error.message}`,
+                    `Failed to create a new Matrix puppet user for Mattermost userid ${userid} error=${error.message}`,
                 );
                 throw error;
             }
@@ -183,7 +174,7 @@ export default class MattermostUserStore {
                 this.main.registration,
                 user.matrix_userid,
             );
-            //await registerAppService(client,client.getUserId(),this.myLogger)
+
             await loginAppService(client, client.getUserId(), true);
             this.clients.set(user.matrix_userid, client);
             let me = await client.whoAmI();

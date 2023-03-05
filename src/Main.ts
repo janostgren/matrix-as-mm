@@ -124,7 +124,30 @@ export default class Main extends EventEmitter {
 
     }
 
-    public async mapMattermostToMatrix() {
+    public async mapMattermostToMatrix(channel, myPublicRooms) {
+        let found=false
+        const server_name=config().homeserver.server_name
+        for (let room of myPublicRooms) {
+            const alias:string=`#${channel.name}:${server_name}`
+            if (channel.display_name === room.name || alias === room.canonical_alias) {
+                const map: Mapping = {
+                    mattermost: channel.id,
+                    matrix: room.room_id
+                }
+                const ch = new Channel(this, map.matrix, map.mattermost);
+                this.channelsByMattermost.set(map.mattermost, ch);
+                this.channelsByMatrix.set(map.matrix, ch);
+                this.mappingsByMattermost.set(map.mattermost, map);
+                this.mappingsByMatrix.set(map.matrix, map)
+                found=true
+                this.myLogger.debug("Matrix channel %s:%s mapped matrix room %s:%s",
+                    channel.display_name, channel.name,room.name,room.canonical_alias)
+            }
+        }
+        if(found === false) {
+            await this.createMatrixRoom(channel)
+        }
+        
 
     }
 
@@ -152,6 +175,8 @@ export default class Main extends EventEmitter {
         this.channelsByMatrix.set(map.matrix, ch);
         this.mappingsByMattermost.set(map.mattermost, map);
         this.mappingsByMatrix.set(map.matrix, map)
+        this.myLogger.debug("New matrix room % created. Mapped to mattermost channel %s",room_id,channel.name)
+       
 
         return matrixRoom
     }
@@ -159,6 +184,7 @@ export default class Main extends EventEmitter {
     private async doInitialMapping() {
 
         const myId = config().mattermost_bot_userid
+        const server_name=config().homeserver.server_name
         try {
             let publicRooms = await this.adminClient.getPublicRooms(1000);
             let myRooms = await this.adminClient.getJoinedRooms();
@@ -166,7 +192,7 @@ export default class Main extends EventEmitter {
             let myPublicRooms: any[] = []
             for (let room of publicRooms.chunk) {
                 let foundRoom = myRooms.joined_rooms.filter(joined => joined == room.room_id)
-                if (foundRoom) {
+                if (foundRoom.length > 0) {
                     myPublicRooms.push(room)
                 }
             }
@@ -176,30 +202,12 @@ export default class Main extends EventEmitter {
                 const teamId = myTeams[0].id
                 const teamChannels = await this.client.get(`/users/${myId}/teams/${teamId}/channels`)
                 const publicChannels = teamChannels.filter(channel => {
-                    return channel.type === 'O'
+                    return channel.type === 'O' && (channel.creator_id  === myId || channel.creator_id==='') 
                 }
                 )
                 for (let channel of publicChannels) {
                     let found=false
-                    
-                    for (let room of publicRooms.chunk) {
-                        if (channel.display_name === room.name) {
-                            const map: Mapping = {
-                                mattermost: channel.id,
-                                matrix: room.room_id
-                            }
-                            const ch = new Channel(this, map.matrix, map.mattermost);
-                            this.channelsByMattermost.set(map.mattermost, ch);
-                            this.channelsByMatrix.set(map.matrix, ch);
-                            this.mappingsByMattermost.set(map.mattermost, map);
-                            this.mappingsByMatrix.set(map.matrix, map)
-                        
-                            found=true
-                        }
-                    }
-                    if(found === false) {
-                        await this.createMatrixRoom(channel)
-                    }
+                    this.mapMattermostToMatrix(channel,myPublicRooms)
                 }
               
 
@@ -600,6 +608,7 @@ export default class Main extends EventEmitter {
         this.myLogger.debug(`Mattermost message: ${JSON.stringify(m)}`);
 
         const handler = MattermostMainHandlers[m.event];
+        try {
         if (handler !== undefined) {
             await handler.bind(this)(m);
         } else if (m.broadcast.channel_id !== '') {
@@ -626,6 +635,11 @@ export default class Main extends EventEmitter {
         } else {
             this.myLogger.debug(`Unknown event type: ${m.event}`);
         }
+     } catch(error) {
+        this.myLogger.fatal(`Fatal error on mattermost event ${m.event}. Error=${error.message}`);
+
+     }
+
     }
 
     private async onMatrixEvent(event: MatrixEvent): Promise<void> {
