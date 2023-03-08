@@ -11,6 +11,7 @@ import {
     MatrixEvent,
     MattermostFileInfo,
 } from '../Interfaces';
+import { config } from '../Config'
 //import { joinMatrixRoom } from '../matrix/Utils';
 import { handlePostError, none } from '../utils/Functions';
 import { mattermostToMatrix, constructMatrixReply } from '../utils/Formatting';
@@ -83,6 +84,24 @@ async function sendMatrixMessage(
         eventid: event.event_id,
     }).save();
     return event.event_id;
+}
+
+export const MattermostUnbridgedHandlers = {
+    posted: async function (
+        this: Main,
+        m: MattermostMessage,
+
+    ): Promise<void> {
+
+        if (m.data?.post) {
+            const post:MattermostPost = JSON.parse(m.data.post) as MattermostPost
+            if (((post.type || '') === 'system_add_to_channel'
+                && (post.props?.addedUserId || '') === config().mattermost_bot_userid)) {
+                let ok = await this.onChannelCreated(m.broadcast.channel_id)
+
+            }
+        }
+    },
 }
 
 
@@ -190,6 +209,7 @@ const MattermostPostHandlers = {
 };
 
 export const MattermostHandlers = {
+
     posted: async function (
         this: Channel,
         m: MattermostMessage,
@@ -197,6 +217,9 @@ export const MattermostHandlers = {
         const post: MattermostPost = JSON.parse(m.data.post) as MattermostPost;
         if (post.type.startsWith('system_')) {
             return;
+        }
+        if (post.user_id === config().mattermost_bot_userid) {
+            return 
         }
 
         if (!(await this.main.isMattermostUser(post.user_id))) {
@@ -319,10 +342,12 @@ export const MattermostHandlers = {
         this: Channel,
         m: MattermostMessage,
     ): Promise<void> {
+
         const client = await this.main.mattermostUserStore.getOrCreateClient(
             m.data.user_id,
         );
         await joinUserToMatrixRoom(client, this.matrixRoom, this.main.adminClient);
+
     },
     user_removed: async function (
         this: Channel,
@@ -378,6 +403,13 @@ export const MattermostMainHandlers = {
     channel_viewed: none,
     preferences_changed: none,
     sidebar_category_updated: none,
+    channel_created: async function (
+        this: Main,
+        m: MattermostMessage,
+
+    ): Promise<void> {
+        const ok = await this.onChannelCreated(m.data.channel_id)
+    },
     direct_added: async function (
         this: Main,
         m: MattermostMessage,

@@ -42,6 +42,10 @@ export interface RoomCreateContent {
    is_direct:boolean
 }
 
+export interface RoomCreatedInfo extends RoomCreateContent {
+    room_id:string
+}
+
 export interface MatrixClientCreateOpts {
     userId: string;
     baseUrl: string;
