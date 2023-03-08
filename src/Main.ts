@@ -251,7 +251,7 @@ export default class Main extends EventEmitter {
 
             }
         } catch (error) {
-            this.myLogger.error("Failed to map channel %s to matrix room", channel.name)
+            this.myLogger.error("Failed to map channel %s to matrix room. Error=%s", channel.name,error.message)
             return false
 
         }
