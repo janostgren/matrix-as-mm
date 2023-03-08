@@ -1,3 +1,14 @@
+export interface Mapping {
+    /**
+     * @pattern ^[a-z0-9]{26}$
+     */
+    mattermost: string;
+    /**
+     * @pattern ^!.*:.*$
+     */
+    matrix: string;
+}
+
 export interface MattermostMessage {
     event: string;
     data: any;

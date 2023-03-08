@@ -1,5 +1,5 @@
 import * as log4js from 'log4js';
-import * as mxClient from './matrix/MatrixClient';
+
 import { MattermostMessage, MatrixEvent } from './Interfaces';
 
 import { getLogger } from './Logging';

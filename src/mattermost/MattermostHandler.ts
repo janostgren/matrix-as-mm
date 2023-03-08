@@ -11,7 +11,8 @@ import {
     MatrixEvent,
     MattermostFileInfo,
 } from '../Interfaces';
-import { joinMatrixRoom } from '../matrix/Utils';
+import { config } from '../Config'
+//import { joinMatrixRoom } from '../matrix/Utils';
 import { handlePostError, none } from '../utils/Functions';
 import { mattermostToMatrix, constructMatrixReply } from '../utils/Formatting';
 import * as fs from 'fs'
@@ -27,21 +28,32 @@ interface Metadata {
     };
 }
 
+const matrixUsersInRoom: Map<string, string> = new Map<string, string>();
+
 async function joinUserToMatrixRoom(
     client: mxClient.MatrixClient,
     roomId: string,
-    adminClient: mxClient.MatrixClient,
+    ownerClient: mxClient.MatrixClient,
 ) {
     const userId = client.getUserId() || '';
-    const rooms = await client.getJoinedRooms();
-    const foundRoom = rooms.joined_rooms.find(room => {
-        return room === roomId;
-    });
-    if (!foundRoom) {
-        const inv = await adminClient.invite(roomId, userId);
-        const join = await client.joinRoom(roomId);
+    const roomKey: string = `${userId}:${roomId}`;
+    if (userId) {
+
+        if (matrixUsersInRoom.get(roomKey) === undefined) {
+            const rooms = await client.getJoinedRooms();
+            const foundRoom = rooms.joined_rooms.find(room => {
+                return room === roomId;
+            });
+            if (!foundRoom) {
+                const inv = await ownerClient.invite(roomId, userId);
+                const join = await client.joinRoom(roomId);
+            }
+            matrixUsersInRoom.set(roomKey, userId)
+
+        }
     }
 }
+
 
 async function sendMatrixMessage(
     client: mxClient.MatrixClient,
@@ -74,6 +86,24 @@ async function sendMatrixMessage(
     return event.event_id;
 }
 
+export const MattermostUnbridgedHandlers = {
+    posted: async function (
+        this: Main,
+        m: MattermostMessage,
+
+    ): Promise<void> {
+
+        if (m.data?.post) {
+            const post:MattermostPost = JSON.parse(m.data.post) as MattermostPost
+            if (((post.type || '') === 'system_add_to_channel'
+                && (post.props?.addedUserId || '') === config().mattermost_bot_userid)) {
+                let ok = await this.onChannelCreated(m.broadcast.channel_id)
+
+            }
+        }
+    },
+}
+
 
 
 const MattermostPostHandlers = {
@@ -96,8 +126,8 @@ const MattermostPostHandlers = {
         if (post.metadata.files !== undefined) {
             for (const file of post.metadata.files) {
                 // Read everything into memory to compute content-length
-                const body:Buffer = await this.main.client.getFile(file.id)
-                const mimetype = file.mime_type;
+                const body: Buffer = await this.main.client.getFile(file.id)
+                let mimetype = file.mime_type;
                 let fileName = `${file.name}`;
 
                 let msgtype = 'm.file';
@@ -108,8 +138,12 @@ const MattermostPostHandlers = {
                     msgtype = 'm.audio';
                 } else if (mimetype.startsWith('video/')) {
                     msgtype = 'm.video';
+                } else if (file.extension === 'mp4') {
+                    mimetype = 'image/mp4';
+                    msgtype = 'm.video';
+
                 }
-            
+
                 const url = await client.upload(
                     fileName,
                     file.extension,
@@ -120,6 +154,14 @@ const MattermostPostHandlers = {
                 myLogger.debug(
                     `Sending to Matrix ${msgtype} ${mimetype} ${url}`,
                 );
+                let info = {
+                    size: file.size,
+                    mimetype: mimetype
+                }
+                if (file.height && file.width) {
+                    info['w'] = file.width
+                    info['h'] = file.height
+                }
                 await sendMatrixMessage(
                     client,
                     this.matrixRoom,
@@ -128,10 +170,7 @@ const MattermostPostHandlers = {
                         msgtype,
                         body: file.name,
                         url,
-                        info: {
-                            mimetype,
-                            size: file.size,
-                        },
+                        info: info
                     },
                     metadata,
                 );
@@ -170,6 +209,7 @@ const MattermostPostHandlers = {
 };
 
 export const MattermostHandlers = {
+
     posted: async function (
         this: Channel,
         m: MattermostMessage,
@@ -177,6 +217,9 @@ export const MattermostHandlers = {
         const post: MattermostPost = JSON.parse(m.data.post) as MattermostPost;
         if (post.type.startsWith('system_')) {
             return;
+        }
+        if (post.user_id === config().mattermost_bot_userid) {
+            return 
         }
 
         if (!(await this.main.isMattermostUser(post.user_id))) {
@@ -299,10 +342,12 @@ export const MattermostHandlers = {
         this: Channel,
         m: MattermostMessage,
     ): Promise<void> {
+
         const client = await this.main.mattermostUserStore.getOrCreateClient(
             m.data.user_id,
         );
-        await joinMatrixRoom(client, this.matrixRoom);
+        await joinUserToMatrixRoom(client, this.matrixRoom, this.main.adminClient);
+
     },
     user_removed: async function (
         this: Channel,
@@ -313,6 +358,9 @@ export const MattermostHandlers = {
         );
         if (client !== undefined) {
             await client.leave(this.matrixRoom);
+            const roomKey: string = `${client.getUserId()}:${this.matrixRoom}`;
+            matrixUsersInRoom.delete(roomKey)
+
         }
     },
     leave_team: async function (
@@ -355,6 +403,13 @@ export const MattermostMainHandlers = {
     channel_viewed: none,
     preferences_changed: none,
     sidebar_category_updated: none,
+    channel_created: async function (
+        this: Main,
+        m: MattermostMessage,
+
+    ): Promise<void> {
+        const ok = await this.onChannelCreated(m.data.channel_id)
+    },
     direct_added: async function (
         this: Main,
         m: MattermostMessage,

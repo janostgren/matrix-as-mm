@@ -3,14 +3,9 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import { Client, ClientWebsocket } from './mattermost/Client';
 import * as logLevel from 'loglevel';
 import * as mxClient from './matrix/MatrixClient';
+import * as util from 'util';
 
-import {
-    Config,
-    Mapping,
-    setConfig,
-    config,
-    RELOADABLE_CONFIG,
-} from './Config';
+import { Config, setConfig, config, RELOADABLE_CONFIG } from './Config';
 import { isDeepStrictEqual } from 'util';
 import {
     notifySystemd,
@@ -25,8 +20,8 @@ import * as log4js from 'log4js';
 import {
     MattermostMessage,
     Registration,
-    MatrixMessage,
     MatrixEvent,
+    Mapping,
 } from './Interfaces';
 import MatrixUserStore from './matrix/MatrixUserStore';
 import {
@@ -40,13 +35,24 @@ import Channel from './Channel';
 import EventQueue from './utils/EventQueue';
 import log, { getLogger } from './Logging';
 import { EventEmitter } from 'events';
-import { MattermostMainHandlers } from './mattermost/MattermostHandler';
+import {
+    MattermostMainHandlers,
+    MattermostUnbridgedHandlers,
+} from './mattermost/MattermostHandler';
+
+interface TeamInfo {
+    id: string;
+    name: string;
+}
+
+
 
 export default class Main extends EventEmitter {
     private ws: ClientWebsocket = undefined as any;
     private readonly appService: AppService;
     public readonly registration: Registration;
     public dataSource: DataSource = undefined as any;
+    private defaultTeam: TeamInfo = {} as any;
 
     private matrixQueue: EventQueue<MatrixEvent> = undefined as any;
     private mattermostQueue: EventQueue<MattermostMessage> = undefined as any;
@@ -120,37 +126,198 @@ export default class Main extends EventEmitter {
 
         this.mattermostUserStore = new MattermostUserStore(this);
         this.matrixUserStore = new MatrixUserStore(this);
-
         this.killed = false;
+    }
 
-        for (const map of config.mappings) {
-            if (this.mappingsByMattermost.has(map.mattermost)) {
-                this.myLogger.error(
-                    `Mattermost channel ${map.mattermost} already bridged. Skipping bridge ${map.mattermost} <-> ${map.matrix}`,
-                );
-                if (config.forbid_bridge_failure) {
-                    void this.killBridge(1);
-                    return;
-                }
-                continue;
+    private async getMyJoinedPublicRooms(client: MatrixClient): Promise<any[]> {
+        let publicRooms = await client.getPublicRooms(1000);
+        let myRooms = await client.getJoinedRooms();
+
+        let myPublicRooms: any[] = [];
+        for (let room of publicRooms.chunk) {
+            let foundRoom = myRooms.joined_rooms.filter(
+                joined => joined == room.room_id,
+            );
+            if (foundRoom.length > 0) {
+                myPublicRooms.push(room);
             }
-            if (this.mappingsByMatrix.has(map.matrix)) {
-                this.myLogger.error(
-                    `Matrix channel ${map.matrix} already bridged. Skipping bridge ${map.mattermost} <-> ${map.matrix}`,
+        }
+        return myPublicRooms;
+    }
+
+    public async onChannelCreated(channelId) {
+        const botId = config().mattermost_bot_userid;
+        try {
+            const channel = await this.client.get(`/channels/${channelId}`);
+            if (channel.team_id != this.defaultTeam.id) {
+                const message = `Only channels in default team ${this.defaultTeam.name} can be mapped to Matrix room`
+                this.myLogger.info(message)
+                await this.client.delete(
+                    `/channels/${channelId}/members/${botId}`,
                 );
-                if (config.forbid_bridge_failure) {
-                    void this.killBridge(1);
-                    return;
+                await this.client.post('/posts', {
+                    channel_id: channel.id,
+                    message: message,
+                });
+
+                return false;
+            }
+            const myPublicRooms: any[] = await this.getMyJoinedPublicRooms(
+                this.adminClient,
+            );
+            return await this.mapMattermostToMatrix(channel, myPublicRooms, true);
+        } catch (error) {
+            this.myLogger.error(
+                'Error in getting channel for mapping %s',
+                error.message,
+            );
+            throw error;
+        }
+    }
+
+    private async mapMattermostToMatrix(
+        channel,
+        myPublicRooms,
+        interactive: boolean = false
+    ): Promise<boolean> {
+        let found = false;
+        const myId = config().mattermost_bot_userid;
+        const server_name = config().homeserver.server_name;
+        const creatorId = channel.creator_id;
+        try {
+            if (creatorId !== '' && creatorId !== myId) {
+                const userInfo = await this.client.get(`/users/${creatorId}`);
+                if (!userInfo.roles.includes('system_admin')) {
+                    const message = `Only system administrators can map channels for Matrix integration. Not ok for user ${userInfo.username} with roles ${userInfo.roles}`
+                    this.myLogger.info(message)
+                    await this.client.delete(
+                        `/channels/${channel.id}/members/${myId}`,
+                    );
+                    await this.client.post('/posts', {
+                        channel_id: channel.id,
+                        message: message,
+                    });
+                    return false;
                 }
-                continue;
+            }
+            for (let room of myPublicRooms) {
+                const alias: string = `#${channel.name}:${server_name}`;
+                if (
+                    channel.display_name === room.name ||
+                    alias === room.canonical_alias
+                ) {
+                    const map: Mapping = {
+                        mattermost: channel.id,
+                        matrix: room.room_id,
+                    };
+                    const ch = new Channel(this, map.matrix, map.mattermost);
+                    this.channelsByMattermost.set(map.mattermost, ch);
+                    this.channelsByMatrix.set(map.matrix, ch);
+                    this.mappingsByMattermost.set(map.mattermost, map);
+                    this.mappingsByMatrix.set(map.matrix, map);
+                    found = true;
+                    this.myLogger.debug(
+                        'Matrix channel %s:%s mapped matrix room %s:%s',
+                        channel.display_name,
+                        channel.name,
+                        room.name,
+                        room.canonical_alias,
+                    );
+                    if (interactive) {
+                        const message = `Matrix channel mapped to matrix room ${room.name} with alias ${room.canonical_alias}`
+                        await this.client.post('/posts', {
+                            channel_id: channel.id,
+                            message: message,
+                        });
+
+                    }
+                    return true
+
+                }
             }
 
-            const channel = new Channel(this, map.matrix, map.mattermost);
-            this.channelsByMattermost.set(map.mattermost, channel);
-            this.channelsByMatrix.set(map.matrix, channel);
+            if (found === false) {
+                const info = await this.createMatrixRoom(channel);
+                await this.botClient.joinRoom(info.room_id, `Mapping of mattermost channel ${channel.name}`)
+                if (interactive) {
+                    const message = `New matrix room ${info.name} with alias ${info.room_alias_name} mapped to the channel.`
+                    await this.client.post('/posts', {
+                        channel_id: channel.id,
+                        message: message,
+                    });
 
-            this.mappingsByMattermost.set(map.mattermost, map);
-            this.mappingsByMatrix.set(map.matrix, map);
+                }
+
+
+            }
+        } catch (error) {
+            this.myLogger.error("Failed to map channel %s to matrix room", channel.name)
+            return false
+
+        }
+        return true;
+    }
+
+    private async createMatrixRoom(channel: any): Promise<mxClient.RoomCreatedInfo> {
+        const matrixRoom: mxClient.RoomCreateContent = {
+            preset: 'public_chat',
+            is_direct: false,
+            visibility: 'public',
+            name: channel.display_name,
+            room_alias_name: channel.name,
+            invite: [this.botClient.getUserId()],
+        };
+        const info = await this.adminClient.createRoom(matrixRoom);
+
+        const map: Mapping = {
+            mattermost: channel.id,
+            matrix: info.room_id,
+        };
+        const ch = new Channel(this, map.matrix, map.mattermost);
+        this.channelsByMattermost.set(map.mattermost, ch);
+        this.channelsByMatrix.set(map.matrix, ch);
+        this.mappingsByMattermost.set(map.mattermost, map);
+        this.mappingsByMatrix.set(map.matrix, map);
+        this.myLogger.debug(
+            'New matrix room %s created. Mapped to mattermost channel %s',
+            info.room_id,
+            channel.name,
+        );
+        let roomInfo: mxClient.RoomCreatedInfo = {} as any
+        roomInfo = Object.assign(roomInfo, matrixRoom, { room_id: info.room_id })
+        return roomInfo;
+    }
+
+    private async doInitialMapping() {
+        const myId = config().mattermost_bot_userid;
+        try {
+            const myTeams = await this.client.get(`/users/${myId}/teams`);
+
+            const myPublicRooms: any[] = await this.getMyJoinedPublicRooms(
+                this.adminClient,
+            );
+
+            if (myTeams.length > 0) {
+                // We only map channels in the default team now
+                const teamId = myTeams[0].id;
+                this.defaultTeam = { id: teamId, name: myTeams[0].name };
+                const teamChannels = await this.client.get(
+                    `/users/${myId}/teams/${teamId}/channels`,
+                );
+
+                const publicChannels = teamChannels.filter(channel => {
+                    return channel.type === 'O';
+                });
+                for (let channel of publicChannels) {
+                    await this.mapMattermostToMatrix(channel, myPublicRooms);
+                }
+            } else {
+                this.myLogger.warn('No teams for mattermost bot user');
+            }
+        } catch (error) {
+            this.myLogger.error(error.message);
+
+            this.killBridge(1);
         }
     }
 
@@ -230,6 +397,7 @@ export default class Main extends EventEmitter {
             config().appservice.port,
             config().appservice.bind || config().appservice.hostname,
         );
+        await this.doInitialMapping();
 
         let rooms = await this.botClient.getJoinedRooms();
 
@@ -286,26 +454,8 @@ export default class Main extends EventEmitter {
             }),
         );
 
-        try {
-            await this.leaveUnbridgedChannels();
-        } catch (e) {
-            this.myLogger.error(
-                `Error when leaving unbridged channels\n${e.stack}`,
-            );
-            if (config().forbid_bridge_failure) {
-                await this.killBridge(1);
-            }
-        }
+        this.myLogger.info('Number of channels bridged successfully =%d', this.channelsByMattermost.size)
 
-        if (this.channelsByMattermost.size === 0) {
-            this.myLogger.info(
-                'No channels bridged successfully. Shutting down bridge.',
-            );
-            // If we exit before notifying systemd, it is considered a failure
-            await notifySystemd();
-            await this.killBridge(0);
-            return;
-        }
 
         await appservice;
         await this.ws.open();
@@ -315,13 +465,6 @@ export default class Main extends EventEmitter {
         void notifySystemd();
         this.initialized = true;
         this.emit('initialize');
-    }
-
-    private async leaveUnbridgedChannels(): Promise<void> {
-        await Promise.all([
-            this.leaveUnbridgedMattermostChannels(),
-            this.leaveUnbridgedMatrixRooms(),
-        ]);
     }
 
     private async setupDataSource(): Promise<void> {
@@ -355,92 +498,6 @@ export default class Main extends EventEmitter {
         }
     }
 
-    private async leaveUnbridgedMatrixRooms(): Promise<void> {
-        const resp = await this.botClient.getJoinedRooms();
-        const rooms = resp.joined_rooms;
-
-        await Promise.all(
-            rooms.map(async room => {
-                if (this.mappingsByMatrix.has(room)) {
-                    return;
-                }
-
-                //const members: string[] = [];
-                let resp = await this.botClient.getRoomMembers(room);
-                const members = Object.keys(resp.joined);
-                for (let member of members) {
-                    members.push(member);
-                }
-
-                await Promise.all(
-                    members.map(async userid => {
-                        if (this.isRemoteUser(userid)) {
-                            await getMatrixClient(
-                                this.registration,
-                                userid,
-                            ).leave(room);
-                        }
-                    }),
-                );
-                await this.botClient.leave(room);
-            }),
-        );
-    }
-
-    private async leaveUnbridgedMattermostChannels(): Promise<void> {
-        const mattermostTeams = await this.client.get(
-            `/users/${this.client.userid}/teams`,
-        );
-
-        const leaveMattermost = async (type: string, id: string) => {
-            const members = await this.client.get(
-                `/${type}s/${id}/members?page=0&per_page=10000`,
-            );
-            await Promise.all(
-                members.map(async member => {
-                    const user = await this.matrixUserStore.getByMattermost(
-                        member.user_id,
-                    );
-                    if (user !== null) {
-                        await user.client.delete(
-                            `/${type}s/${id}/members/${member.user_id}`,
-                        );
-                    }
-                }),
-            );
-            await this.client.delete(
-                `/${type}s/${id}/members/${this.client.userid}`,
-            );
-        };
-
-        await Promise.all(
-            mattermostTeams.map(async team => {
-                const teamId = team.id;
-                const channels = await this.client.get(
-                    `/users/${this.client.userid}/teams/${teamId}/channels`,
-                );
-
-                if (!channels.some(c => this.mappingsByMattermost.has(c.id))) {
-                    await leaveMattermost('team', teamId);
-                    return;
-                }
-
-                await Promise.all(
-                    channels.map(async channel => {
-                        if (this.mappingsByMattermost.has(channel.id)) {
-                            return;
-                        }
-                        if (channel.name === 'town-square') {
-                            // cannot leave town square
-                            return;
-                        }
-                        await leaveMattermost('channel', channel.id);
-                    }),
-                );
-            }),
-        );
-    }
-
     public async killBridge(exitCode: number): Promise<void> {
         const killed = this.killed;
         this.killed = true;
@@ -456,13 +513,12 @@ export default class Main extends EventEmitter {
                 await this.botClient.logout();
             }
             this.myLogger.info('MatrixClient logged out. Session invalidated.');
-        } catch (ignore) {}
+        } catch (ignore) { }
 
         // Destroy DataSource
         if (this.dataSource && this.dataSource.isInitialized) {
             await this.dataSource.destroy();
         }
-        
 
         // Otherwise, closing the websocket connection will initiate
         // the shutdown sequence again.
@@ -531,34 +587,50 @@ export default class Main extends EventEmitter {
     }
 
     private async onMattermostMessage(m: MattermostMessage): Promise<void> {
-        this.myLogger.debug(`Mattermost message: ${JSON.stringify(m)}`);
+        this.myLogger.debug(
+            `Mattermost message:\n`,
+            util.inspect(m, { showHidden: false, depth: 3, colors: true }),
+        );
 
         const handler = MattermostMainHandlers[m.event];
-        if (handler !== undefined) {
-            await handler.bind(this)(m);
-        } else if (m.broadcast.channel_id !== '') {
-            // We may have been invited to channels that are not bridged;
-            const channel = this.channelsByMattermost.get(
-                m.broadcast.channel_id,
+        try {
+            if (handler !== undefined) {
+                await handler.bind(this)(m);
+            } else if (m.broadcast.channel_id !== '') {
+                // We may have been invited to channels that are not bridged;
+                const channel = this.channelsByMattermost.get(
+                    m.broadcast.channel_id,
+                );
+                if (channel !== undefined) {
+                    await channel.onMattermostMessage(m);
+                } else {
+                    const ubHandler = MattermostUnbridgedHandlers[m.event];
+                    if (ubHandler) {
+                        await ubHandler.bind(this)(m);
+                    } else {
+                        this.myLogger.debug(
+                            `Message for unknown channel_id: ${m.broadcast.channel_id}`,
+                        );
+                    }
+                }
+            } else if (m.broadcast.team_id !== '') {
+                const channels = this.channelsByTeam.get(m.broadcast.team_id);
+                if (channels === undefined) {
+                    this.myLogger.debug(
+                        `Message for unknown team: ${m.broadcast.team_id}`,
+                    );
+                } else {
+                    await Promise.all(
+                        channels.map(c => c.onMattermostMessage(m)),
+                    );
+                }
+            } else {
+                this.myLogger.debug(`Unknown event type: ${m.event}`);
+            }
+        } catch (error) {
+            this.myLogger.fatal(
+                `Fatal error on mattermost event ${m.event}. Error=${error.message}`,
             );
-            if (channel !== undefined) {
-                await channel.onMattermostMessage(m);
-            } else {
-                this.myLogger.debug(
-                    `Message for unknown channel_id: ${m.broadcast.channel_id}`,
-                );
-            }
-        } else if (m.broadcast.team_id !== '') {
-            const channels = this.channelsByTeam.get(m.broadcast.team_id);
-            if (channels === undefined) {
-                this.myLogger.debug(
-                    `Message for unknown team: ${m.broadcast.team_id}`,
-                );
-            } else {
-                await Promise.all(channels.map(c => c.onMattermostMessage(m)));
-            }
-        } else {
-            this.myLogger.debug(`Unknown event type: ${m.event}`);
         }
     }
 
