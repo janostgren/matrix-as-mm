@@ -237,7 +237,7 @@ export default class Main extends EventEmitter {
             }
 
             if (found === false) {
-                const info = await this.createMatrixRoom(channel);
+                const info = await this.createPublicMatrixRoom(channel);
                 await this.botClient.joinRoom(info.room_id, `Mapping of mattermost channel ${channel.name}`)
                 if (interactive) {
                     const message = `New matrix room ${info.name} with alias ${info.room_alias_name} mapped to the channel.`
@@ -258,7 +258,7 @@ export default class Main extends EventEmitter {
         return true;
     }
 
-    private async createMatrixRoom(channel: any): Promise<mxClient.RoomCreatedInfo> {
+    private async createPublicMatrixRoom(channel: any): Promise<mxClient.RoomCreatedInfo> {
         const matrixRoom: mxClient.RoomCreateContent = {
             preset: 'public_chat',
             is_direct: false,

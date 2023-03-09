@@ -56,7 +56,8 @@ export default class EventQueue<T> {
         // resolved Promise, is assigned to this.consuming by the caller. Thus,
         // despite the queue being empty, it is still in the consuming state.
         await new Promise(r => setTimeout(r, 0));
-        let data;
+        let 
+        data;
         while ((data = this.queue.shift())) {
             //log.time.debug(`Process ${this.opts.description} message queue`);
             this.myLogger.debug(
