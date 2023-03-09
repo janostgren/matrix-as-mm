@@ -70,8 +70,6 @@ export default class Main extends EventEmitter {
     public readonly channelsByMattermost: Map<string, Channel>;
     public readonly channelsByTeam: Map<string, Channel[]>;
 
-    // Channels include successfully bridge channels.
-    // Mappings are ones that are specified in the config file
     public readonly mappingsByMatrix: Map<string, Mapping>;
     public readonly mappingsByMattermost: Map<string, Mapping>;
 
@@ -175,6 +173,19 @@ export default class Main extends EventEmitter {
         }
     }
 
+    public doOneMapping(channelId,roomId) {
+        const map: Mapping = {
+            mattermost: channelId,
+            matrix: roomId
+        };
+        const ch = new Channel(this, map.matrix, map.mattermost);
+        this.channelsByMattermost.set(map.mattermost, ch);
+        this.channelsByMatrix.set(map.matrix, ch);
+        this.mappingsByMattermost.set(map.mattermost, map);
+        this.mappingsByMatrix.set(map.matrix, map);
+    }
+
+
     private async mapMattermostToMatrix(
         channel,
         myPublicRooms,
@@ -206,6 +217,7 @@ export default class Main extends EventEmitter {
                     channel.display_name === room.name ||
                     alias === room.canonical_alias
                 ) {
+                    /*
                     const map: Mapping = {
                         mattermost: channel.id,
                         matrix: room.room_id,
@@ -215,6 +227,8 @@ export default class Main extends EventEmitter {
                     this.channelsByMatrix.set(map.matrix, ch);
                     this.mappingsByMattermost.set(map.mattermost, map);
                     this.mappingsByMatrix.set(map.matrix, map);
+                    */
+                    this.doOneMapping(channel.id,room.room_id)
                     found = true;
                     this.myLogger.debug(
                         'Matrix channel %s:%s mapped matrix room %s:%s',
@@ -229,10 +243,8 @@ export default class Main extends EventEmitter {
                             channel_id: channel.id,
                             message: message,
                         });
-
                     }
                     return true
-
                 }
             }
 
@@ -247,8 +259,6 @@ export default class Main extends EventEmitter {
                     });
 
                 }
-
-
             }
         } catch (error) {
             this.myLogger.error("Failed to map channel %s to matrix room. Error=%s", channel.name,error.message)
@@ -340,14 +350,6 @@ export default class Main extends EventEmitter {
             config().matrix_bot.username,
             this.myLogger,
         );
-        /*
-        let info =await loginAppService(
-            this.botClient,
-            config().matrix_bot.username
-        );        
-        this.myLogger.info("Login as app service: %s",info)
-        this.botClient.setAccessToken(info.access_token)
-        */
 
         try {
             await this.updateBotProfile();

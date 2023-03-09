@@ -129,8 +129,6 @@ async function mapGroupChannel(
 
     const client = await main.mattermostUserStore.getOrCreateClient(sender.mattermost_userid)
 
-
-    let memberIds: string[] = []
     let invite: string[] = [main.botClient.getUserId()]
     const members = channel.display_name.split(', ')
     for (let member of members) {
@@ -155,8 +153,10 @@ async function mapGroupChannel(
             "invite": invite
         })
         groupChannelMap.set(channel.display_name, info.room_id)
+        main.doOneMapping(channel.id, info.room_id)
         room_id = info.room_id
         await main.botClient.joinRoom(info.room_id)
+
     }
     await client.sendMessage(room_id || '', 'm.room.message', {
         msgtype: "m.text",
