@@ -2726,6 +2726,10 @@ COPY public.cache_invalidation_stream_by_instance (stream_id, instance_name, cac
 159	master	get_user_by_access_token	{syt_dXNlcjEubWF0cml4_DpWjksZWbpepOHDeLFOl_46Vnpc}	1678034032219
 160	master	count_e2e_one_time_keys	{@user1.matrix:localhost,GQUGBBJECP}	1678034032231
 161	master	get_e2e_unused_fallback_key_types	{@user1.matrix:localhost,GQUGBBJECP}	1678034032234
+162	master	user_last_seen_monthly_active	\N	1678462040440
+163	master	get_monthly_active_count	{}	1678462040471
+164	master	user_last_seen_monthly_active	\N	1678462133179
+165	master	get_monthly_active_count	{}	1678462133192
 \.
 
 
@@ -3533,20 +3537,6 @@ COPY public.event_labels (event_id, label, room_id, topological_ordering) FROM s
 --
 
 COPY public.event_push_actions (room_id, event_id, user_id, profile_tag, actions, topological_ordering, stream_ordering, notif, highlight, unread, thread_id) FROM stdin;
-!FzTtpSkXWMPYBKHUQN:localhost	$ls5AzJlLTu3Alykxvj5L99HqOQsi7cUGH7wVb-IqErQ	@matterbot:localhost	\N		13	25	1	0	0	main
-!pYSbiOyjMFsKNxSMyi:localhost	$nFwL1txBnk2dj72aBWqthTGHrC-kv7CYWMt3cwz8qgw	@matterbot:localhost	\N		12	26	1	0	0	main
-!FzTtpSkXWMPYBKHUQN:localhost	$hXzRSYfNTLUmjRz8EgsrekOmklfOoUQ9NKx0vS1AmTk	@matterbot:localhost	\N		15	28	1	0	0	main
-!FzTtpSkXWMPYBKHUQN:localhost	$fbEIs1FPebLFup8Sm4TvsnGt3OqnXO125KPufsX6e4E	@matterbot:localhost	\N		16	29	1	0	0	main
-!FzTtpSkXWMPYBKHUQN:localhost	$ggCddRubeCPps5yMhlY-9Ib0RvBhwUJy716vZvf32Oo	@admin:localhost	\N		17	30	1	0	0	main
-!FzTtpSkXWMPYBKHUQN:localhost	$ggCddRubeCPps5yMhlY-9Ib0RvBhwUJy716vZvf32Oo	@matterbot:localhost	\N		17	30	1	0	0	main
-!AHOiTmgdxQzlhIOUsy:localhost	$xOF81meT9KSyhw3dY5FjCzADSBULEj6OoQaHM9DWtMY	@matterbot:localhost	\N	["notify",{"set_tweak":"highlight","value":false},{"set_tweak":"sound","value":"default"}]	8	38	1	0	0	main
-!AHOiTmgdxQzlhIOUsy:localhost	$hgeuyu5_SLbd99TLf-m4kSUM8l1Jy-W4XmhdQGO2rr0	@mm_user1.mm:localhost	\N	["notify",{"set_tweak":"highlight","value":false},{"set_tweak":"sound","value":"default"}]	10	40	1	0	0	main
-!AHOiTmgdxQzlhIOUsy:localhost	$v3jGyApp70gdwh4Il9oB6nRxdyr-zF1Nt9w5VRI1Em4	@admin:localhost	\N		12	42	1	0	0	main
-!AHOiTmgdxQzlhIOUsy:localhost	$v3jGyApp70gdwh4Il9oB6nRxdyr-zF1Nt9w5VRI1Em4	@matterbot:localhost	\N		12	42	1	0	0	main
-!AHOiTmgdxQzlhIOUsy:localhost	$95vJ25qtpsri2l4-Ft6bN-NMw1uq9NjdTcLLt_v-cdE	@admin:localhost	\N		14	44	1	0	0	main
-!AHOiTmgdxQzlhIOUsy:localhost	$95vJ25qtpsri2l4-Ft6bN-NMw1uq9NjdTcLLt_v-cdE	@matterbot:localhost	\N		14	44	1	0	0	main
-!AHOiTmgdxQzlhIOUsy:localhost	$cy5KlfdXxrxwsh3JYgCvSt79RGqs9e0nqUdGznRRG7c	@admin:localhost	\N		16	46	1	0	0	main
-!AHOiTmgdxQzlhIOUsy:localhost	$cy5KlfdXxrxwsh3JYgCvSt79RGqs9e0nqUdGznRRG7c	@matterbot:localhost	\N		16	46	1	0	0	main
 \.
 
 
@@ -4683,8 +4673,6 @@ user1.matrix	0	\\x7b22726f6f6d223a7b227374617465223a7b226c617a795f6c6f61645f6d65
 --
 
 COPY public.user_ips (user_id, access_token, device_id, ip, user_agent, last_seen) FROM stdin;
-@admin:localhost	syt_YWRtaW4_HzSAvDjKsSuGPIUmeheO_19s0jm	LWSWGUCQHK	172.16.238.1	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36	1675956679412
-@user1.matrix:localhost	syt_dXNlcjEubWF0cml4_LDaxTViGjdehvJXyYkMx_0MwbKp	TVVUNPJUJZ	172.16.238.1	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36	1675958805843
 @user1.matrix:localhost	syt_dXNlcjEubWF0cml4_ENEVYSTmTTMOFxEOKoKJ_0bGIae	VPHDFELNLR	172.16.238.1	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36	1678033020328
 @mm_user1.mm:localhost	syt_bW1fdXNlcjEubW0_IunjotstMScFaScLrPOc_0mVBOr	NEISSLGWTR	172.16.238.1	axios/1.3.2	1678033179129
 @admin:localhost	syt_YWRtaW4_qBoxylZXGoaTkMpOxawg_4SQ49f	WYMFZMMAGV	172.16.238.1	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36	1678033227722
@@ -4809,7 +4797,7 @@ SELECT pg_catalog.setval('public.application_services_txn_id_seq', 22, true);
 -- Name: cache_invalidation_stream_seq; Type: SEQUENCE SET; Schema: public; Owner: synapse
 --
 
-SELECT pg_catalog.setval('public.cache_invalidation_stream_seq', 161, true);
+SELECT pg_catalog.setval('public.cache_invalidation_stream_seq', 165, true);
 
 
 --

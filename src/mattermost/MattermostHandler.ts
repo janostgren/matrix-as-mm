@@ -3,6 +3,7 @@ import * as mxClient from '../matrix/MatrixClient';
 import Channel from '../Channel';
 import { Post } from '../entities/Post';
 import { User } from '../entities/User';
+import { Mapping } from '../entities/Mapping';
 import Main from '../Main';
 import { getLogger } from '../Logging';
 import {
@@ -119,7 +120,7 @@ async function mapGroupChannel(
     const post: MattermostPost = JSON.parse(m.data.post) as MattermostPost
     const channelId = m.broadcast.channel_id
     const channel = await main.client.get(`/channels/${channelId}`);
-    //const members = await main.client.get(`/users?per_page=100&in_channel=${channelId}`);
+   
     const senderName: string = m.data.sender_name.slice(1)
     const sender = await User.findOne({
         "where": { "mattermost_username": senderName }
@@ -131,8 +132,10 @@ async function mapGroupChannel(
 
     let invite: string[] = [main.botClient.getUserId()]
     const members = channel.display_name.split(', ')
+    const pos=config().mattermost_username_template.indexOf('_')
+    const mattermost_user_prefix =pos ? config().mattermost_username_template.substring(0,pos+1) : 'matrix_'
     for (let member of members) {
-        if (member.startsWith('matrix_')) {
+        if (member.startsWith(mattermost_user_prefix)) {
             let mmUser = await User.findOne({
                 where: { "mattermost_username": member }
             })
@@ -147,15 +150,21 @@ async function mapGroupChannel(
         let info = await client.createRoom({
             preset: "private_chat",
             is_direct: true,
-            name: channel.channel_display_name,
+            //name: channel.channel_display_name,
             visibility: "private",
-            "room_alias_name": channel.name,
-            "invite": invite
+            //room_alias_name: channel.name,
+            invite: invite
         })
         groupChannelMap.set(channel.display_name, info.room_id)
         main.doOneMapping(channel.id, info.room_id)
-        room_id = info.room_id
         await main.botClient.joinRoom(info.room_id)
+
+        const mapping = new Mapping()
+        mapping.matrix_room_id=info.room_id
+        mapping.mattermost_channel_id=channel.id
+        room_id = info.room_id
+        await mapping.save()
+
 
     }
     await client.sendMessage(room_id || '', 'm.room.message', {

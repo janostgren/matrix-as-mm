@@ -3639,7 +3639,7 @@ p7retz8iwtgzdrdceqw13fwmbr	ygmycw6rnff7igko8gwbqchujr	channels_ygmycw6rnff7igko8
 
 COPY public.status (userid, status, manual, lastactivityat, dndendtime, prevstatus) FROM stdin;
 whida44gqpyfierua1wfrnbxtr	offline	f	1675956299644	0	
-bgct5icpib883fx619bh3cfu6h	online	f	1678034001648	0	
+bgct5icpib883fx619bh3cfu6h	offline	f	1678034001648	0	
 ygmycw6rnff7igko8gwbqchujr	offline	f	1678034022063	0	
 geds3gxhdf81dccdrm8bfx37ry	offline	f	1678034043339	0	
 \.
@@ -3697,8 +3697,8 @@ RemainingSchemaMigrations	true
 PostActionCookieSecret	{"key":"1b6qKeFPcn3l3kqRRQNxZXtcD0eX2wyDsY2OkndMkyo="}
 InstallationDate	1675955407698
 migration_advanced_permissions_phase_2	true
-LastSecurityTime	1678032765914
 FirstAdminSetupComplete	true
+LastSecurityTime	1678462035904
 \.
 
 
@@ -3791,11 +3791,11 @@ COPY public.users (id, createat, updateat, deleteat, username, password, authdat
 g6hetueczp8wif38h7o3o1pcyc	1675955410087	1675955410087	0	boards		\N		boards@localhost	f		Boards		system_user	f	{}	{"push": "mention", "email": "true", "channel": "true", "desktop": "mention", "comments": "never", "first_name": "false", "push_status": "away", "mention_keys": "", "push_threads": "all", "desktop_sound": "true", "email_threads": "all", "desktop_threads": "all"}	1675955410087	0	0	en	f			{"manualTimezone": "", "automaticTimezone": "", "useAutomaticTimezone": "true"}	\N
 59858ksa4ircjd9a5811negojr	1675955999723	1675955999723	0	system-bot		\N		system-bot@localhost	f		System		system_user	f	{}	{"push": "mention", "email": "true", "channel": "true", "desktop": "mention", "comments": "never", "first_name": "false", "push_status": "away", "mention_keys": "", "push_threads": "all", "desktop_sound": "true", "email_threads": "all", "desktop_threads": "all"}	1675955999723	0	0	en	f			{"manualTimezone": "", "automaticTimezone": "", "useAutomaticTimezone": "true"}	\N
 whida44gqpyfierua1wfrnbxtr	1675955707161	1675955722081	0	admin	$2a$10$F/SOv8pg1NY3p9ZH6USjxOLr02DqMH4SgTEUnKVZlqPLtrkL.lNEK	\N		admin@localhost.com	f				system_admin system_user	f	{}	{"push": "mention", "email": "true", "channel": "true", "desktop": "mention", "comments": "never", "first_name": "false", "push_status": "away", "mention_keys": "", "push_threads": "all", "desktop_sound": "true", "email_threads": "all", "desktop_threads": "all"}	1675955707161	0	0	en	f			{"manualTimezone": "", "automaticTimezone": "", "useAutomaticTimezone": "true"}	\N
-uzpc4t1qkjbt3gspmrtmuzrimw	1675955407698	1678032769392	0	appsbot		\N		appsbot@localhost	f		Mattermost Apps		system_user	f	{}	{"push": "mention", "email": "true", "channel": "true", "desktop": "mention", "comments": "never", "first_name": "false", "push_status": "away", "mention_keys": "", "push_threads": "all", "desktop_sound": "true", "email_threads": "all", "desktop_threads": "all"}	1675955407698	1678032769392	0	en	f			{"manualTimezone": "", "automaticTimezone": "", "useAutomaticTimezone": "true"}	\N
-nm4raj8trpgetcnutzc8icka7r	1675955408397	1678032769877	0	playbooks		\N		playbooks@localhost	f		Playbooks		system_user	f	{}	{"push": "mention", "email": "true", "channel": "true", "desktop": "mention", "comments": "never", "first_name": "false", "push_status": "away", "mention_keys": "", "push_threads": "all", "desktop_sound": "true", "email_threads": "all", "desktop_threads": "all"}	1675955408397	1678032769877	0	en	f			{"manualTimezone": "", "automaticTimezone": "", "useAutomaticTimezone": "true"}	\N
 geds3gxhdf81dccdrm8bfx37ry	1675956108535	1675956222140	0	matrix.bridge	$2a$10$JXCrzoCJTcpdLmjN1XYghuFiZOizqFjNvlAoSCjt5mhkgJl6owVhu	\N		matrix.bridge@localhost.com	f				system_user system_admin	f	{}	{"push": "mention", "email": "true", "channel": "true", "desktop": "mention", "comments": "never", "first_name": "false", "push_status": "away", "mention_keys": "", "push_threads": "all", "desktop_sound": "true", "email_threads": "all", "desktop_threads": "all"}	1675956108535	0	0	en	f			{"manualTimezone": "", "automaticTimezone": "", "useAutomaticTimezone": "true"}	\N
 bgct5icpib883fx619bh3cfu6h	1676646214332	1678033988280	0	matrix_user1.matrix	$2a$10$q9SUFyaY6Lra0k7p8YK0YOqT9gP0GS3qw1X8dELNq2PrkEYPBilsW	\N		devnull-t6oqx2s4cgfznyuj@localhost	t		user1.matrix		system_user	f	{}	{"push": "mention", "email": "true", "channel": "true", "desktop": "mention", "comments": "never", "first_name": "false", "push_status": "away", "mention_keys": "", "push_threads": "all", "desktop_sound": "true", "email_threads": "all", "desktop_threads": "all"}	1676646214332	0	0	en	f			{"manualTimezone": "", "automaticTimezone": "", "useAutomaticTimezone": "true"}	\N
 ygmycw6rnff7igko8gwbqchujr	1675956418277	1675956421298	0	user1.mm	$2a$10$P31EGMdOVpLdPjTky0zd6u6BSLvOMix7MvPxqO5D5k1bf/Pqv/yYK	\N		user1.mm@localhost.com	f				system_user	f	{}	{"push": "mention", "email": "true", "channel": "true", "desktop": "mention", "comments": "never", "first_name": "false", "push_status": "away", "mention_keys": "", "push_threads": "all", "desktop_sound": "true", "email_threads": "all", "desktop_threads": "all"}	1675956418277	0	0	en	f			{"manualTimezone": "", "automaticTimezone": "", "useAutomaticTimezone": "true"}	\N
+uzpc4t1qkjbt3gspmrtmuzrimw	1675955407698	1678462047027	0	appsbot		\N		appsbot@localhost	f		Mattermost Apps		system_user	f	{}	{"push": "mention", "email": "true", "channel": "true", "desktop": "mention", "comments": "never", "first_name": "false", "push_status": "away", "mention_keys": "", "push_threads": "all", "desktop_sound": "true", "email_threads": "all", "desktop_threads": "all"}	1675955407698	1678462047027	0	en	f			{"manualTimezone": "", "automaticTimezone": "", "useAutomaticTimezone": "true"}	\N
+nm4raj8trpgetcnutzc8icka7r	1675955408397	1678462048078	0	playbooks		\N		playbooks@localhost	f		Playbooks		system_user	f	{}	{"push": "mention", "email": "true", "channel": "true", "desktop": "mention", "comments": "never", "first_name": "false", "push_status": "away", "mention_keys": "", "push_threads": "all", "desktop_sound": "true", "email_threads": "all", "desktop_threads": "all"}	1675955408397	1678462048078	0	en	f			{"manualTimezone": "", "automaticTimezone": "", "useAutomaticTimezone": "true"}	\N
 \.
 
 

@@ -41,7 +41,16 @@ export async function run(): Promise<any> {
           user.mattermost_username='Nils'
           user.save({"transaction":false})
           */
-        return u;
+        n=await Mapping.count()
+        console.log('Count Mappings', n);
+        /*
+        if(n === 0) {
+            let m = new Mapping()
+            m.mattermost_channel_id='1'
+            m.matrix_room_id='2'
+            await m.save()
+        }
+        */
     } catch (err) {
         console.error(err);
         throw err;

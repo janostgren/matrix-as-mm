@@ -29,8 +29,8 @@ export interface RoomCreateContent {
 
     preset: RoomPreset,
     visibility:RoomVisibility,
-    room_alias_name: string,
-    name: string,
+    room_alias_name?: string,
+    name?: string,
     topic?: string,
     invite?:string[],
     room_version?:string,

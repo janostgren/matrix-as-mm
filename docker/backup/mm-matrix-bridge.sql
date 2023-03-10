@@ -22,6 +22,20 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
+-- Name: mapping; Type: TABLE; Schema: public; Owner: mm-matrix-bridge
+--
+
+CREATE TABLE public.mapping (
+    mattermost_channel_id text NOT NULL,
+    matrix_room_id text NOT NULL,
+    is_private boolean DEFAULT true NOT NULL,
+    is_direct boolean DEFAULT true NOT NULL
+);
+
+
+ALTER TABLE public.mapping OWNER TO "mm-matrix-bridge";
+
+--
 -- Name: posts; Type: TABLE; Schema: public; Owner: mm-matrix-bridge
 --
 
@@ -67,6 +81,14 @@ CREATE TABLE public.users (
 ALTER TABLE public.users OWNER TO "mm-matrix-bridge";
 
 --
+-- Data for Name: mapping; Type: TABLE DATA; Schema: public; Owner: mm-matrix-bridge
+--
+
+COPY public.mapping (mattermost_channel_id, matrix_room_id, is_private, is_direct) FROM stdin;
+\.
+
+
+--
 -- Data for Name: posts; Type: TABLE DATA; Schema: public; Owner: mm-matrix-bridge
 --
 
@@ -109,11 +131,27 @@ ALTER TABLE ONLY public.posts
 
 
 --
+-- Name: mapping PK_9b3d7f9178c4476a1f0da53195d; Type: CONSTRAINT; Schema: public; Owner: mm-matrix-bridge
+--
+
+ALTER TABLE ONLY public.mapping
+    ADD CONSTRAINT "PK_9b3d7f9178c4476a1f0da53195d" PRIMARY KEY (mattermost_channel_id);
+
+
+--
 -- Name: users PK_a857f41bae47ffe29abb14bc31d; Type: CONSTRAINT; Schema: public; Owner: mm-matrix-bridge
 --
 
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT "PK_a857f41bae47ffe29abb14bc31d" PRIMARY KEY (matrix_userid);
+
+
+--
+-- Name: mapping UQ_0e4c898c29b678849086653e2cd; Type: CONSTRAINT; Schema: public; Owner: mm-matrix-bridge
+--
+
+ALTER TABLE ONLY public.mapping
+    ADD CONSTRAINT "UQ_0e4c898c29b678849086653e2cd" UNIQUE (matrix_room_id);
 
 
 --

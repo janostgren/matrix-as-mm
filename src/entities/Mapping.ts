@@ -4,7 +4,6 @@ import {
     PrimaryColumn,
     Column,
     Unique,
-
    
 } from 'typeorm';
 

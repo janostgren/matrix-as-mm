@@ -15,6 +15,7 @@ import {
 } from './utils/Functions';
 import { User } from './entities/User';
 import { Post } from './entities/Post';
+import * as dbMapping from './entities/Mapping';
 import { MatrixClient } from './matrix/MatrixClient';
 import * as log4js from 'log4js';
 import {
@@ -173,7 +174,7 @@ export default class Main extends EventEmitter {
         }
     }
 
-    public doOneMapping(channelId,roomId) {
+    public doOneMapping(channelId, roomId) {
         const map: Mapping = {
             mattermost: channelId,
             matrix: roomId
@@ -217,18 +218,8 @@ export default class Main extends EventEmitter {
                     channel.display_name === room.name ||
                     alias === room.canonical_alias
                 ) {
-                    /*
-                    const map: Mapping = {
-                        mattermost: channel.id,
-                        matrix: room.room_id,
-                    };
-                    const ch = new Channel(this, map.matrix, map.mattermost);
-                    this.channelsByMattermost.set(map.mattermost, ch);
-                    this.channelsByMatrix.set(map.matrix, ch);
-                    this.mappingsByMattermost.set(map.mattermost, map);
-                    this.mappingsByMatrix.set(map.matrix, map);
-                    */
-                    this.doOneMapping(channel.id,room.room_id)
+
+                    this.doOneMapping(channel.id, room.room_id)
                     found = true;
                     this.myLogger.debug(
                         'Matrix channel %s:%s mapped matrix room %s:%s',
@@ -244,6 +235,7 @@ export default class Main extends EventEmitter {
                             message: message,
                         });
                     }
+
                     return true
                 }
             }
@@ -261,7 +253,7 @@ export default class Main extends EventEmitter {
                 }
             }
         } catch (error) {
-            this.myLogger.error("Failed to map channel %s to matrix room. Error=%s", channel.name,error.message)
+            this.myLogger.error("Failed to map channel %s to matrix room. Error=%s", channel.name, error.message)
             return false
 
         }
@@ -321,8 +313,18 @@ export default class Main extends EventEmitter {
                 for (let channel of publicChannels) {
                     await this.mapMattermostToMatrix(channel, myPublicRooms);
                 }
+
             } else {
                 this.myLogger.warn('No teams for mattermost bot user');
+            }
+            /*
+           * Do mappings from database table mapping. It includes the mappings for direct messages. 
+           */
+            const dbMappings = await dbMapping.Mapping.find({})
+            this.myLogger.info('Found %d mappings in database table mappings for private Channels/Rooms', dbMappings.length)
+            for (let dbMap of dbMappings) {
+                this.myLogger.info("\tChannel id=%s, Room id=%s", dbMap.mattermost_channel_id, dbMap.matrix_room_id)
+                this.doOneMapping(dbMap.mattermost_channel_id, dbMap.matrix_room_id)
             }
         } catch (error) {
             this.myLogger.error(error.message);
@@ -421,18 +423,24 @@ export default class Main extends EventEmitter {
         await Promise.all(
             Array.from(this.channelsByMattermost, async ([, channel]) => {
                 try {
-                    let foundRoom = rooms.joined_rooms.find(room => {
-                        return room === channel.matrixRoom;
-                    });
-                    if (!foundRoom) {
-                        await this.botClient.joinRoom(channel.matrixRoom);
+                    const count = await dbMapping.Mapping.count({
+                        where: { "mattermost_channel_id": channel.mattermostChannel }
                     }
-                    await joinMattermostChannel(
-                        channel,
-                        User.create({
-                            mattermost_userid: this.client.userid,
-                        }),
-                    );
+                    )
+                    if (count === 0) {
+                        let foundRoom = rooms.joined_rooms.find(room => {
+                            return room === channel.matrixRoom;
+                        });
+                        if (!foundRoom) {
+                            await this.botClient.joinRoom(channel.matrixRoom);
+                        }
+                        await joinMattermostChannel(
+                            channel,
+                            User.create({
+                                mattermost_userid: this.client.userid,
+                            }),
+                        );
+                    }
                 } catch (e) {
                     await onChannelError(e, channel);
                 }
@@ -442,13 +450,19 @@ export default class Main extends EventEmitter {
         await Promise.all(
             Array.from(this.channelsByMattermost, async ([, channel]) => {
                 try {
-                    await channel.syncChannel();
-                    const team = await channel.getTeam();
-                    const channels = this.channelsByTeam.get(team);
-                    if (channels === undefined) {
-                        this.channelsByTeam.set(team, [channel]);
-                    } else {
-                        channels.push(channel);
+                    const count = await dbMapping.Mapping.count({
+                        where: { "mattermost_channel_id": channel.mattermostChannel }
+                    }
+                    )
+                    if (count === 0) {
+                        await channel.syncChannel();
+                        const team = await channel.getTeam();
+                        const channels = this.channelsByTeam.get(team);
+                        if (channels === undefined) {
+                            this.channelsByTeam.set(team, [channel]);
+                        } else {
+                            channels.push(channel);
+                        }
                     }
                 } catch (e) {
                     await onChannelError(e, channel);
@@ -471,7 +485,7 @@ export default class Main extends EventEmitter {
 
     private async setupDataSource(): Promise<void> {
         const db: any = Object.assign({}, config().database);
-        db['entities'] = [User, Post];
+        db['entities'] = [User, Post, dbMapping.Mapping];
         db['synchronize'] = false;
         if (this.traceApi) {
             db['logging'] = ['query', 'error'];

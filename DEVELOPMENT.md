@@ -114,6 +114,6 @@ Configuration file _element-config.json_ changes.
 
 ## Mailhog
 A simple SNMP server for testing of email. An installation of the MailHog docker container. See https://github.com/mailhog/MailHog
-for additional information
+for additional information.
 
 
