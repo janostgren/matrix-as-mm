@@ -2433,7 +2433,9 @@ COPY public.access_tokens (id, user_id, device_id, token, valid_until_ms, puppet
 6	@mm_user1.mm:localhost	RQAXSULDUM	syt_bW1fdXNlcjEubW0_ZqfhoUgkNwRquoGGFsGK_40NMNW	\N	\N	1676646214890	\N	f
 7	@mm_user1.mm:localhost	CTHQGTXACR	syt_bW1fdXNlcjEubW0_TwulhcELLSVFPjIfNctJ_4eluOc	\N	\N	1676646295819	\N	f
 8	@mm_user1.mm:localhost	PKQQWLAPGS	syt_bW1fdXNlcjEubW0_nFFwEHNyVMAHnsVZrErr_2Zye67	\N	\N	1676646295827	\N	f
+10	@user2.matrix:localhost	XJGUXKWQTC	syt_dXNlcjIubWF0cml4_ZoQXnpOmEvGfuUgfHLwA_1I6gRO	\N	\N	1678611293209	\N	f
 2	@admin:localhost	OZJZGYFHKP	syt_YWRtaW4_ESjBoGLaWtscFgZHsBhJ_027WFj	\N	\N	1675956521567	\N	t
+11	@mm_user2.mm:localhost	EJTXMDRSFA	syt_bW1fdXNlcjIubW0_GmjyQTBItmQdoiUupOcR_3LyLTp	\N	\N	1678611396769	\N	f
 \.
 
 
@@ -2452,6 +2454,10 @@ COPY public.account_data (user_id, account_data_type, stream_id, content, instan
 @user1.matrix:localhost	org.matrix.msc3890.local_notification_settings.GQUGBBJECP	37	{"is_silenced":false}	\N
 @user1.matrix:localhost	im.vector.web.settings	40	{"FTUE.useCaseSelection":"Skip","SpotlightSearch.recentSearches":["!AHOiTmgdxQzlhIOUsy:localhost","!FzTtpSkXWMPYBKHUQN:localhost","!pYSbiOyjMFsKNxSMyi:localhost","!KSMzKvonSTiyePvssr:localhost","!nazZsmPypmVtBOMIti:localhost"]}	\N
 @user1.matrix:localhost	im.vector.setting.breadcrumbs	41	{"recent_rooms":["!AHOiTmgdxQzlhIOUsy:localhost","!FzTtpSkXWMPYBKHUQN:localhost","!pYSbiOyjMFsKNxSMyi:localhost"]}	\N
+@user2.matrix:localhost	org.matrix.msc3890.local_notification_settings.GKJBQYVCXV	46	{"is_silenced":false}	\N
+@user2.matrix:localhost	im.vector.analytics	49	{"pseudonymousAnalyticsOptIn":false}	\N
+@user2.matrix:localhost	im.vector.web.settings	50	{"FTUE.useCaseSelection":"Skip","SpotlightSearch.recentSearches":["!FzTtpSkXWMPYBKHUQN:localhost"]}	\N
+@user2.matrix:localhost	im.vector.setting.breadcrumbs	51	{"recent_rooms":["!FzTtpSkXWMPYBKHUQN:localhost"]}	\N
 \.
 
 
@@ -2533,7 +2539,7 @@ COPY public.appservice_room_list (appservice_id, network_id, room_id) FROM stdin
 --
 
 COPY public.appservice_stream_position (lock, stream_ordering) FROM stdin;
-X	46
+X	52
 \.
 
 
@@ -2730,6 +2736,36 @@ COPY public.cache_invalidation_stream_by_instance (stream_id, instance_name, cac
 163	master	get_monthly_active_count	{}	1678462040471
 164	master	user_last_seen_monthly_active	\N	1678462133179
 165	master	get_monthly_active_count	{}	1678462133192
+166	master	user_last_seen_monthly_active	\N	1678611208546
+167	master	get_monthly_active_count	{}	1678611208562
+168	master	get_user_by_id	{@user2.matrix:localhost}	1678611291344
+169	master	count_e2e_one_time_keys	{@user2.matrix:localhost,GKJBQYVCXV}	1678611292479
+170	master	get_e2e_unused_fallback_key_types	{@user2.matrix:localhost,GKJBQYVCXV}	1678611292521
+171	master	count_e2e_one_time_keys	{@user2.matrix:localhost,GKJBQYVCXV}	1678611292663
+172	master	get_e2e_unused_fallback_key_types	{@user2.matrix:localhost,GKJBQYVCXV}	1678611292679
+173	master	count_e2e_one_time_keys	{@user2.matrix:localhost,GKJBQYVCXV}	1678611292776
+174	master	count_e2e_one_time_keys	{@user2.matrix:localhost,GKJBQYVCXV}	1678611292851
+175	master	count_e2e_one_time_keys	{@user2.matrix:localhost,GKJBQYVCXV}	1678611292943
+176	master	count_e2e_one_time_keys	{@user2.matrix:localhost,GKJBQYVCXV}	1678611293000
+177	master	count_e2e_one_time_keys	{@user2.matrix:localhost,GKJBQYVCXV}	1678611293063
+178	master	count_e2e_one_time_keys	{@user2.matrix:localhost,GKJBQYVCXV}	1678611293134
+179	master	count_e2e_one_time_keys	{@user2.matrix:localhost,GKJBQYVCXV}	1678611293242
+180	master	count_e2e_one_time_keys	{@user2.matrix:localhost,GKJBQYVCXV}	1678611293347
+181	master	_get_bare_e2e_cross_signing_keys	{@user2.matrix:localhost}	1678611305463
+182	master	_get_bare_e2e_cross_signing_keys	{@user2.matrix:localhost}	1678611305470
+183	master	_get_bare_e2e_cross_signing_keys	{@user2.matrix:localhost}	1678611305480
+184	master	cs_cache_fake	{!FzTtpSkXWMPYBKHUQN:localhost,@user2.matrix:localhost}	1678611367191
+185	master	get_user_by_id	{@mm_user2.mm:localhost}	1678611396736
+186	master	cs_cache_fake	{!FzTtpSkXWMPYBKHUQN:localhost,@mm_user2.mm:localhost}	1678611397752
+187	master	cs_cache_fake	{!FzTtpSkXWMPYBKHUQN:localhost,@mm_user2.mm:localhost}	1678611398516
+188	master	cs_cache_fake	{!pYSbiOyjMFsKNxSMyi:localhost,@mm_user2.mm:localhost}	1678611399536
+189	master	cs_cache_fake	{!pYSbiOyjMFsKNxSMyi:localhost,@mm_user2.mm:localhost}	1678611400091
+190	master	get_user_by_access_token	{syt_dXNlcjIubWF0cml4_zBDOKMsvtUtbCjNSykQR_0QpfZN}	1678611430702
+191	master	count_e2e_one_time_keys	{@user2.matrix:localhost,GKJBQYVCXV}	1678611430718
+192	master	get_e2e_unused_fallback_key_types	{@user2.matrix:localhost,GKJBQYVCXV}	1678611430721
+193	master	get_user_by_access_token	{syt_bW1fdXNlcjIubW0_ByhbCJOeqHuExNbANHJg_0XY0ER}	1678611444086
+194	master	count_e2e_one_time_keys	{@mm_user2.mm:localhost,KYXTRJOYRV}	1678611444131
+195	master	get_e2e_unused_fallback_key_types	{@mm_user2.mm:localhost,KYXTRJOYRV}	1678611444144
 \.
 
 
@@ -2774,6 +2810,11 @@ COPY public.current_state_delta_stream (stream_id, room_id, type, state_key, eve
 41	!AHOiTmgdxQzlhIOUsy:localhost	m.room.member	@mm_user1.mm:localhost	$jiXC1l1ou9Ti0I7CV7PJrsVblqsrb9dPQentqZqLBys	$hgeuyu5_SLbd99TLf-m4kSUM8l1Jy-W4XmhdQGO2rr0	master
 43	!AHOiTmgdxQzlhIOUsy:localhost	m.room.member	@user1.matrix:localhost	$ye7ixCV2UmoA3GCF2K5lqNSxMrWwkdvkTSOdQDHy-P0	\N	master
 45	!AHOiTmgdxQzlhIOUsy:localhost	m.room.member	@matterbot:localhost	$0XMDIAwJBH-iA7qIReHWRJAwmGiTGGioVtV8KFmJ4_M	$cgYituIGJ7X54S5-Ax3C5u2yLwCnf99x2VbMmy0YD3w	master
+47	!FzTtpSkXWMPYBKHUQN:localhost	m.room.member	@user2.matrix:localhost	$v8iGN1Nqfe45E9UAlYS-2URhe0VSFqIHY_trb51SesI	\N	master
+49	!FzTtpSkXWMPYBKHUQN:localhost	m.room.member	@mm_user2.mm:localhost	$0xWeoIOTCY4e3-7ZbZGuokwWQFjVMhIRQNXarqF1pxw	\N	master
+50	!FzTtpSkXWMPYBKHUQN:localhost	m.room.member	@mm_user2.mm:localhost	$pdWypCivt0W58tNdti2PPFECr9nY2FHCzPHcq3t7WEY	$0xWeoIOTCY4e3-7ZbZGuokwWQFjVMhIRQNXarqF1pxw	master
+51	!pYSbiOyjMFsKNxSMyi:localhost	m.room.member	@mm_user2.mm:localhost	$Fv99ToyoiCcmIgW4cLLELDhrk41dcIcraArBj2LvaNE	\N	master
+52	!pYSbiOyjMFsKNxSMyi:localhost	m.room.member	@mm_user2.mm:localhost	$PdV2tqK4NNZudisUim3L-UFebwMTDKtC4V3oRBsAKNg	$Fv99ToyoiCcmIgW4cLLELDhrk41dcIcraArBj2LvaNE	master
 \.
 
 
@@ -2811,6 +2852,9 @@ $sFv4HsuqMN9A0Wl_Bb1tZ-I7Kgdtxe83YsRaNWowWDM	!AHOiTmgdxQzlhIOUsy:localhost	m.roo
 $jiXC1l1ou9Ti0I7CV7PJrsVblqsrb9dPQentqZqLBys	!AHOiTmgdxQzlhIOUsy:localhost	m.room.member	@mm_user1.mm:localhost	join
 $ye7ixCV2UmoA3GCF2K5lqNSxMrWwkdvkTSOdQDHy-P0	!AHOiTmgdxQzlhIOUsy:localhost	m.room.member	@user1.matrix:localhost	join
 $0XMDIAwJBH-iA7qIReHWRJAwmGiTGGioVtV8KFmJ4_M	!AHOiTmgdxQzlhIOUsy:localhost	m.room.member	@matterbot:localhost	join
+$v8iGN1Nqfe45E9UAlYS-2URhe0VSFqIHY_trb51SesI	!FzTtpSkXWMPYBKHUQN:localhost	m.room.member	@user2.matrix:localhost	join
+$pdWypCivt0W58tNdti2PPFECr9nY2FHCzPHcq3t7WEY	!FzTtpSkXWMPYBKHUQN:localhost	m.room.member	@mm_user2.mm:localhost	join
+$PdV2tqK4NNZudisUim3L-UFebwMTDKtC4V3oRBsAKNg	!pYSbiOyjMFsKNxSMyi:localhost	m.room.member	@mm_user2.mm:localhost	join
 \.
 
 
@@ -2883,7 +2927,7 @@ COPY public.device_inbox (user_id, device_id, stream_id, message_json, instance_
 --
 
 COPY public.device_lists_changes_converted_stream_position (lock, stream_id, room_id) FROM stdin;
-X	34	!pYSbiOyjMFsKNxSMyi:localhost
+X	45	!pYSbiOyjMFsKNxSMyi:localhost
 \.
 
 
@@ -2919,6 +2963,9 @@ COPY public.device_lists_changes_in_room (user_id, device_id, room_id, stream_id
 @user1.matrix:localhost	GQUGBBJECP	!pYSbiOyjMFsKNxSMyi:localhost	34	f	{}
 @user1.matrix:localhost	GQUGBBJECP	!FzTtpSkXWMPYBKHUQN:localhost	34	f	{}
 @user1.matrix:localhost	GQUGBBJECP	!AHOiTmgdxQzlhIOUsy:localhost	34	f	{}
+@user2.matrix:localhost	GKJBQYVCXV	!FzTtpSkXWMPYBKHUQN:localhost	44	f	{}
+@mm_user2.mm:localhost	KYXTRJOYRV	!FzTtpSkXWMPYBKHUQN:localhost	45	f	{}
+@mm_user2.mm:localhost	KYXTRJOYRV	!pYSbiOyjMFsKNxSMyi:localhost	45	f	{}
 \.
 
 
@@ -2992,6 +3039,12 @@ COPY public.device_lists_stream (stream_id, user_id, device_id) FROM stdin;
 31	@mm_user1.mm:localhost	NPASEFYMXA
 33	@mm_user1.mm:localhost	NYIKZJDRFF
 34	@user1.matrix:localhost	GQUGBBJECP
+37	@user2.matrix:localhost	XJGUXKWQTC
+39	@user2.matrix:localhost	5b6cQaGf5GV8+fQLo2zlNmEYv5aKsgv9yrozWTIeYd0
+40	@user2.matrix:localhost	w0M80S3bnAUb+n2nKhpdQVpRgy9D7oinRrWkM2IpREs
+42	@mm_user2.mm:localhost	EJTXMDRSFA
+44	@user2.matrix:localhost	GKJBQYVCXV
+45	@mm_user2.mm:localhost	KYXTRJOYRV
 \.
 
 
@@ -3011,7 +3064,12 @@ COPY public.devices (user_id, device_id, display_name, last_seen, ip, user_agent
 @mm_user1.mm:localhost	RQAXSULDUM	\N	\N	\N	\N	f
 @mm_user1.mm:localhost	CTHQGTXACR	\N	\N	\N	\N	f
 @mm_user1.mm:localhost	PKQQWLAPGS	\N	\N	\N	\N	f
-@admin:localhost	OZJZGYFHKP	\N	1678033936477	172.16.238.1	axios/1.3.2	f
+@user2.matrix:localhost	XJGUXKWQTC	localhost:8080: Chrome on macOS	\N	\N	\N	f
+@user2.matrix:localhost	5b6cQaGf5GV8+fQLo2zlNmEYv5aKsgv9yrozWTIeYd0	master signing key	\N	\N	\N	t
+@user2.matrix:localhost	w0M80S3bnAUb+n2nKhpdQVpRgy9D7oinRrWkM2IpREs	self_signing signing key	\N	\N	\N	t
+@user2.matrix:localhost	vzY0MeHZtI5hpcf4M7D5iZJ4sPuFG9pARVs8WouUgxo	user_signing signing key	\N	\N	\N	t
+@admin:localhost	OZJZGYFHKP	\N	1678611343281	172.16.238.1	axios/1.3.2	f
+@mm_user2.mm:localhost	EJTXMDRSFA	\N	\N	\N	\N	f
 \.
 
 
@@ -3026,6 +3084,9 @@ COPY public.e2e_cross_signing_keys (user_id, keytype, keydata, stream_id) FROM s
 @user1.matrix:localhost	master	{"user_id":"@user1.matrix:localhost","usage":["master"],"keys":{"ed25519:beSzgvmiqhyOlsq4MZxq3tNAMlxVH0/q0zWZ5l+taX0":"beSzgvmiqhyOlsq4MZxq3tNAMlxVH0/q0zWZ5l+taX0"},"signatures":{"@user1.matrix:localhost":{"ed25519:TVVUNPJUJZ":"ayiUJcfBfu1NuKTcUoEPjlEiLrwmMWg/rSScfJBgGXMc9HLIKRZTWfGYaXA1Xm8VDgBdoEaDXX+XfHo7mbWsCQ"}}}	5
 @user1.matrix:localhost	self_signing	{"user_id":"@user1.matrix:localhost","usage":["self_signing"],"keys":{"ed25519:XDO/JuW2hr3pn+yiAgaWGlXOiZkLZTXihr135+Z5YnA":"XDO/JuW2hr3pn+yiAgaWGlXOiZkLZTXihr135+Z5YnA"},"signatures":{"@user1.matrix:localhost":{"ed25519:beSzgvmiqhyOlsq4MZxq3tNAMlxVH0/q0zWZ5l+taX0":"waOgjO4z0CGVmjygGBFWMMf12xOAG8nUdjV5p4dGkF+6ka75XDZ7ynfi6q87QuvZ+EoENWwji3F6PWXFXtHXBg"}}}	6
 @user1.matrix:localhost	user_signing	{"user_id":"@user1.matrix:localhost","usage":["user_signing"],"keys":{"ed25519:FcIIrw9PjZO3SoQHeMatSRfhcThhfPsmWYvHPKaboJw":"FcIIrw9PjZO3SoQHeMatSRfhcThhfPsmWYvHPKaboJw"},"signatures":{"@user1.matrix:localhost":{"ed25519:beSzgvmiqhyOlsq4MZxq3tNAMlxVH0/q0zWZ5l+taX0":"JPl2KUUyu9z6cvqm50NNhRAT9NDltcG/vPGovjjoIN2QRG+FHuPvLctR2JfJxlhzD6RtES02SOYBuuHv1qVUAQ"}}}	7
+@user2.matrix:localhost	master	{"user_id":"@user2.matrix:localhost","usage":["master"],"keys":{"ed25519:5b6cQaGf5GV8+fQLo2zlNmEYv5aKsgv9yrozWTIeYd0":"5b6cQaGf5GV8+fQLo2zlNmEYv5aKsgv9yrozWTIeYd0"},"signatures":{"@user2.matrix:localhost":{"ed25519:GKJBQYVCXV":"DPSX4W/xf1CbDNcDU0DjA7remmZJdYvlcGh5xM2kr2gu8WNLv5zUMQoUI6XJoz3FHockq3IHsQclAhshzL7vBg"}}}	8
+@user2.matrix:localhost	self_signing	{"user_id":"@user2.matrix:localhost","usage":["self_signing"],"keys":{"ed25519:w0M80S3bnAUb+n2nKhpdQVpRgy9D7oinRrWkM2IpREs":"w0M80S3bnAUb+n2nKhpdQVpRgy9D7oinRrWkM2IpREs"},"signatures":{"@user2.matrix:localhost":{"ed25519:5b6cQaGf5GV8+fQLo2zlNmEYv5aKsgv9yrozWTIeYd0":"ZF8K+ta0UD+f+8oBKObJMhRS+Ur9+5gY9QZSw71gXIqnWUEgIgaIL3f7hKwZY7fn7AAqQNZ2wprAeyAQxjVXDw"}}}	9
+@user2.matrix:localhost	user_signing	{"user_id":"@user2.matrix:localhost","usage":["user_signing"],"keys":{"ed25519:vzY0MeHZtI5hpcf4M7D5iZJ4sPuFG9pARVs8WouUgxo":"vzY0MeHZtI5hpcf4M7D5iZJ4sPuFG9pARVs8WouUgxo"},"signatures":{"@user2.matrix:localhost":{"ed25519:5b6cQaGf5GV8+fQLo2zlNmEYv5aKsgv9yrozWTIeYd0":"kChd5mIOdVQvWquzxlS862w9o86lcVyUNXENycwiu1MY+WSmyhis48/D4PUiknv+z18/JznR/IXY57OeLXZDAA"}}}	10
 \.
 
 
@@ -3036,6 +3097,7 @@ COPY public.e2e_cross_signing_keys (user_id, keytype, keydata, stream_id) FROM s
 COPY public.e2e_cross_signing_signatures (user_id, key_id, target_user_id, target_device_id, signature) FROM stdin;
 @admin:localhost	ed25519:hJ2/IzKfbNkQKWlWXSO0LCSGtcCOfc2csC55NNXc2EQ	@admin:localhost	LWSWGUCQHK	OaW6io7zPXG3tMOuTiK08VaihJ2LvFN8K1okNYoEZ2ezL83U8oOVXhX+eBAeURXGAV/qB3lZ6a8TSfHddKzfBw
 @user1.matrix:localhost	ed25519:XDO/JuW2hr3pn+yiAgaWGlXOiZkLZTXihr135+Z5YnA	@user1.matrix:localhost	TVVUNPJUJZ	/STyt607WZGFv9Pqw1skvanc1mCD4Scj8FmjFr3zz0ZMryw4l9J2RaW+iNivHpfPOKqU0AJ/9vsMsc3eeMhvDA
+@user2.matrix:localhost	ed25519:w0M80S3bnAUb+n2nKhpdQVpRgy9D7oinRrWkM2IpREs	@user2.matrix:localhost	GKJBQYVCXV	10C25SBcinrz4Wq9bwJbMnxzZiRDe0U25LxwatVWphCLRbfWboGX2hqbrECiLMW4WTI8eEiOKHagKEDM/e7SBw
 \.
 
 
@@ -3243,6 +3305,25 @@ $0XMDIAwJBH-iA7qIReHWRJAwmGiTGGioVtV8KFmJ4_M	$Ww-5pR04rXtgZleTLBj7vJSR1LGkC3tZ5Z
 $0XMDIAwJBH-iA7qIReHWRJAwmGiTGGioVtV8KFmJ4_M	$cgYituIGJ7X54S5-Ax3C5u2yLwCnf99x2VbMmy0YD3w	!AHOiTmgdxQzlhIOUsy:localhost
 $0XMDIAwJBH-iA7qIReHWRJAwmGiTGGioVtV8KFmJ4_M	$425aYo_LNE95R3HHpQZSk0MGS0CjqhCPkp0DJvtMk5M	!AHOiTmgdxQzlhIOUsy:localhost
 $0XMDIAwJBH-iA7qIReHWRJAwmGiTGGioVtV8KFmJ4_M	$8JzwefAwHCl96ZlTja5b5rV-MxH_1T91x6Yl6vKYGSg	!AHOiTmgdxQzlhIOUsy:localhost
+$v8iGN1Nqfe45E9UAlYS-2URhe0VSFqIHY_trb51SesI	$1kn0z5XFW6tgZeQlEjEweLSJX_vv-w54n3uMagFyz9o	!FzTtpSkXWMPYBKHUQN:localhost
+$v8iGN1Nqfe45E9UAlYS-2URhe0VSFqIHY_trb51SesI	$c4I4FYRPIltfSw8Wf6w1NWiI0mLCN0eVcYuMsCyqiS4	!FzTtpSkXWMPYBKHUQN:localhost
+$v8iGN1Nqfe45E9UAlYS-2URhe0VSFqIHY_trb51SesI	$MjPoUIyI-4SLUb_2CX0SN6Cq4siLSpO81XmSX0Tt1Ag	!FzTtpSkXWMPYBKHUQN:localhost
+$0xWeoIOTCY4e3-7ZbZGuokwWQFjVMhIRQNXarqF1pxw	$1kn0z5XFW6tgZeQlEjEweLSJX_vv-w54n3uMagFyz9o	!FzTtpSkXWMPYBKHUQN:localhost
+$0xWeoIOTCY4e3-7ZbZGuokwWQFjVMhIRQNXarqF1pxw	$c4I4FYRPIltfSw8Wf6w1NWiI0mLCN0eVcYuMsCyqiS4	!FzTtpSkXWMPYBKHUQN:localhost
+$0xWeoIOTCY4e3-7ZbZGuokwWQFjVMhIRQNXarqF1pxw	$MjPoUIyI-4SLUb_2CX0SN6Cq4siLSpO81XmSX0Tt1Ag	!FzTtpSkXWMPYBKHUQN:localhost
+$0xWeoIOTCY4e3-7ZbZGuokwWQFjVMhIRQNXarqF1pxw	$IU1ZxuT0Nte99MGUdW5IhEVc_pVMkrUEqjP5xs27dVs	!FzTtpSkXWMPYBKHUQN:localhost
+$pdWypCivt0W58tNdti2PPFECr9nY2FHCzPHcq3t7WEY	$1kn0z5XFW6tgZeQlEjEweLSJX_vv-w54n3uMagFyz9o	!FzTtpSkXWMPYBKHUQN:localhost
+$pdWypCivt0W58tNdti2PPFECr9nY2FHCzPHcq3t7WEY	$c4I4FYRPIltfSw8Wf6w1NWiI0mLCN0eVcYuMsCyqiS4	!FzTtpSkXWMPYBKHUQN:localhost
+$pdWypCivt0W58tNdti2PPFECr9nY2FHCzPHcq3t7WEY	$0xWeoIOTCY4e3-7ZbZGuokwWQFjVMhIRQNXarqF1pxw	!FzTtpSkXWMPYBKHUQN:localhost
+$pdWypCivt0W58tNdti2PPFECr9nY2FHCzPHcq3t7WEY	$MjPoUIyI-4SLUb_2CX0SN6Cq4siLSpO81XmSX0Tt1Ag	!FzTtpSkXWMPYBKHUQN:localhost
+$Fv99ToyoiCcmIgW4cLLELDhrk41dcIcraArBj2LvaNE	$EgLH6XFurmJirUH4D5Zkm8y1WyPdrFX2SSko4S0-7hQ	!pYSbiOyjMFsKNxSMyi:localhost
+$Fv99ToyoiCcmIgW4cLLELDhrk41dcIcraArBj2LvaNE	$gyvaweguHrwLjB1B_41QMnzSUMHQGbQmTALeOOMmWfU	!pYSbiOyjMFsKNxSMyi:localhost
+$Fv99ToyoiCcmIgW4cLLELDhrk41dcIcraArBj2LvaNE	$tkoiHC3Vf1zAnFhhvTe60NQ7m3nRNvT1ILxtf8O8Tdc	!pYSbiOyjMFsKNxSMyi:localhost
+$Fv99ToyoiCcmIgW4cLLELDhrk41dcIcraArBj2LvaNE	$hZ3X11MNOocXcrcCNowWncNXGOcKtKz2Yuy15DpSX9Y	!pYSbiOyjMFsKNxSMyi:localhost
+$PdV2tqK4NNZudisUim3L-UFebwMTDKtC4V3oRBsAKNg	$EgLH6XFurmJirUH4D5Zkm8y1WyPdrFX2SSko4S0-7hQ	!pYSbiOyjMFsKNxSMyi:localhost
+$PdV2tqK4NNZudisUim3L-UFebwMTDKtC4V3oRBsAKNg	$gyvaweguHrwLjB1B_41QMnzSUMHQGbQmTALeOOMmWfU	!pYSbiOyjMFsKNxSMyi:localhost
+$PdV2tqK4NNZudisUim3L-UFebwMTDKtC4V3oRBsAKNg	$Fv99ToyoiCcmIgW4cLLELDhrk41dcIcraArBj2LvaNE	!pYSbiOyjMFsKNxSMyi:localhost
+$PdV2tqK4NNZudisUim3L-UFebwMTDKtC4V3oRBsAKNg	$tkoiHC3Vf1zAnFhhvTe60NQ7m3nRNvT1ILxtf8O8Tdc	!pYSbiOyjMFsKNxSMyi:localhost
 \.
 
 
@@ -3331,6 +3412,18 @@ COPY public.event_auth_chain_links (origin_chain_id, origin_sequence_number, tar
 30	1	25	1
 30	1	22	1
 30	1	26	1
+31	1	1	1
+31	1	4	1
+31	1	2	1
+31	1	3	1
+32	1	1	1
+32	1	3	1
+32	1	4	1
+32	1	2	1
+33	1	13	1
+33	1	12	1
+33	1	8	1
+33	1	9	1
 \.
 
 
@@ -3383,6 +3476,11 @@ $hgeuyu5_SLbd99TLf-m4kSUM8l1Jy-W4XmhdQGO2rr0	29	1
 $jiXC1l1ou9Ti0I7CV7PJrsVblqsrb9dPQentqZqLBys	29	2
 $ye7ixCV2UmoA3GCF2K5lqNSxMrWwkdvkTSOdQDHy-P0	30	1
 $0XMDIAwJBH-iA7qIReHWRJAwmGiTGGioVtV8KFmJ4_M	28	3
+$v8iGN1Nqfe45E9UAlYS-2URhe0VSFqIHY_trb51SesI	31	1
+$0xWeoIOTCY4e3-7ZbZGuokwWQFjVMhIRQNXarqF1pxw	32	1
+$pdWypCivt0W58tNdti2PPFECr9nY2FHCzPHcq3t7WEY	32	2
+$Fv99ToyoiCcmIgW4cLLELDhrk41dcIcraArBj2LvaNE	33	1
+$PdV2tqK4NNZudisUim3L-UFebwMTDKtC4V3oRBsAKNg	33	2
 \.
 
 
@@ -3441,6 +3539,12 @@ $ye7ixCV2UmoA3GCF2K5lqNSxMrWwkdvkTSOdQDHy-P0	$v3jGyApp70gdwh4Il9oB6nRxdyr-zF1Nt9
 $95vJ25qtpsri2l4-Ft6bN-NMw1uq9NjdTcLLt_v-cdE	$ye7ixCV2UmoA3GCF2K5lqNSxMrWwkdvkTSOdQDHy-P0	\N	f
 $0XMDIAwJBH-iA7qIReHWRJAwmGiTGGioVtV8KFmJ4_M	$95vJ25qtpsri2l4-Ft6bN-NMw1uq9NjdTcLLt_v-cdE	\N	f
 $cy5KlfdXxrxwsh3JYgCvSt79RGqs9e0nqUdGznRRG7c	$0XMDIAwJBH-iA7qIReHWRJAwmGiTGGioVtV8KFmJ4_M	\N	f
+$v8iGN1Nqfe45E9UAlYS-2URhe0VSFqIHY_trb51SesI	$ggCddRubeCPps5yMhlY-9Ib0RvBhwUJy716vZvf32Oo	\N	f
+$0s6lqq-j-E9Nm_LFwUEpeeLWBeDQ75ZYmwrYMoexDwc	$v8iGN1Nqfe45E9UAlYS-2URhe0VSFqIHY_trb51SesI	\N	f
+$0xWeoIOTCY4e3-7ZbZGuokwWQFjVMhIRQNXarqF1pxw	$0s6lqq-j-E9Nm_LFwUEpeeLWBeDQ75ZYmwrYMoexDwc	\N	f
+$pdWypCivt0W58tNdti2PPFECr9nY2FHCzPHcq3t7WEY	$0xWeoIOTCY4e3-7ZbZGuokwWQFjVMhIRQNXarqF1pxw	\N	f
+$Fv99ToyoiCcmIgW4cLLELDhrk41dcIcraArBj2LvaNE	$nFwL1txBnk2dj72aBWqthTGHrC-kv7CYWMt3cwz8qgw	\N	f
+$PdV2tqK4NNZudisUim3L-UFebwMTDKtC4V3oRBsAKNg	$Fv99ToyoiCcmIgW4cLLELDhrk41dcIcraArBj2LvaNE	\N	f
 \.
 
 
@@ -3465,9 +3569,9 @@ COPY public.event_failed_pull_attempts (room_id, event_id, num_attempts, last_at
 --
 
 COPY public.event_forward_extremities (event_id, room_id) FROM stdin;
-$nFwL1txBnk2dj72aBWqthTGHrC-kv7CYWMt3cwz8qgw	!pYSbiOyjMFsKNxSMyi:localhost
-$ggCddRubeCPps5yMhlY-9Ib0RvBhwUJy716vZvf32Oo	!FzTtpSkXWMPYBKHUQN:localhost
 $cy5KlfdXxrxwsh3JYgCvSt79RGqs9e0nqUdGznRRG7c	!AHOiTmgdxQzlhIOUsy:localhost
+$pdWypCivt0W58tNdti2PPFECr9nY2FHCzPHcq3t7WEY	!FzTtpSkXWMPYBKHUQN:localhost
+$PdV2tqK4NNZudisUim3L-UFebwMTDKtC4V3oRBsAKNg	!pYSbiOyjMFsKNxSMyi:localhost
 \.
 
 
@@ -3521,6 +3625,12 @@ $v3jGyApp70gdwh4Il9oB6nRxdyr-zF1Nt9w5VRI1Em4	!AHOiTmgdxQzlhIOUsy:localhost	{"tok
 $95vJ25qtpsri2l4-Ft6bN-NMw1uq9NjdTcLLt_v-cdE	!AHOiTmgdxQzlhIOUsy:localhost	{"token_id":14,"txn_id":"m1678033803383","historical":false}	{"auth_events":["$jiXC1l1ou9Ti0I7CV7PJrsVblqsrb9dPQentqZqLBys","$425aYo_LNE95R3HHpQZSk0MGS0CjqhCPkp0DJvtMk5M","$8JzwefAwHCl96ZlTja5b5rV-MxH_1T91x6Yl6vKYGSg"],"prev_events":["$ye7ixCV2UmoA3GCF2K5lqNSxMrWwkdvkTSOdQDHy-P0"],"type":"m.room.message","room_id":"!AHOiTmgdxQzlhIOUsy:localhost","sender":"@mm_user1.mm:localhost","content":{"msgtype":"m.text","body":"KLKLK"},"depth":14,"origin":"localhost","origin_server_ts":1678033803466,"hashes":{"sha256":"oWs6lDS1hxB8XAq5Gy8wVPfbnaHa2K4cZImk3m+xjF0"},"signatures":{"localhost":{"ed25519:a_vyji":"+33i3CgoaGVGJs6i6GEXVZk+czQBys/78hKtUJxBo7M+InuganKgZ9jQLHIgqzhYMbjc5Gvu2HG6B7lxifU0DA"}},"unsigned":{"age_ts":1678033803466}}	3
 $0XMDIAwJBH-iA7qIReHWRJAwmGiTGGioVtV8KFmJ4_M	!AHOiTmgdxQzlhIOUsy:localhost	{"historical":false}	{"auth_events":["$Ww-5pR04rXtgZleTLBj7vJSR1LGkC3tZ5Zuaxqazwek","$cgYituIGJ7X54S5-Ax3C5u2yLwCnf99x2VbMmy0YD3w","$425aYo_LNE95R3HHpQZSk0MGS0CjqhCPkp0DJvtMk5M","$8JzwefAwHCl96ZlTja5b5rV-MxH_1T91x6Yl6vKYGSg"],"prev_events":["$95vJ25qtpsri2l4-Ft6bN-NMw1uq9NjdTcLLt_v-cdE"],"type":"m.room.member","room_id":"!AHOiTmgdxQzlhIOUsy:localhost","sender":"@matterbot:localhost","content":{"reason":"Needed for app service","membership":"join","displayname":"Mattermost Bridge"},"depth":15,"state_key":"@matterbot:localhost","origin":"localhost","origin_server_ts":1678033936870,"hashes":{"sha256":"OeUvpjYUXxiDpUNRUOq7zYUxbuPvFZGcT+kGdW9rgTM"},"signatures":{"localhost":{"ed25519:a_vyji":"o+AumAhxyMdTEjFlHKRp9hLJEKogqav6do3D3JGiJ3O385soMqSJr9zvk/gWB1mbnCiqQAGyfoUGGxkmuXYpDw"}},"unsigned":{"age_ts":1678033936870,"replaces_state":"$cgYituIGJ7X54S5-Ax3C5u2yLwCnf99x2VbMmy0YD3w"}}	3
 $cy5KlfdXxrxwsh3JYgCvSt79RGqs9e0nqUdGznRRG7c	!AHOiTmgdxQzlhIOUsy:localhost	{"token_id":13,"txn_id":"m1678034001328.1","historical":false}	{"auth_events":["$8JzwefAwHCl96ZlTja5b5rV-MxH_1T91x6Yl6vKYGSg","$425aYo_LNE95R3HHpQZSk0MGS0CjqhCPkp0DJvtMk5M","$ye7ixCV2UmoA3GCF2K5lqNSxMrWwkdvkTSOdQDHy-P0"],"prev_events":["$0XMDIAwJBH-iA7qIReHWRJAwmGiTGGioVtV8KFmJ4_M"],"type":"m.room.message","room_id":"!AHOiTmgdxQzlhIOUsy:localhost","sender":"@user1.matrix:localhost","content":{"msgtype":"m.text","body":"ddd"},"depth":16,"origin":"localhost","origin_server_ts":1678034001410,"hashes":{"sha256":"lcAUxUEP3Iof8CQupDZpTbWW3XyG+QC6YAuVGZNBwYA"},"signatures":{"localhost":{"ed25519:a_vyji":"N56NpfT+x5a+P2cIF8RK2oyZ5kh7dpbOOwvcPixEJYZXJEBb+8OdxCPQKApoIKqDETqKgoX8vJRxBEknbN7OBg"}},"unsigned":{"age_ts":1678034001410}}	3
+$v8iGN1Nqfe45E9UAlYS-2URhe0VSFqIHY_trb51SesI	!FzTtpSkXWMPYBKHUQN:localhost	{"token_id":9,"historical":false}	{"auth_events":["$1kn0z5XFW6tgZeQlEjEweLSJX_vv-w54n3uMagFyz9o","$c4I4FYRPIltfSw8Wf6w1NWiI0mLCN0eVcYuMsCyqiS4","$MjPoUIyI-4SLUb_2CX0SN6Cq4siLSpO81XmSX0Tt1Ag"],"prev_events":["$ggCddRubeCPps5yMhlY-9Ib0RvBhwUJy716vZvf32Oo"],"type":"m.room.member","room_id":"!FzTtpSkXWMPYBKHUQN:localhost","sender":"@user2.matrix:localhost","content":{"membership":"join","displayname":"user2.matrix"},"depth":18,"state_key":"@user2.matrix:localhost","origin":"localhost","origin_server_ts":1678611367048,"hashes":{"sha256":"83YEUzufRJQ/bnfxsyxBULWlsWxzEC4ndc+W4a1wWsw"},"signatures":{"localhost":{"ed25519:a_vyji":"h+6KEz2Tv9h4CdYiQYjDhaTYQROjrPwonSj7HvpKTJcKR+HImIGGKMy1xUgPp0iynzGIMdSTRnELloHUxvSWCQ"}},"unsigned":{"age_ts":1678611367048}}	3
+$0s6lqq-j-E9Nm_LFwUEpeeLWBeDQ75ZYmwrYMoexDwc	!FzTtpSkXWMPYBKHUQN:localhost	{"token_id":9,"txn_id":"m1678611372616.0","historical":false}	{"auth_events":["$1kn0z5XFW6tgZeQlEjEweLSJX_vv-w54n3uMagFyz9o","$c4I4FYRPIltfSw8Wf6w1NWiI0mLCN0eVcYuMsCyqiS4","$v8iGN1Nqfe45E9UAlYS-2URhe0VSFqIHY_trb51SesI"],"prev_events":["$v8iGN1Nqfe45E9UAlYS-2URhe0VSFqIHY_trb51SesI"],"type":"m.room.message","room_id":"!FzTtpSkXWMPYBKHUQN:localhost","sender":"@user2.matrix:localhost","content":{"msgtype":"m.text","body":"ok"},"depth":19,"origin":"localhost","origin_server_ts":1678611372706,"hashes":{"sha256":"9mmoy6pD2VMDaBxTmYAkUQyVKTwuo4TlP5ReWUh4iDU"},"signatures":{"localhost":{"ed25519:a_vyji":"4e3JgCGWgC6JbB5FvPKhfKUHnClsT9S8yPx2kB2TuK5DKgmzrhRyMpTQf+ONCvcTo1E6Bbmo80POc1QAWkwMCQ"}},"unsigned":{"age_ts":1678611372706}}	3
+$0xWeoIOTCY4e3-7ZbZGuokwWQFjVMhIRQNXarqF1pxw	!FzTtpSkXWMPYBKHUQN:localhost	{"token_id":2,"historical":false}	{"auth_events":["$1kn0z5XFW6tgZeQlEjEweLSJX_vv-w54n3uMagFyz9o","$c4I4FYRPIltfSw8Wf6w1NWiI0mLCN0eVcYuMsCyqiS4","$MjPoUIyI-4SLUb_2CX0SN6Cq4siLSpO81XmSX0Tt1Ag","$IU1ZxuT0Nte99MGUdW5IhEVc_pVMkrUEqjP5xs27dVs"],"prev_events":["$0s6lqq-j-E9Nm_LFwUEpeeLWBeDQ75ZYmwrYMoexDwc"],"type":"m.room.member","room_id":"!FzTtpSkXWMPYBKHUQN:localhost","sender":"@admin:localhost","content":{"reason":"Invited to room","membership":"invite","displayname":"mm_user2.mm"},"depth":20,"state_key":"@mm_user2.mm:localhost","origin":"localhost","origin_server_ts":1678611397446,"hashes":{"sha256":"QqrXXk8CabYD6+3qHQk4WjDrpSsjtQl+Lcp08jRz5jc"},"signatures":{"localhost":{"ed25519:a_vyji":"Ub3BoExce9Fs7ctc85UEHQO/yBjrurVnmOfswWNUoBXnpDVmdOiRW2QuITHB+HMgN9GcWK3xMQyc10pmlTG/Cw"}},"unsigned":{"age_ts":1678611397446,"invite_room_state":[{"type":"m.room.join_rules","state_key":"","content":{"join_rule":"public"},"sender":"@admin:localhost"},{"type":"m.room.canonical_alias","state_key":"","content":{"alias":"#town-square:localhost"},"sender":"@admin:localhost"},{"type":"m.room.name","state_key":"","content":{"name":"Town Square"},"sender":"@admin:localhost"},{"type":"m.room.create","state_key":"","content":{"room_version":"9","creator":"@admin:localhost"},"sender":"@admin:localhost"},{"type":"m.room.member","state_key":"@admin:localhost","content":{"membership":"join","displayname":"admin"},"sender":"@admin:localhost"}]}}	3
+$pdWypCivt0W58tNdti2PPFECr9nY2FHCzPHcq3t7WEY	!FzTtpSkXWMPYBKHUQN:localhost	{"token_id":12,"historical":false}	{"auth_events":["$1kn0z5XFW6tgZeQlEjEweLSJX_vv-w54n3uMagFyz9o","$c4I4FYRPIltfSw8Wf6w1NWiI0mLCN0eVcYuMsCyqiS4","$0xWeoIOTCY4e3-7ZbZGuokwWQFjVMhIRQNXarqF1pxw","$MjPoUIyI-4SLUb_2CX0SN6Cq4siLSpO81XmSX0Tt1Ag"],"prev_events":["$0xWeoIOTCY4e3-7ZbZGuokwWQFjVMhIRQNXarqF1pxw"],"type":"m.room.member","room_id":"!FzTtpSkXWMPYBKHUQN:localhost","sender":"@mm_user2.mm:localhost","content":{"reason":"joining room","membership":"join","displayname":"mm_user2.mm"},"depth":21,"state_key":"@mm_user2.mm:localhost","origin":"localhost","origin_server_ts":1678611398194,"hashes":{"sha256":"l3GJ4NDTClPqVgtQywgpFW+7gBbVzspTKqo21RnVg+s"},"signatures":{"localhost":{"ed25519:a_vyji":"IvVF017EX2qaosDaXH0zsPrKUQ8kpSoxRV71WBcuDWdkjNQqMho7jqY4vbCC/c09t8G6m5FQrsnGtV7SgwkvAg"}},"unsigned":{"age_ts":1678611398194,"replaces_state":"$0xWeoIOTCY4e3-7ZbZGuokwWQFjVMhIRQNXarqF1pxw"}}	3
+$Fv99ToyoiCcmIgW4cLLELDhrk41dcIcraArBj2LvaNE	!pYSbiOyjMFsKNxSMyi:localhost	{"token_id":2,"historical":false}	{"auth_events":["$EgLH6XFurmJirUH4D5Zkm8y1WyPdrFX2SSko4S0-7hQ","$gyvaweguHrwLjB1B_41QMnzSUMHQGbQmTALeOOMmWfU","$tkoiHC3Vf1zAnFhhvTe60NQ7m3nRNvT1ILxtf8O8Tdc","$hZ3X11MNOocXcrcCNowWncNXGOcKtKz2Yuy15DpSX9Y"],"prev_events":["$nFwL1txBnk2dj72aBWqthTGHrC-kv7CYWMt3cwz8qgw"],"type":"m.room.member","room_id":"!pYSbiOyjMFsKNxSMyi:localhost","sender":"@admin:localhost","content":{"reason":"Invited to room","membership":"invite","displayname":"mm_user2.mm"},"depth":13,"state_key":"@mm_user2.mm:localhost","origin":"localhost","origin_server_ts":1678611398940,"hashes":{"sha256":"xMGmIpRwLXQvM5gjfE7cysO84U6KZVuksNzwcFXbbY4"},"signatures":{"localhost":{"ed25519:a_vyji":"XYWZEsw7hZs/tT0sJUChy6U8vZUWVMqCpvcOB/PqOfbpYPocqDQ52ZoRr1XjhuFFvXT1IAROoye8+Fv1+UqOBg"}},"unsigned":{"age_ts":1678611398940,"invite_room_state":[{"type":"m.room.join_rules","state_key":"","content":{"join_rule":"public"},"sender":"@admin:localhost"},{"type":"m.room.create","state_key":"","content":{"room_version":"9","creator":"@admin:localhost"},"sender":"@admin:localhost"},{"type":"m.room.canonical_alias","state_key":"","content":{"alias":"#off-topic:localhost"},"sender":"@admin:localhost"},{"type":"m.room.name","state_key":"","content":{"name":"#Off-Topic"},"sender":"@admin:localhost"},{"type":"m.room.member","state_key":"@admin:localhost","content":{"membership":"join","displayname":"admin"},"sender":"@admin:localhost"}]}}	3
+$PdV2tqK4NNZudisUim3L-UFebwMTDKtC4V3oRBsAKNg	!pYSbiOyjMFsKNxSMyi:localhost	{"token_id":12,"historical":false}	{"auth_events":["$EgLH6XFurmJirUH4D5Zkm8y1WyPdrFX2SSko4S0-7hQ","$gyvaweguHrwLjB1B_41QMnzSUMHQGbQmTALeOOMmWfU","$Fv99ToyoiCcmIgW4cLLELDhrk41dcIcraArBj2LvaNE","$tkoiHC3Vf1zAnFhhvTe60NQ7m3nRNvT1ILxtf8O8Tdc"],"prev_events":["$Fv99ToyoiCcmIgW4cLLELDhrk41dcIcraArBj2LvaNE"],"type":"m.room.member","room_id":"!pYSbiOyjMFsKNxSMyi:localhost","sender":"@mm_user2.mm:localhost","content":{"reason":"joining room","membership":"join","displayname":"mm_user2.mm"},"depth":14,"state_key":"@mm_user2.mm:localhost","origin":"localhost","origin_server_ts":1678611399739,"hashes":{"sha256":"WPXQ0nVcW8PcOyD9I2FOeAcjcrgtRp6EFD4VfhgSoT4"},"signatures":{"localhost":{"ed25519:a_vyji":"lRan5f06jl2b7YQ/qJcMtQahmdivF36sZV6RXvW1TSuwhbkTaaw0KSpP8eURlPB9NVEhBdp5gXrODfRstQJqAA"}},"unsigned":{"age_ts":1678611399739,"replaces_state":"$Fv99ToyoiCcmIgW4cLLELDhrk41dcIcraArBj2LvaNE"}}	3
 \.
 
 
@@ -3537,6 +3647,11 @@ COPY public.event_labels (event_id, label, room_id, topological_ordering) FROM s
 --
 
 COPY public.event_push_actions (room_id, event_id, user_id, profile_tag, actions, topological_ordering, stream_ordering, notif, highlight, unread, thread_id) FROM stdin;
+!FzTtpSkXWMPYBKHUQN:localhost	$0s6lqq-j-E9Nm_LFwUEpeeLWBeDQ75ZYmwrYMoexDwc	@admin:localhost	\N		19	48	1	0	0	main
+!FzTtpSkXWMPYBKHUQN:localhost	$0s6lqq-j-E9Nm_LFwUEpeeLWBeDQ75ZYmwrYMoexDwc	@user1.matrix:localhost	\N		19	48	1	0	0	main
+!FzTtpSkXWMPYBKHUQN:localhost	$0s6lqq-j-E9Nm_LFwUEpeeLWBeDQ75ZYmwrYMoexDwc	@matterbot:localhost	\N		19	48	1	0	0	main
+!FzTtpSkXWMPYBKHUQN:localhost	$0xWeoIOTCY4e3-7ZbZGuokwWQFjVMhIRQNXarqF1pxw	@mm_user2.mm:localhost	\N	["notify",{"set_tweak":"highlight","value":false},{"set_tweak":"sound","value":"default"}]	20	49	1	0	0	main
+!pYSbiOyjMFsKNxSMyi:localhost	$Fv99ToyoiCcmIgW4cLLELDhrk41dcIcraArBj2LvaNE	@mm_user2.mm:localhost	\N	["notify",{"set_tweak":"highlight","value":false},{"set_tweak":"sound","value":"default"}]	13	51	1	0	0	main
 \.
 
 
@@ -3557,12 +3672,14 @@ COPY public.event_push_summary (user_id, room_id, notif_count, stream_ordering, 
 @mm_user1.mm:localhost	!FzTtpSkXWMPYBKHUQN:localhost	1	23	0	\N	main
 @matterbot:localhost	!pYSbiOyjMFsKNxSMyi:localhost	1	26	0	\N	main
 @admin:localhost	!pYSbiOyjMFsKNxSMyi:localhost	0	26	0	26	main
-@user1.matrix:localhost	!FzTtpSkXWMPYBKHUQN:localhost	0	29	0	29	main
-@admin:localhost	!FzTtpSkXWMPYBKHUQN:localhost	1	30	0	28	main
-@matterbot:localhost	!FzTtpSkXWMPYBKHUQN:localhost	4	30	0	\N	main
 @mm_user1.mm:localhost	!AHOiTmgdxQzlhIOUsy:localhost	1	40	0	\N	main
 @admin:localhost	!AHOiTmgdxQzlhIOUsy:localhost	3	46	0	\N	main
 @matterbot:localhost	!AHOiTmgdxQzlhIOUsy:localhost	4	46	0	\N	main
+@user1.matrix:localhost	!FzTtpSkXWMPYBKHUQN:localhost	1	48	0	29	main
+@admin:localhost	!FzTtpSkXWMPYBKHUQN:localhost	2	48	0	28	main
+@matterbot:localhost	!FzTtpSkXWMPYBKHUQN:localhost	5	48	0	\N	main
+@mm_user2.mm:localhost	!FzTtpSkXWMPYBKHUQN:localhost	1	49	0	\N	main
+@mm_user2.mm:localhost	!pYSbiOyjMFsKNxSMyi:localhost	1	51	0	\N	main
 \.
 
 
@@ -3571,7 +3688,7 @@ COPY public.event_push_summary (user_id, room_id, notif_count, stream_ordering, 
 --
 
 COPY public.event_push_summary_last_receipt_stream_id (lock, stream_id) FROM stdin;
-X	19
+X	23
 \.
 
 
@@ -3580,7 +3697,7 @@ X	19
 --
 
 COPY public.event_push_summary_stream_ordering (lock, stream_ordering) FROM stdin;
-X	46
+X	52
 \.
 
 
@@ -3618,6 +3735,7 @@ $sFv4HsuqMN9A0Wl_Bb1tZ-I7Kgdtxe83YsRaNWowWDM	!AHOiTmgdxQzlhIOUsy:localhost	\N	co
 $v3jGyApp70gdwh4Il9oB6nRxdyr-zF1Nt9w5VRI1Em4	!AHOiTmgdxQzlhIOUsy:localhost	\N	content.body	'klklk':1	1678033769274	42
 $95vJ25qtpsri2l4-Ft6bN-NMw1uq9NjdTcLLt_v-cdE	!AHOiTmgdxQzlhIOUsy:localhost	\N	content.body	'klklk':1	1678033803466	44
 $cy5KlfdXxrxwsh3JYgCvSt79RGqs9e0nqUdGznRRG7c	!AHOiTmgdxQzlhIOUsy:localhost	\N	content.body	'ddd':1	1678034001410	46
+$0s6lqq-j-E9Nm_LFwUEpeeLWBeDQ75ZYmwrYMoexDwc	!FzTtpSkXWMPYBKHUQN:localhost	\N	content.body	'ok':1	1678611372706	48
 \.
 
 
@@ -3671,6 +3789,12 @@ $ye7ixCV2UmoA3GCF2K5lqNSxMrWwkdvkTSOdQDHy-P0	52
 $95vJ25qtpsri2l4-Ft6bN-NMw1uq9NjdTcLLt_v-cdE	52
 $0XMDIAwJBH-iA7qIReHWRJAwmGiTGGioVtV8KFmJ4_M	55
 $cy5KlfdXxrxwsh3JYgCvSt79RGqs9e0nqUdGznRRG7c	55
+$v8iGN1Nqfe45E9UAlYS-2URhe0VSFqIHY_trb51SesI	62
+$0s6lqq-j-E9Nm_LFwUEpeeLWBeDQ75ZYmwrYMoexDwc	62
+$0xWeoIOTCY4e3-7ZbZGuokwWQFjVMhIRQNXarqF1pxw	63
+$pdWypCivt0W58tNdti2PPFECr9nY2FHCzPHcq3t7WEY	64
+$Fv99ToyoiCcmIgW4cLLELDhrk41dcIcraArBj2LvaNE	65
+$PdV2tqK4NNZudisUim3L-UFebwMTDKtC4V3oRBsAKNg	66
 \.
 
 
@@ -3732,6 +3856,12 @@ COPY public.events (topological_ordering, event_id, type, room_id, content, unre
 13	$ye7ixCV2UmoA3GCF2K5lqNSxMrWwkdvkTSOdQDHy-P0	m.room.member	!AHOiTmgdxQzlhIOUsy:localhost	\N	\N	t	f	13	1678033782282	1678033782332	@user1.matrix:localhost	f	master	43	@user1.matrix:localhost	\N
 15	$0XMDIAwJBH-iA7qIReHWRJAwmGiTGGioVtV8KFmJ4_M	m.room.member	!AHOiTmgdxQzlhIOUsy:localhost	\N	\N	t	f	15	1678033936870	1678033936909	@matterbot:localhost	f	master	45	@matterbot:localhost	\N
 16	$cy5KlfdXxrxwsh3JYgCvSt79RGqs9e0nqUdGznRRG7c	m.room.message	!AHOiTmgdxQzlhIOUsy:localhost	\N	\N	t	f	16	1678034001410	1678034001456	@user1.matrix:localhost	f	master	46	\N	\N
+18	$v8iGN1Nqfe45E9UAlYS-2URhe0VSFqIHY_trb51SesI	m.room.member	!FzTtpSkXWMPYBKHUQN:localhost	\N	\N	t	f	18	1678611367048	1678611367133	@user2.matrix:localhost	f	master	47	@user2.matrix:localhost	\N
+19	$0s6lqq-j-E9Nm_LFwUEpeeLWBeDQ75ZYmwrYMoexDwc	m.room.message	!FzTtpSkXWMPYBKHUQN:localhost	\N	\N	t	f	19	1678611372706	1678611372764	@user2.matrix:localhost	f	master	48	\N	\N
+20	$0xWeoIOTCY4e3-7ZbZGuokwWQFjVMhIRQNXarqF1pxw	m.room.member	!FzTtpSkXWMPYBKHUQN:localhost	\N	\N	t	f	20	1678611397446	1678611397671	@admin:localhost	f	master	49	@mm_user2.mm:localhost	\N
+21	$pdWypCivt0W58tNdti2PPFECr9nY2FHCzPHcq3t7WEY	m.room.member	!FzTtpSkXWMPYBKHUQN:localhost	\N	\N	t	f	21	1678611398194	1678611398457	@mm_user2.mm:localhost	f	master	50	@mm_user2.mm:localhost	\N
+13	$Fv99ToyoiCcmIgW4cLLELDhrk41dcIcraArBj2LvaNE	m.room.member	!pYSbiOyjMFsKNxSMyi:localhost	\N	\N	t	f	13	1678611398940	1678611399445	@admin:localhost	f	master	51	@mm_user2.mm:localhost	\N
+14	$PdV2tqK4NNZudisUim3L-UFebwMTDKtC4V3oRBsAKNg	m.room.member	!pYSbiOyjMFsKNxSMyi:localhost	\N	\N	t	f	14	1678611399739	1678611399952	@mm_user2.mm:localhost	f	master	52	@mm_user2.mm:localhost	\N
 \.
 
 
@@ -3757,7 +3887,7 @@ COPY public.federation_inbound_events_staging (origin, room_id, event_id, receiv
 
 COPY public.federation_stream_position (type, stream_id, instance_name) FROM stdin;
 federation	-1	master
-events	46	master
+events	52	master
 \.
 
 
@@ -3817,6 +3947,9 @@ COPY public.local_current_membership (room_id, user_id, event_id, membership) FR
 !AHOiTmgdxQzlhIOUsy:localhost	@mm_user1.mm:localhost	$jiXC1l1ou9Ti0I7CV7PJrsVblqsrb9dPQentqZqLBys	join
 !AHOiTmgdxQzlhIOUsy:localhost	@user1.matrix:localhost	$ye7ixCV2UmoA3GCF2K5lqNSxMrWwkdvkTSOdQDHy-P0	join
 !AHOiTmgdxQzlhIOUsy:localhost	@matterbot:localhost	$0XMDIAwJBH-iA7qIReHWRJAwmGiTGGioVtV8KFmJ4_M	join
+!FzTtpSkXWMPYBKHUQN:localhost	@user2.matrix:localhost	$v8iGN1Nqfe45E9UAlYS-2URhe0VSFqIHY_trb51SesI	join
+!FzTtpSkXWMPYBKHUQN:localhost	@mm_user2.mm:localhost	$pdWypCivt0W58tNdti2PPFECr9nY2FHCzPHcq3t7WEY	join
+!pYSbiOyjMFsKNxSMyi:localhost	@mm_user2.mm:localhost	$PdV2tqK4NNZudisUim3L-UFebwMTDKtC4V3oRBsAKNg	join
 \.
 
 
@@ -3901,6 +4034,7 @@ COPY public.presence_stream (stream_id, user_id, state, last_active_ts, last_fed
 53	@admin:localhost	offline	1678033250018	1678033310512	1678033275894	\N	t	master
 67	@mm_user1.mm:localhost	offline	1678033803773	1678033767632	0	\N	f	master
 71	@user1.matrix:localhost	offline	1678034031972	1678034065513	1678034032270	\N	t	master
+75	@user2.matrix:localhost	online	1678611426802	1678611291995	1678611430749	\N	t	master
 \.
 
 
@@ -3913,6 +4047,8 @@ admin	admin	\N
 user1.matrix	user1.matrix	\N
 matterbot	Mattermost Bridge	\N
 mm_user1.mm	mm_user1.mm	\N
+user2.matrix	user2.matrix	\N
+mm_user2.mm	mm_user2.mm	\N
 \.
 
 
@@ -3979,6 +4115,8 @@ COPY public.receipts_graph (room_id, receipt_type, user_id, event_ids, data, thr
 !FzTtpSkXWMPYBKHUQN:localhost	m.read.private	@user1.matrix:localhost	["$fbEIs1FPebLFup8Sm4TvsnGt3OqnXO125KPufsX6e4E"]	{"ts":1678033309282}	\N
 !AHOiTmgdxQzlhIOUsy:localhost	m.read	@user1.matrix:localhost	["$0XMDIAwJBH-iA7qIReHWRJAwmGiTGGioVtV8KFmJ4_M"]	{"ts":1678033997717}	\N
 !AHOiTmgdxQzlhIOUsy:localhost	m.read.private	@user1.matrix:localhost	["$0XMDIAwJBH-iA7qIReHWRJAwmGiTGGioVtV8KFmJ4_M"]	{"ts":1678033997742}	\N
+!FzTtpSkXWMPYBKHUQN:localhost	m.read	@user2.matrix:localhost	["$pdWypCivt0W58tNdti2PPFECr9nY2FHCzPHcq3t7WEY"]	{"ts":1678611424216}	\N
+!FzTtpSkXWMPYBKHUQN:localhost	m.read.private	@user2.matrix:localhost	["$pdWypCivt0W58tNdti2PPFECr9nY2FHCzPHcq3t7WEY"]	{"ts":1678611424239}	\N
 \.
 
 
@@ -3997,6 +4135,8 @@ COPY public.receipts_linearized (stream_id, room_id, receipt_type, user_id, even
 13	!FzTtpSkXWMPYBKHUQN:localhost	m.read.private	@user1.matrix:localhost	$fbEIs1FPebLFup8Sm4TvsnGt3OqnXO125KPufsX6e4E	{"ts":1678033309282}	\N	29	\N
 18	!AHOiTmgdxQzlhIOUsy:localhost	m.read	@user1.matrix:localhost	$0XMDIAwJBH-iA7qIReHWRJAwmGiTGGioVtV8KFmJ4_M	{"ts":1678033997717}	\N	45	\N
 19	!AHOiTmgdxQzlhIOUsy:localhost	m.read.private	@user1.matrix:localhost	$0XMDIAwJBH-iA7qIReHWRJAwmGiTGGioVtV8KFmJ4_M	{"ts":1678033997742}	\N	45	\N
+22	!FzTtpSkXWMPYBKHUQN:localhost	m.read	@user2.matrix:localhost	$pdWypCivt0W58tNdti2PPFECr9nY2FHCzPHcq3t7WEY	{"ts":1678611424216}	\N	50	\N
+23	!FzTtpSkXWMPYBKHUQN:localhost	m.read.private	@user2.matrix:localhost	$pdWypCivt0W58tNdti2PPFECr9nY2FHCzPHcq3t7WEY	{"ts":1678611424239}	\N	50	\N
 \.
 
 
@@ -4066,6 +4206,7 @@ COPY public.room_account_data (user_id, room_id, account_data_type, stream_id, c
 @admin:localhost	!FzTtpSkXWMPYBKHUQN:localhost	m.fully_read	35	{"event_id":"$fbEIs1FPebLFup8Sm4TvsnGt3OqnXO125KPufsX6e4E"}	\N
 @user1.matrix:localhost	!FzTtpSkXWMPYBKHUQN:localhost	m.fully_read	39	{"event_id":"$ggCddRubeCPps5yMhlY-9Ib0RvBhwUJy716vZvf32Oo"}	\N
 @user1.matrix:localhost	!AHOiTmgdxQzlhIOUsy:localhost	m.fully_read	45	{"event_id":"$cy5KlfdXxrxwsh3JYgCvSt79RGqs9e0nqUdGznRRG7c"}	\N
+@user2.matrix:localhost	!FzTtpSkXWMPYBKHUQN:localhost	m.fully_read	54	{"event_id":"$pdWypCivt0W58tNdti2PPFECr9nY2FHCzPHcq3t7WEY"}	\N
 \.
 
 
@@ -4124,6 +4265,11 @@ $hgeuyu5_SLbd99TLf-m4kSUM8l1Jy-W4XmhdQGO2rr0	@mm_user1.mm:localhost	@admin:local
 $jiXC1l1ou9Ti0I7CV7PJrsVblqsrb9dPQentqZqLBys	@mm_user1.mm:localhost	@mm_user1.mm:localhost	!AHOiTmgdxQzlhIOUsy:localhost	join	0	mm_user1.mm	\N
 $ye7ixCV2UmoA3GCF2K5lqNSxMrWwkdvkTSOdQDHy-P0	@user1.matrix:localhost	@user1.matrix:localhost	!AHOiTmgdxQzlhIOUsy:localhost	join	0	user1.matrix	\N
 $0XMDIAwJBH-iA7qIReHWRJAwmGiTGGioVtV8KFmJ4_M	@matterbot:localhost	@matterbot:localhost	!AHOiTmgdxQzlhIOUsy:localhost	join	0	Mattermost Bridge	\N
+$v8iGN1Nqfe45E9UAlYS-2URhe0VSFqIHY_trb51SesI	@user2.matrix:localhost	@user2.matrix:localhost	!FzTtpSkXWMPYBKHUQN:localhost	join	0	user2.matrix	\N
+$0xWeoIOTCY4e3-7ZbZGuokwWQFjVMhIRQNXarqF1pxw	@mm_user2.mm:localhost	@admin:localhost	!FzTtpSkXWMPYBKHUQN:localhost	invite	0	mm_user2.mm	\N
+$pdWypCivt0W58tNdti2PPFECr9nY2FHCzPHcq3t7WEY	@mm_user2.mm:localhost	@mm_user2.mm:localhost	!FzTtpSkXWMPYBKHUQN:localhost	join	0	mm_user2.mm	\N
+$Fv99ToyoiCcmIgW4cLLELDhrk41dcIcraArBj2LvaNE	@mm_user2.mm:localhost	@admin:localhost	!pYSbiOyjMFsKNxSMyi:localhost	invite	0	mm_user2.mm	\N
+$PdV2tqK4NNZudisUim3L-UFebwMTDKtC4V3oRBsAKNg	@mm_user2.mm:localhost	@mm_user2.mm:localhost	!pYSbiOyjMFsKNxSMyi:localhost	join	0	mm_user2.mm	\N
 \.
 
 
@@ -4140,9 +4286,9 @@ COPY public.room_retention (room_id, event_id, min_lifetime, max_lifetime) FROM 
 --
 
 COPY public.room_stats_current (room_id, current_state_events, joined_members, invited_members, left_members, banned_members, local_users_in_room, completed_delta_stream_id, knocked_members) FROM stdin;
-!pYSbiOyjMFsKNxSMyi:localhost	9	3	0	0	0	3	21	0
-!FzTtpSkXWMPYBKHUQN:localhost	10	4	0	0	0	4	27	0
 !AHOiTmgdxQzlhIOUsy:localhost	10	4	0	0	0	4	45	0
+!FzTtpSkXWMPYBKHUQN:localhost	12	6	0	0	0	6	50	0
+!pYSbiOyjMFsKNxSMyi:localhost	10	4	0	0	0	4	52	0
 \.
 
 
@@ -4275,6 +4421,11 @@ $hgeuyu5_SLbd99TLf-m4kSUM8l1Jy-W4XmhdQGO2rr0	!AHOiTmgdxQzlhIOUsy:localhost	m.roo
 $jiXC1l1ou9Ti0I7CV7PJrsVblqsrb9dPQentqZqLBys	!AHOiTmgdxQzlhIOUsy:localhost	m.room.member	@mm_user1.mm:localhost	\N
 $ye7ixCV2UmoA3GCF2K5lqNSxMrWwkdvkTSOdQDHy-P0	!AHOiTmgdxQzlhIOUsy:localhost	m.room.member	@user1.matrix:localhost	\N
 $0XMDIAwJBH-iA7qIReHWRJAwmGiTGGioVtV8KFmJ4_M	!AHOiTmgdxQzlhIOUsy:localhost	m.room.member	@matterbot:localhost	\N
+$v8iGN1Nqfe45E9UAlYS-2URhe0VSFqIHY_trb51SesI	!FzTtpSkXWMPYBKHUQN:localhost	m.room.member	@user2.matrix:localhost	\N
+$0xWeoIOTCY4e3-7ZbZGuokwWQFjVMhIRQNXarqF1pxw	!FzTtpSkXWMPYBKHUQN:localhost	m.room.member	@mm_user2.mm:localhost	\N
+$pdWypCivt0W58tNdti2PPFECr9nY2FHCzPHcq3t7WEY	!FzTtpSkXWMPYBKHUQN:localhost	m.room.member	@mm_user2.mm:localhost	\N
+$Fv99ToyoiCcmIgW4cLLELDhrk41dcIcraArBj2LvaNE	!pYSbiOyjMFsKNxSMyi:localhost	m.room.member	@mm_user2.mm:localhost	\N
+$PdV2tqK4NNZudisUim3L-UFebwMTDKtC4V3oRBsAKNg	!pYSbiOyjMFsKNxSMyi:localhost	m.room.member	@mm_user2.mm:localhost	\N
 \.
 
 
@@ -4338,6 +4489,14 @@ COPY public.state_group_edges (state_group, prev_state_group) FROM stdin;
 56	29
 57	24
 58	55
+59	55
+60	29
+61	24
+62	29
+63	62
+64	63
+65	24
+66	65
 \.
 
 
@@ -4404,6 +4563,14 @@ COPY public.state_groups (id, room_id, event_id) FROM stdin;
 56	!FzTtpSkXWMPYBKHUQN:localhost	$tRn_uPjSoJQAFtSjVnO6sgd-SBLrufGp5xzhZhRqUzk
 57	!pYSbiOyjMFsKNxSMyi:localhost	$62-3JFpTMlRpv4_xAN2cDJVPyTAxye0feXIBfnOHi_E
 58	!AHOiTmgdxQzlhIOUsy:localhost	$pTP0-CXb2Wza_9WGoLY5ZytUdeNQu6_3znRjg9NDoNY
+59	!AHOiTmgdxQzlhIOUsy:localhost	$YKA_43_TyGCBO0cUZpxHCEJrOZm0h6u1pd_Fbqrc35E
+60	!FzTtpSkXWMPYBKHUQN:localhost	$Vb2Aa7pNxIjgzYHSe-Nj9npKFPiVhR4BhwMWywOSCQs
+61	!pYSbiOyjMFsKNxSMyi:localhost	$nAG8kHvrbluGnZ6CaA4uCC1wRfCaUyZjL7gI79rXnZg
+62	!FzTtpSkXWMPYBKHUQN:localhost	$v8iGN1Nqfe45E9UAlYS-2URhe0VSFqIHY_trb51SesI
+63	!FzTtpSkXWMPYBKHUQN:localhost	$0xWeoIOTCY4e3-7ZbZGuokwWQFjVMhIRQNXarqF1pxw
+64	!FzTtpSkXWMPYBKHUQN:localhost	$pdWypCivt0W58tNdti2PPFECr9nY2FHCzPHcq3t7WEY
+65	!pYSbiOyjMFsKNxSMyi:localhost	$Fv99ToyoiCcmIgW4cLLELDhrk41dcIcraArBj2LvaNE
+66	!pYSbiOyjMFsKNxSMyi:localhost	$PdV2tqK4NNZudisUim3L-UFebwMTDKtC4V3oRBsAKNg
 \.
 
 
@@ -4467,6 +4634,14 @@ COPY public.state_groups_state (state_group, room_id, type, state_key, event_id)
 56	!FzTtpSkXWMPYBKHUQN:localhost	m.room.member	@matterbot:localhost	$tRn_uPjSoJQAFtSjVnO6sgd-SBLrufGp5xzhZhRqUzk
 57	!pYSbiOyjMFsKNxSMyi:localhost	m.room.member	@matterbot:localhost	$62-3JFpTMlRpv4_xAN2cDJVPyTAxye0feXIBfnOHi_E
 58	!AHOiTmgdxQzlhIOUsy:localhost	m.room.member	@matterbot:localhost	$pTP0-CXb2Wza_9WGoLY5ZytUdeNQu6_3znRjg9NDoNY
+59	!AHOiTmgdxQzlhIOUsy:localhost	m.room.member	@matterbot:localhost	$YKA_43_TyGCBO0cUZpxHCEJrOZm0h6u1pd_Fbqrc35E
+60	!FzTtpSkXWMPYBKHUQN:localhost	m.room.member	@matterbot:localhost	$Vb2Aa7pNxIjgzYHSe-Nj9npKFPiVhR4BhwMWywOSCQs
+61	!pYSbiOyjMFsKNxSMyi:localhost	m.room.member	@matterbot:localhost	$nAG8kHvrbluGnZ6CaA4uCC1wRfCaUyZjL7gI79rXnZg
+62	!FzTtpSkXWMPYBKHUQN:localhost	m.room.member	@user2.matrix:localhost	$v8iGN1Nqfe45E9UAlYS-2URhe0VSFqIHY_trb51SesI
+63	!FzTtpSkXWMPYBKHUQN:localhost	m.room.member	@mm_user2.mm:localhost	$0xWeoIOTCY4e3-7ZbZGuokwWQFjVMhIRQNXarqF1pxw
+64	!FzTtpSkXWMPYBKHUQN:localhost	m.room.member	@mm_user2.mm:localhost	$pdWypCivt0W58tNdti2PPFECr9nY2FHCzPHcq3t7WEY
+65	!pYSbiOyjMFsKNxSMyi:localhost	m.room.member	@mm_user2.mm:localhost	$Fv99ToyoiCcmIgW4cLLELDhrk41dcIcraArBj2LvaNE
+66	!pYSbiOyjMFsKNxSMyi:localhost	m.room.member	@mm_user2.mm:localhost	$PdV2tqK4NNZudisUim3L-UFebwMTDKtC4V3oRBsAKNg
 \.
 
 
@@ -4475,7 +4650,7 @@ COPY public.state_groups_state (state_group, room_id, type, state_key, event_id)
 --
 
 COPY public.stats_incremental_position (lock, stream_id) FROM stdin;
-X	46
+X	52
 \.
 
 
@@ -4520,6 +4695,12 @@ COPY public.stream_ordering_to_exterm (stream_ordering, room_id, event_id) FROM 
 44	!AHOiTmgdxQzlhIOUsy:localhost	$95vJ25qtpsri2l4-Ft6bN-NMw1uq9NjdTcLLt_v-cdE
 45	!AHOiTmgdxQzlhIOUsy:localhost	$0XMDIAwJBH-iA7qIReHWRJAwmGiTGGioVtV8KFmJ4_M
 46	!AHOiTmgdxQzlhIOUsy:localhost	$cy5KlfdXxrxwsh3JYgCvSt79RGqs9e0nqUdGznRRG7c
+47	!FzTtpSkXWMPYBKHUQN:localhost	$v8iGN1Nqfe45E9UAlYS-2URhe0VSFqIHY_trb51SesI
+48	!FzTtpSkXWMPYBKHUQN:localhost	$0s6lqq-j-E9Nm_LFwUEpeeLWBeDQ75ZYmwrYMoexDwc
+49	!FzTtpSkXWMPYBKHUQN:localhost	$0xWeoIOTCY4e3-7ZbZGuokwWQFjVMhIRQNXarqF1pxw
+50	!FzTtpSkXWMPYBKHUQN:localhost	$pdWypCivt0W58tNdti2PPFECr9nY2FHCzPHcq3t7WEY
+51	!pYSbiOyjMFsKNxSMyi:localhost	$Fv99ToyoiCcmIgW4cLLELDhrk41dcIcraArBj2LvaNE
+52	!pYSbiOyjMFsKNxSMyi:localhost	$PdV2tqK4NNZudisUim3L-UFebwMTDKtC4V3oRBsAKNg
 \.
 
 
@@ -4528,10 +4709,10 @@ COPY public.stream_ordering_to_exterm (stream_ordering, room_id, event_id) FROM 
 --
 
 COPY public.stream_positions (stream_name, instance_name, stream_id) FROM stdin;
-receipts	master	19
-events	master	46
-account_data	master	45
-presence_stream	master	71
+events	master	52
+receipts	master	23
+account_data	master	54
+presence_stream	master	75
 \.
 
 
@@ -4572,6 +4753,10 @@ COPY public.threepid_validation_token (token, session_id, next_link, expires) FR
 --
 
 COPY public.ui_auth_sessions (session_id, creation_time, serverdict, clientdict, uri, method, description) FROM stdin;
+tdOFDIIRYGCjsrGqPeyNYGXf	1678611242592	{}	{}	/_matrix/client/r0/register	POST	register a new account
+qdcwyfGQAnwWClAetlwnbEzU	1678611292313	{"request_user_id":"@user2.matrix:localhost"}	{}	/_matrix/client/unstable/keys/device_signing/upload	POST	add a device signing key to your account
+ewbcDohCnRavMjpBNwLttFgc	1678611278576	{"password_hash":"$2b$12$dTZp5dCmXsdR2tyURjxHNOyQX6.Zh0.TrEVJOsRq4Iy3K7oDRpowm","registered_user_id":"@user2.matrix:localhost"}	{"username":"user2.matrix","initial_device_display_name":"localhost:8080: Chrome on macOS"}	/_matrix/client/r0/register	POST	register a new account
+XBJmPsNofvmodEgcAHSEohxm	1678611292480	{"request_user_id":"@user2.matrix:localhost"}	{"master_key":{"user_id":"@user2.matrix:localhost","usage":["master"],"keys":{"ed25519:5b6cQaGf5GV8+fQLo2zlNmEYv5aKsgv9yrozWTIeYd0":"5b6cQaGf5GV8+fQLo2zlNmEYv5aKsgv9yrozWTIeYd0"},"signatures":{"@user2.matrix:localhost":{"ed25519:GKJBQYVCXV":"DPSX4W/xf1CbDNcDU0DjA7remmZJdYvlcGh5xM2kr2gu8WNLv5zUMQoUI6XJoz3FHockq3IHsQclAhshzL7vBg"}}},"self_signing_key":{"user_id":"@user2.matrix:localhost","usage":["self_signing"],"keys":{"ed25519:w0M80S3bnAUb+n2nKhpdQVpRgy9D7oinRrWkM2IpREs":"w0M80S3bnAUb+n2nKhpdQVpRgy9D7oinRrWkM2IpREs"},"signatures":{"@user2.matrix:localhost":{"ed25519:5b6cQaGf5GV8+fQLo2zlNmEYv5aKsgv9yrozWTIeYd0":"ZF8K+ta0UD+f+8oBKObJMhRS+Ur9+5gY9QZSw71gXIqnWUEgIgaIL3f7hKwZY7fn7AAqQNZ2wprAeyAQxjVXDw"}}},"user_signing_key":{"user_id":"@user2.matrix:localhost","usage":["user_signing"],"keys":{"ed25519:vzY0MeHZtI5hpcf4M7D5iZJ4sPuFG9pARVs8WouUgxo":"vzY0MeHZtI5hpcf4M7D5iZJ4sPuFG9pARVs8WouUgxo"},"signatures":{"@user2.matrix:localhost":{"ed25519:5b6cQaGf5GV8+fQLo2zlNmEYv5aKsgv9yrozWTIeYd0":"kChd5mIOdVQvWquzxlS862w9o86lcVyUNXENycwiu1MY+WSmyhis48/D4PUiknv+z18/JznR/IXY57OeLXZDAA"}}}}	/_matrix/client/unstable/keys/device_signing/upload	POST	add a device signing key to your account
 \.
 
 
@@ -4580,6 +4765,8 @@ COPY public.ui_auth_sessions (session_id, creation_time, serverdict, clientdict,
 --
 
 COPY public.ui_auth_sessions_credentials (session_id, stage_type, result) FROM stdin;
+ewbcDohCnRavMjpBNwLttFgc	m.login.email.identity	{"medium":"email","address":"user2.matrix@localhost.com","validated_at":1678611289596,"threepid_creds":{"sid":"vDApxQazTZpgYDJb","client_secret":"QQMV2aL7ysRkdgUyi7t3jiCJhWaorZRa"}}
+XBJmPsNofvmodEgcAHSEohxm	m.login.password	"@user2.matrix:localhost"
 \.
 
 
@@ -4588,6 +4775,10 @@ COPY public.ui_auth_sessions_credentials (session_id, stage_type, result) FROM s
 --
 
 COPY public.ui_auth_sessions_ips (session_id, ip, user_agent) FROM stdin;
+tdOFDIIRYGCjsrGqPeyNYGXf	172.16.238.1	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36
+ewbcDohCnRavMjpBNwLttFgc	172.16.238.1	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36
+qdcwyfGQAnwWClAetlwnbEzU	172.16.238.1	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36
+XBJmPsNofvmodEgcAHSEohxm	172.16.238.1	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36
 \.
 
 
@@ -4628,6 +4819,7 @@ COPY public.user_daily_visits (user_id, device_id, "timestamp", user_agent) FROM
 COPY public.user_directory (user_id, room_id, display_name, avatar_url) FROM stdin;
 @admin:localhost	\N	admin	\N
 @user1.matrix:localhost	\N	user1.matrix	\N
+@user2.matrix:localhost	\N	user2.matrix	\N
 \.
 
 
@@ -4638,6 +4830,7 @@ COPY public.user_directory (user_id, room_id, display_name, avatar_url) FROM std
 COPY public.user_directory_search (user_id, vector) FROM stdin;
 @admin:localhost	'admin':1A,3B 'localhost':2
 @user1.matrix:localhost	'localhost':2 'user1.matrix':1A,3B
+@user2.matrix:localhost	'localhost':2 'user2.matrix':1A,3B
 \.
 
 
@@ -4646,7 +4839,7 @@ COPY public.user_directory_search (user_id, vector) FROM stdin;
 --
 
 COPY public.user_directory_stream_pos (lock, stream_id) FROM stdin;
-X	46
+X	52
 \.
 
 
@@ -4665,6 +4858,7 @@ COPY public.user_external_ids (auth_provider, external_id, user_id) FROM stdin;
 COPY public.user_filters (user_id, filter_id, filter_json) FROM stdin;
 admin	0	\\x7b22726f6f6d223a7b227374617465223a7b226c617a795f6c6f61645f6d656d62657273223a747275657d2c2274696d656c696e65223a7b22756e726561645f7468726561645f6e6f74696669636174696f6e73223a747275657d7d7d
 user1.matrix	0	\\x7b22726f6f6d223a7b227374617465223a7b226c617a795f6c6f61645f6d656d62657273223a747275657d2c2274696d656c696e65223a7b22756e726561645f7468726561645f6e6f74696669636174696f6e73223a747275657d7d7d
+user2.matrix	0	\\x7b22726f6f6d223a7b227374617465223a7b226c617a795f6c6f61645f6d656d62657273223a747275657d2c2274696d656c696e65223a7b22756e726561645f7468726561645f6e6f74696669636174696f6e73223a747275657d7d7d
 \.
 
 
@@ -4679,7 +4873,9 @@ COPY public.user_ips (user_id, access_token, device_id, ip, user_agent, last_see
 @mm_user1.mm:localhost	syt_bW1fdXNlcjEubW0_wPGKGCeFNoOzLYPunbBr_3uSoKr	NPASEFYMXA	172.16.238.1	axios/1.3.2	1678033565759
 @user1.matrix:localhost	syt_dXNlcjEubWF0cml4_DpWjksZWbpepOHDeLFOl_46Vnpc	GQUGBBJECP	172.16.238.1	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36	1678033928726
 @mm_user1.mm:localhost	syt_bW1fdXNlcjEubW0_oTMHTIecwTAOMSwTHtBV_3qDyhz	NYIKZJDRFF	172.16.238.1	axios/1.3.2	1678033930340
-@admin:localhost	syt_YWRtaW4_ESjBoGLaWtscFgZHsBhJ_027WFj	OZJZGYFHKP	172.16.238.1	axios/1.3.2	1678033936477
+@admin:localhost	syt_YWRtaW4_ESjBoGLaWtscFgZHsBhJ_027WFj	OZJZGYFHKP	172.16.238.1	axios/1.3.2	1678611343281
+@mm_user2.mm:localhost	syt_bW1fdXNlcjIubW0_ByhbCJOeqHuExNbANHJg_0XY0ER	KYXTRJOYRV	172.16.238.1	axios/1.3.2	1678611397209
+@user2.matrix:localhost	syt_dXNlcjIubWF0cml4_zBDOKMsvtUtbCjNSykQR_0QpfZN	GKJBQYVCXV	172.16.238.1	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36	1678611424216
 \.
 
 
@@ -4690,6 +4886,7 @@ COPY public.user_ips (user_id, access_token, device_id, ip, user_agent, last_see
 COPY public.user_signature_stream (stream_id, from_user_id, user_ids) FROM stdin;
 5	@admin:localhost	["@admin:localhost"]
 12	@user1.matrix:localhost	["@user1.matrix:localhost"]
+38	@user2.matrix:localhost	["@user2.matrix:localhost"]
 \.
 
 
@@ -4702,6 +4899,8 @@ COPY public.user_stats_current (user_id, joined_rooms, completed_delta_stream_id
 @matterbot:localhost	3	39
 @mm_user1.mm:localhost	2	41
 @user1.matrix:localhost	3	43
+@user2.matrix:localhost	1	47
+@mm_user2.mm:localhost	2	52
 \.
 
 
@@ -4718,6 +4917,7 @@ COPY public.user_threepid_id_server (user_id, medium, address, id_server) FROM s
 --
 
 COPY public.user_threepids (user_id, medium, address, validated_at, added_at) FROM stdin;
+@user2.matrix:localhost	email	user2.matrix@localhost.com	1678611289596	1678611291411
 \.
 
 
@@ -4730,6 +4930,8 @@ COPY public.users (name, password_hash, creation_ts, admin, upgrade_ts, is_guest
 @user1.matrix:localhost	$2b$12$QUKVuA1bwKpslWNfisIeGeZ5/L4A6M5di4AUYKbdBt5Kx7nlcA9w2	1675956810	0	\N	0	\N	\N	\N	\N	0	f	\N	t
 @matterbot:localhost		1675957082	0	\N	0	xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	\N	\N	\N	0	f	\N	t
 @mm_user1.mm:localhost		1676646214	0	\N	0	xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	\N	\N	\N	0	f	\N	t
+@user2.matrix:localhost	$2b$12$dTZp5dCmXsdR2tyURjxHNOyQX6.Zh0.TrEVJOsRq4Iy3K7oDRpowm	1678611291	0	\N	0	\N	\N	\N	\N	0	f	\N	t
+@mm_user2.mm:localhost		1678611396	0	\N	0	xfbONb3M-hYO861rkzW7N0xUKm-6MII2M6sj-z8sdc0DaiXV1S25SXdr5ElIvatt	\N	\N	\N	0	f	\N	t
 \.
 
 
@@ -4744,6 +4946,7 @@ COPY public.users_in_public_rooms (user_id, room_id) FROM stdin;
 @user1.matrix:localhost	!pYSbiOyjMFsKNxSMyi:localhost
 @admin:localhost	!AHOiTmgdxQzlhIOUsy:localhost
 @user1.matrix:localhost	!AHOiTmgdxQzlhIOUsy:localhost
+@user2.matrix:localhost	!FzTtpSkXWMPYBKHUQN:localhost
 \.
 
 
@@ -4783,21 +4986,21 @@ COPY public.worker_locks (lock_name, lock_key, instance_name, token, last_renewe
 -- Name: account_data_sequence; Type: SEQUENCE SET; Schema: public; Owner: synapse
 --
 
-SELECT pg_catalog.setval('public.account_data_sequence', 45, true);
+SELECT pg_catalog.setval('public.account_data_sequence', 54, true);
 
 
 --
 -- Name: application_services_txn_id_seq; Type: SEQUENCE SET; Schema: public; Owner: synapse
 --
 
-SELECT pg_catalog.setval('public.application_services_txn_id_seq', 22, true);
+SELECT pg_catalog.setval('public.application_services_txn_id_seq', 28, true);
 
 
 --
 -- Name: cache_invalidation_stream_seq; Type: SEQUENCE SET; Schema: public; Owner: synapse
 --
 
-SELECT pg_catalog.setval('public.cache_invalidation_stream_seq', 165, true);
+SELECT pg_catalog.setval('public.cache_invalidation_stream_seq', 195, true);
 
 
 --
@@ -4811,7 +5014,7 @@ SELECT pg_catalog.setval('public.device_inbox_sequence', 1, true);
 -- Name: event_auth_chain_id; Type: SEQUENCE SET; Schema: public; Owner: synapse
 --
 
-SELECT pg_catalog.setval('public.event_auth_chain_id', 30, true);
+SELECT pg_catalog.setval('public.event_auth_chain_id', 33, true);
 
 
 --
@@ -4825,7 +5028,7 @@ SELECT pg_catalog.setval('public.events_backfill_stream_seq', 1, true);
 -- Name: events_stream_seq; Type: SEQUENCE SET; Schema: public; Owner: synapse
 --
 
-SELECT pg_catalog.setval('public.events_stream_seq', 46, true);
+SELECT pg_catalog.setval('public.events_stream_seq', 52, true);
 
 
 --
@@ -4839,21 +5042,21 @@ SELECT pg_catalog.setval('public.instance_map_instance_id_seq', 1, false);
 -- Name: presence_stream_sequence; Type: SEQUENCE SET; Schema: public; Owner: synapse
 --
 
-SELECT pg_catalog.setval('public.presence_stream_sequence', 71, true);
+SELECT pg_catalog.setval('public.presence_stream_sequence', 75, true);
 
 
 --
 -- Name: receipts_sequence; Type: SEQUENCE SET; Schema: public; Owner: synapse
 --
 
-SELECT pg_catalog.setval('public.receipts_sequence', 19, true);
+SELECT pg_catalog.setval('public.receipts_sequence', 23, true);
 
 
 --
 -- Name: state_group_id_seq; Type: SEQUENCE SET; Schema: public; Owner: synapse
 --
 
-SELECT pg_catalog.setval('public.state_group_id_seq', 58, true);
+SELECT pg_catalog.setval('public.state_group_id_seq', 66, true);
 
 
 --
