@@ -18,7 +18,6 @@ import { config } from '../Config';
 import { handlePostError, none } from '../utils/Functions';
 import { mattermostToMatrix, constructMatrixReply } from '../utils/Formatting';
 
-
 const myLogger: log4js.Logger = getLogger('MattermostHandler');
 
 interface Metadata {
@@ -67,7 +66,7 @@ async function sendMatrixMessage(
 
         try {
             original = await client.getRoomEvent(room, replyTo.matrix);
-        } catch (e) { }
+        } catch (e) {}
         if (original !== undefined) {
             constructMatrixReply(original, message);
         }
@@ -92,7 +91,7 @@ export const MattermostUnbridgedHandlers = {
             if (
                 (post.type || '') === 'system_add_to_channel' &&
                 (post.props?.addedUserId || '') ===
-                config().mattermost_bot_userid
+                    config().mattermost_bot_userid
             ) {
                 let ok = await this.onChannelCreated(m.broadcast.channel_id);
             } else if (m.data.channel_type === 'G') {
@@ -104,21 +103,19 @@ export const MattermostUnbridgedHandlers = {
         this: Main,
         m: MattermostMessage,
     ): Promise<void> {
-
-        myLogger.info("Event group_added ignored.")
-        return
+        myLogger.info('Event group_added ignored.');
+        return;
     },
 };
 
 const groupChannelMap = new Map<string, string>();
 
 async function mapGroupChannel(main: Main, m: MattermostMessage) {
-
     const channelId = m.broadcast.channel_id;
     const channel = await main.client.get(`/channels/${channelId}`);
 
-    let invite: string[] = [main.botClient.getUserId()];
-
+    const invite: string[] = [main.botClient.getUserId()];
+    const joiners: User[] = [];
 
     const senderName: string = m.data.sender_name.slice(1);
     const sender = await User.findOne({
@@ -126,33 +123,34 @@ async function mapGroupChannel(main: Main, m: MattermostMessage) {
     });
     if (!sender) return;
 
-    const client: mxClient.MatrixClient = await main.mattermostUserStore.getOrCreateClient(sender.mattermost_userid);
+    const client: mxClient.MatrixClient =
+        await main.mattermostUserStore.getOrCreateClient(
+            sender.mattermost_userid,
+        );
 
     const members = channel.display_name.split(', ');
 
     for (let member of members) {
-
         let mmUser = await User.findOne({
             where: { mattermost_username: member, is_matrix_user: true },
         });
         if (mmUser) {
             invite.push(mmUser.matrix_userid);
         } else {
-
         }
     }
     if (invite.length === 1) {
-        return
+        return;
     }
     for (let member of members) {
-
         let mmUser = await User.findOne({
             where: { mattermost_username: member, is_matrix_user: false },
         });
-        if (mmUser &&  mmUser.mattermost_userid != sender.mattermost_userid) {
-            invite.push(mmUser.matrix_userid);
-        } else {
-
+        if (mmUser) {
+            if (mmUser.mattermost_userid != sender.mattermost_userid) {
+                invite.push(mmUser.matrix_userid);
+                joiners.push(mmUser);
+            }
         }
     }
 
@@ -186,7 +184,19 @@ async function mapGroupChannel(main: Main, m: MattermostMessage) {
             postMessage,
             {},
         );
-
+        for (const joiner of joiners) {
+            const roomClient: mxClient.MatrixClient =
+                await main.mattermostUserStore.getOrCreateClient(
+                    joiner.mattermost_userid,
+                );
+            await roomClient.joinRoom(
+                room_id,
+                'Room for direct messaging joined',
+            );
+            myLogger.info(
+                `User ${joiner.matrix_userid} joining room ${room_id} for direct messaging`,
+            );
+        }
     }
 }
 

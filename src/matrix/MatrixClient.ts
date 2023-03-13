@@ -16,34 +16,30 @@ export enum Membership {
 }
 
 export type RoomPreset =
-    'public_chat' |
-    'private_chat' |
-    'trusted_private_chat'
+    | 'public_chat'
+    | 'private_chat'
+    | 'trusted_private_chat';
 
-export type RoomVisibility=
-    'public' |
-    'private'
-
+export type RoomVisibility = 'public' | 'private';
 
 export interface RoomCreateContent {
-
-    preset: RoomPreset,
-    visibility:RoomVisibility,
-    room_alias_name?: string,
-    name?: string,
-    topic?: string,
-    invite?:string[],
-    room_version?:string,
+    preset: RoomPreset;
+    visibility: RoomVisibility;
+    room_alias_name?: string;
+    name?: string;
+    topic?: string;
+    invite?: string[];
+    room_version?: string;
     /*
     "creation_content": {
         "m.federate": false
     }
     */
-   is_direct:boolean
+    is_direct: boolean;
 }
 
 export interface RoomCreatedInfo extends RoomCreateContent {
-    room_id:string
+    room_id: string;
 }
 
 export interface MatrixClientCreateOpts {
@@ -283,15 +279,13 @@ export class MatrixClient {
         });
     }
 
-    public async createRoom(content:RoomCreateContent): Promise<any> {
+    public async createRoom(content: RoomCreateContent): Promise<any> {
         return await this.doRequest({
             url: `_matrix/client/v3/createRoom`,
             method: 'POST',
-            data: content
+            data: content,
         });
     }
-
-
 
     public async registerService(userName?: string): Promise<string> {
         let retValue: string = 'OK';
@@ -383,8 +377,8 @@ export class MatrixClient {
         return await this.doRequest({
             url: `_matrix/client/r0/register/available`,
             params: {
-                "username": userName
-            }
+                username: userName,
+            },
         });
     }
 
@@ -435,7 +429,7 @@ export class MatrixClient {
         content: MessageContent,
     ): Promise<any> {
         let txnId: string = 'm' + Date.now();
-        this.myLogger.debug("send Message: ", content)
+        this.myLogger.debug('send Message: ', content);
         return await this.doRequest({
             method: 'PUT',
             url: `_matrix/client/v3/rooms/${roomId}/send/${eventType}/${txnId}`,
@@ -498,14 +492,15 @@ export class MatrixClient {
             headers: { Authorization: `Bearer ${this.accessToken}` },
             validateStatus: function (status) {
                 return status >= 200 && status < 300; // default
-              },
-            
+            },
         };
         let method = options.method || 'GET';
         myOptions = Object.assign(myOptions, options);
         this.myLogger.trace(
-            `${method} ${options.url
-            } active userId=${this.getUserId()}. Valid Session= ${this.sessionIsValid
+            `${method} ${
+                options.url
+            } active userId=${this.getUserId()}. Valid Session= ${
+                this.sessionIsValid
             }`,
         );
         try {

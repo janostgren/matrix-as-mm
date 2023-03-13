@@ -6,7 +6,7 @@ homeserver:
   # is usually the domain of the url, but may be different if you use an SRV
   # record or a .well-known URI
   server_name: 'localhost'
-  server_type:  'synapse'
+  server_type: 'synapse'
 
 appservice:
   # The port the homeserver uses to talk to the appservice (bridge). This can

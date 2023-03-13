@@ -158,8 +158,16 @@ const MatrixMembershipHandler = {
             return;
         }
 
-        const user = await this.main.matrixUserStore.getOrCreate(userid, true);
-        await joinMattermostChannel(this, user);
+        const channel = await this.main.client.get(
+            `/channels/${this.mattermostChannel}`,
+        );
+        if (channel.type != 'G') {
+            const user = await this.main.matrixUserStore.getOrCreate(
+                userid,
+                true,
+            );
+            await joinMattermostChannel(this, user);
+        }
     },
     leave: async function (this: Channel, userid: string) {
         const user = await this.main.matrixUserStore.get(userid);
@@ -167,31 +175,38 @@ const MatrixMembershipHandler = {
             myLogger.info(`Found untracked matrix user ${userid}`);
             return;
         }
-        await leaveMattermostChannel(
-            this.main.client,
-            this.mattermostChannel,
-            user.mattermost_userid,
+        const channel = await this.main.client.get(
+            `/channels/${this.mattermostChannel}`,
         );
-
-        // Check if we have left all channels in the team. If so, leave the
-        // team. This is useful because this is the only way to leave Town
-        // Square.
-        const team = await this.getTeam();
-        const channels = this.main.channelsByTeam.get(team) as Channel[];
-
-        const joined = await Promise.all(
-            channels.map(async channel => {
-                const members = await this.main.botClient.getRoomMembers(
-                    channel.matrixRoom,
-                );
-                return Object.keys(members.joined).includes(user.matrix_userid);
-            }),
-        );
-
-        if (!joined.some(x => x)) {
-            await user.client.delete(
-                `/teams/${team}/members/${user.mattermost_userid}`,
+        if (channel.type != 'G') {
+            await leaveMattermostChannel(
+                this.main.client,
+                this.mattermostChannel,
+                user.mattermost_userid,
             );
+
+            // Check if we have left all channels in the team. If so, leave the
+            // team. This is useful because this is the only way to leave Town
+            // Square.
+            const team = await this.getTeam();
+            const channels = this.main.channelsByTeam.get(team) as Channel[];
+
+            const joined = await Promise.all(
+                channels.map(async channel => {
+                    const members = await this.main.botClient.getRoomMembers(
+                        channel.matrixRoom,
+                    );
+                    return Object.keys(members.joined).includes(
+                        user.matrix_userid,
+                    );
+                }),
+            );
+
+            if (!joined.some(x => x)) {
+                await user.client.delete(
+                    `/teams/${team}/members/${user.mattermost_userid}`,
+                );
+            }
         }
     },
     ban: async function (this: Channel, userid: string): Promise<void> {

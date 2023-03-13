@@ -71,11 +71,12 @@ export default class MattermostUserStore {
             */
         }
         if (count === 0 || user) {
-            
             try {
                 const data = await this.main.client.get(`/users/${userid}`);
                 const server_name = config().homeserver.server_name;
-                const username=`${config().matrix_localpart_prefix}${data.username}`
+                const username = `${config().matrix_localpart_prefix}${
+                    data.username
+                }`;
                 const matrix_userId: string = `@${username}:${server_name}`;
                 /*
                         await loginAppService(

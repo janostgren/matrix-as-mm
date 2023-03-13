@@ -53,7 +53,9 @@ $ docker-compose -f docker/docker-compose.yaml up
 $ INTEGRATION_MANUAL_DOCKER=true npm run integration
 $ docker-compose -f docker/docker-compose.yaml down -v
 ```
-### Important about integration tests 
+
+### Important about integration tests
+
 Integration tests are from original version of the Mattermost to Matrix bridge. They don't work in this release. We will replace them with a new solution.
 
 # Docker containers
@@ -113,7 +115,6 @@ Configuration file _element-config.json_ changes.
 ```
 
 ## Mailhog
+
 A simple SNMP server for testing of email. An installation of the MailHog docker container. See https://github.com/mailhog/MailHog
 for additional information.
-
-

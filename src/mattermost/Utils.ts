@@ -18,7 +18,7 @@ export async function getMattermostUsers(
         );
         return new Set(query.map(member => member.user_id));
     } catch (err) {
-        myLogger.error("Failed to get mattermost users. Error=%s",err.message)
+        myLogger.error('Failed to get mattermost users. Error=%s', err.message);
         throw err;
     }
 }
