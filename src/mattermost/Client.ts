@@ -50,30 +50,31 @@ export class Client {
         });
     }
 
-    public async getFile(fileId:string ):Promise<Buffer>{
-        const endpoint=`/files/${fileId}`
+    public async getFile(fileId: string): Promise<Buffer> {
+        const endpoint = `/files/${fileId}`;
         try {
-        this.myLogger.trace("GetFile %s",fileId)
-       
-        const response:axios.AxiosResponse =await this.client.get(
-            `/api/v4/${endpoint}`,
-            {
-                headers:{
-                    "Accept-Encoding":"gzip, deflate, br"
-                },
-                responseType:'arraybuffer'     
-            }
+            this.myLogger.trace('GetFile %s', fileId);
 
-        )
-        return response.data
-        }
-        catch(error) {
-            throw this.clientError(error,endpoint,"GET")
-            
+            const response: axios.AxiosResponse = await this.client.get(
+                `/api/v4/${endpoint}`,
+                {
+                    headers: {
+                        'Accept-Encoding': 'gzip, deflate, br',
+                    },
+                    responseType: 'arraybuffer',
+                },
+            );
+            return response.data;
+        } catch (error) {
+            throw this.clientError(error, endpoint, 'GET');
         }
     }
 
-    private clientError(error:any,endpoint:string,method:axios.Method):ClientError {
+    private clientError(
+        error: any,
+        endpoint: string,
+        method: axios.Method,
+    ): ClientError {
         let message: string = error.message;
         let errName = 'ApiError';
         let ae: boolean = axios.isAxiosError(error);
@@ -112,9 +113,8 @@ export class Client {
         );
         clientError.name = errName;
         this.myLogger.fatal('%s %s message: %s', method, endpoint, message);
-        return clientError
+        return clientError;
     }
-
 
     private async send_raw(
         method: axios.Method,
@@ -139,9 +139,8 @@ export class Client {
             );
             return response.data;
         } catch (error: any) {
-            throw this.clientError(error,endpoint,method)
+            throw this.clientError(error, endpoint, method);
         }
-            
     }
 
     private async send(

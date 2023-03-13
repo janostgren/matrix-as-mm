@@ -15,6 +15,7 @@ import {
 } from './utils/Functions';
 import { User } from './entities/User';
 import { Post } from './entities/Post';
+import * as dbMapping from './entities/Mapping';
 import { MatrixClient } from './matrix/MatrixClient';
 import * as log4js from 'log4js';
 import {
@@ -45,8 +46,6 @@ interface TeamInfo {
     name: string;
 }
 
-
-
 export default class Main extends EventEmitter {
     private ws: ClientWebsocket = undefined as any;
     private readonly appService: AppService;
@@ -70,8 +69,6 @@ export default class Main extends EventEmitter {
     public readonly channelsByMattermost: Map<string, Channel>;
     public readonly channelsByTeam: Map<string, Channel[]>;
 
-    // Channels include successfully bridge channels.
-    // Mappings are ones that are specified in the config file
     public readonly mappingsByMatrix: Map<string, Mapping>;
     public readonly mappingsByMattermost: Map<string, Mapping>;
 
@@ -150,8 +147,8 @@ export default class Main extends EventEmitter {
         try {
             const channel = await this.client.get(`/channels/${channelId}`);
             if (channel.team_id != this.defaultTeam.id) {
-                const message = `Only channels in default team ${this.defaultTeam.name} can be mapped to Matrix room`
-                this.myLogger.info(message)
+                const message = `Only channels in default team ${this.defaultTeam.name} can be mapped to Matrix room`;
+                this.myLogger.info(message);
                 await this.client.delete(
                     `/channels/${channelId}/members/${botId}`,
                 );
@@ -165,7 +162,11 @@ export default class Main extends EventEmitter {
             const myPublicRooms: any[] = await this.getMyJoinedPublicRooms(
                 this.adminClient,
             );
-            return await this.mapMattermostToMatrix(channel, myPublicRooms, true);
+            return await this.mapMattermostToMatrix(
+                channel,
+                myPublicRooms,
+                true,
+            );
         } catch (error) {
             this.myLogger.error(
                 'Error in getting channel for mapping %s',
@@ -175,10 +176,22 @@ export default class Main extends EventEmitter {
         }
     }
 
+    public doOneMapping(channelId, roomId) {
+        const map: Mapping = {
+            mattermost: channelId,
+            matrix: roomId,
+        };
+        const ch = new Channel(this, map.matrix, map.mattermost);
+        this.channelsByMattermost.set(map.mattermost, ch);
+        this.channelsByMatrix.set(map.matrix, ch);
+        this.mappingsByMattermost.set(map.mattermost, map);
+        this.mappingsByMatrix.set(map.matrix, map);
+    }
+
     private async mapMattermostToMatrix(
         channel,
         myPublicRooms,
-        interactive: boolean = false
+        interactive: boolean = false,
     ): Promise<boolean> {
         let found = false;
         const myId = config().mattermost_bot_userid;
@@ -188,8 +201,8 @@ export default class Main extends EventEmitter {
             if (creatorId !== '' && creatorId !== myId) {
                 const userInfo = await this.client.get(`/users/${creatorId}`);
                 if (!userInfo.roles.includes('system_admin')) {
-                    const message = `Only system administrators can map channels for Matrix integration. Not ok for user ${userInfo.username} with roles ${userInfo.roles}`
-                    this.myLogger.info(message)
+                    const message = `Only system administrators can map channels for Matrix integration. Not ok for user ${userInfo.username} with roles ${userInfo.roles}`;
+                    this.myLogger.info(message);
                     await this.client.delete(
                         `/channels/${channel.id}/members/${myId}`,
                     );
@@ -206,15 +219,7 @@ export default class Main extends EventEmitter {
                     channel.display_name === room.name ||
                     alias === room.canonical_alias
                 ) {
-                    const map: Mapping = {
-                        mattermost: channel.id,
-                        matrix: room.room_id,
-                    };
-                    const ch = new Channel(this, map.matrix, map.mattermost);
-                    this.channelsByMattermost.set(map.mattermost, ch);
-                    this.channelsByMatrix.set(map.matrix, ch);
-                    this.mappingsByMattermost.set(map.mattermost, map);
-                    this.mappingsByMatrix.set(map.matrix, map);
+                    this.doOneMapping(channel.id, room.room_id);
                     found = true;
                     this.myLogger.debug(
                         'Matrix channel %s:%s mapped matrix room %s:%s',
@@ -224,41 +229,45 @@ export default class Main extends EventEmitter {
                         room.canonical_alias,
                     );
                     if (interactive) {
-                        const message = `Matrix channel mapped to matrix room ${room.name} with alias ${room.canonical_alias}`
+                        const message = `Matrix channel mapped to matrix room ${room.name} with alias ${room.canonical_alias}`;
                         await this.client.post('/posts', {
                             channel_id: channel.id,
                             message: message,
                         });
-
                     }
-                    return true
 
+                    return true;
                 }
             }
 
             if (found === false) {
                 const info = await this.createPublicMatrixRoom(channel);
-                await this.botClient.joinRoom(info.room_id, `Mapping of mattermost channel ${channel.name}`)
+                await this.botClient.joinRoom(
+                    info.room_id,
+                    `Mapping of mattermost channel ${channel.name}`,
+                );
                 if (interactive) {
-                    const message = `New matrix room ${info.name} with alias ${info.room_alias_name} mapped to the channel.`
+                    const message = `New matrix room ${info.name} with alias ${info.room_alias_name} mapped to the channel.`;
                     await this.client.post('/posts', {
                         channel_id: channel.id,
                         message: message,
                     });
-
                 }
-
-
             }
         } catch (error) {
-            this.myLogger.error("Failed to map channel %s to matrix room. Error=%s", channel.name,error.message)
-            return false
-
+            this.myLogger.error(
+                'Failed to map channel %s to matrix room. Error=%s',
+                channel.name,
+                error.message,
+            );
+            return false;
         }
         return true;
     }
 
-    private async createPublicMatrixRoom(channel: any): Promise<mxClient.RoomCreatedInfo> {
+    private async createPublicMatrixRoom(
+        channel: any,
+    ): Promise<mxClient.RoomCreatedInfo> {
         const matrixRoom: mxClient.RoomCreateContent = {
             preset: 'public_chat',
             is_direct: false,
@@ -283,8 +292,10 @@ export default class Main extends EventEmitter {
             info.room_id,
             channel.name,
         );
-        let roomInfo: mxClient.RoomCreatedInfo = {} as any
-        roomInfo = Object.assign(roomInfo, matrixRoom, { room_id: info.room_id })
+        let roomInfo: mxClient.RoomCreatedInfo = {} as any;
+        roomInfo = Object.assign(roomInfo, matrixRoom, {
+            room_id: info.room_id,
+        });
         return roomInfo;
     }
 
@@ -314,6 +325,25 @@ export default class Main extends EventEmitter {
             } else {
                 this.myLogger.warn('No teams for mattermost bot user');
             }
+            /*
+             * Do mappings from database table mapping. It includes the mappings for direct messages.
+             */
+            const dbMappings = await dbMapping.Mapping.find({});
+            this.myLogger.info(
+                'Found %d mappings in database table mappings for private Channels/Rooms',
+                dbMappings.length,
+            );
+            for (let dbMap of dbMappings) {
+                this.myLogger.info(
+                    '\tChannel id=%s, Room id=%s',
+                    dbMap.mattermost_channel_id,
+                    dbMap.matrix_room_id,
+                );
+                this.doOneMapping(
+                    dbMap.mattermost_channel_id,
+                    dbMap.matrix_room_id,
+                );
+            }
         } catch (error) {
             this.myLogger.error(error.message);
 
@@ -340,14 +370,6 @@ export default class Main extends EventEmitter {
             config().matrix_bot.username,
             this.myLogger,
         );
-        /*
-        let info =await loginAppService(
-            this.botClient,
-            config().matrix_bot.username
-        );        
-        this.myLogger.info("Login as app service: %s",info)
-        this.botClient.setAccessToken(info.access_token)
-        */
 
         try {
             await this.updateBotProfile();
@@ -419,18 +441,25 @@ export default class Main extends EventEmitter {
         await Promise.all(
             Array.from(this.channelsByMattermost, async ([, channel]) => {
                 try {
-                    let foundRoom = rooms.joined_rooms.find(room => {
-                        return room === channel.matrixRoom;
+                    const count = await dbMapping.Mapping.count({
+                        where: {
+                            mattermost_channel_id: channel.mattermostChannel,
+                        },
                     });
-                    if (!foundRoom) {
-                        await this.botClient.joinRoom(channel.matrixRoom);
+                    if (count === 0) {
+                        let foundRoom = rooms.joined_rooms.find(room => {
+                            return room === channel.matrixRoom;
+                        });
+                        if (!foundRoom) {
+                            await this.botClient.joinRoom(channel.matrixRoom);
+                        }
+                        await joinMattermostChannel(
+                            channel,
+                            User.create({
+                                mattermost_userid: this.client.userid,
+                            }),
+                        );
                     }
-                    await joinMattermostChannel(
-                        channel,
-                        User.create({
-                            mattermost_userid: this.client.userid,
-                        }),
-                    );
                 } catch (e) {
                     await onChannelError(e, channel);
                 }
@@ -440,13 +469,20 @@ export default class Main extends EventEmitter {
         await Promise.all(
             Array.from(this.channelsByMattermost, async ([, channel]) => {
                 try {
-                    await channel.syncChannel();
-                    const team = await channel.getTeam();
-                    const channels = this.channelsByTeam.get(team);
-                    if (channels === undefined) {
-                        this.channelsByTeam.set(team, [channel]);
-                    } else {
-                        channels.push(channel);
+                    const count = await dbMapping.Mapping.count({
+                        where: {
+                            mattermost_channel_id: channel.mattermostChannel,
+                        },
+                    });
+                    if (count === 0) {
+                        await channel.syncChannel();
+                        const team = await channel.getTeam();
+                        const channels = this.channelsByTeam.get(team);
+                        if (channels === undefined) {
+                            this.channelsByTeam.set(team, [channel]);
+                        } else {
+                            channels.push(channel);
+                        }
                     }
                 } catch (e) {
                     await onChannelError(e, channel);
@@ -454,8 +490,10 @@ export default class Main extends EventEmitter {
             }),
         );
 
-        this.myLogger.info('Number of channels bridged successfully =%d', this.channelsByMattermost.size)
-
+        this.myLogger.info(
+            'Number of channels bridged successfully =%d',
+            this.channelsByMattermost.size,
+        );
 
         await appservice;
         await this.ws.open();
@@ -469,7 +507,7 @@ export default class Main extends EventEmitter {
 
     private async setupDataSource(): Promise<void> {
         const db: any = Object.assign({}, config().database);
-        db['entities'] = [User, Post];
+        db['entities'] = [User, Post, dbMapping.Mapping];
         db['synchronize'] = false;
         if (this.traceApi) {
             db['logging'] = ['query', 'error'];
@@ -513,7 +551,7 @@ export default class Main extends EventEmitter {
                 await this.botClient.logout();
             }
             this.myLogger.info('MatrixClient logged out. Session invalidated.');
-        } catch (ignore) { }
+        } catch (ignore) {}
 
         // Destroy DataSource
         if (this.dataSource && this.dataSource.isInitialized) {

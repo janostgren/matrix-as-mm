@@ -40,7 +40,7 @@ While attempts have been made to make the code more modular, hence more unit-tes
 
 We use Docker to set up real instances of Mattermost and Synapse for integration tests, with the bridge running on the host so that we can modify the bridge to test different configurations. The tests are present in `src/tests`, while the Docker configuration is in `docker/`.
 
-Integration tests are run with
+### Integration tests are run with
 
 ```
 $ npm run integration
@@ -54,18 +54,22 @@ $ INTEGRATION_MANUAL_DOCKER=true npm run integration
 $ docker-compose -f docker/docker-compose.yaml down -v
 ```
 
+### Important about integration tests
+
+Integration tests are from original version of the Mattermost to Matrix bridge. They don't work in this release. We will replace them with a new solution.
+
 # Docker containers
 
 The rest of this section documents the docker containers used development environment.
 
-## postgres
+## Postgres
 
 This is a standard postgres image pulled from DockerHub. It has two database, one for mattermost and one for synapse, with the mattermost one being the "default" one.
 There is also an additional database used by the bridge for storing some meta-data. Does not need to be postgres in a target environment. Sqlite is supported https://www.sqlite.org/index.html.
 
 The tables are pre-populated with hardcoded values extracted from live instances. This makes it faster to start up and more convenient to write tests with known ids. The dumps are piped through awk to remove redundant lines. The awk script is placed at `docker/postgres/minify-dump.awk`.
 
-## synapse
+## Matrix
 
 This installs synapse from the alpine repositories. It uses `nc` to wait until `postgres` is up before starting synapse, since synapse crashes if the database is inaccessible.
 Synapse is the only container which access the bridge through http. It should use the special host called host.docker.internal. See https://docs.docker.com/desktop/networking/
@@ -87,7 +91,7 @@ protocols:
   - mattermost
 ```
 
-## mattermost
+## Mattermost
 
 This performs a standard Mattermost 7.5.1 install on alpine.
 
@@ -109,3 +113,8 @@ Configuration file _element-config.json_ changes.
     }
   }
 ```
+
+## Mailhog
+
+A simple SNMP server for testing of email. An installation of the MailHog docker container. See https://github.com/mailhog/MailHog
+for additional information.

@@ -43,7 +43,7 @@ export class User extends BaseEntity {
         username: string,
         displayname: string,
     ): Promise<User> {
-        const mmUser=await client.post('/users', {
+        const mmUser = await client.post('/users', {
             username: username,
             password: randomString(45) + 'aA#2',
             first_name: displayname,
@@ -55,7 +55,9 @@ export class User extends BaseEntity {
                 .replace('[RANDOM]', randomString(16)),
         });
         const resp = (await client.post('/users/usernames', [username]))[0];
-        const verifyEmail=await client.post(`/users/${resp.id}/email/verify/member`);
+        const verifyEmail = await client.post(
+            `/users/${resp.id}/email/verify/member`,
+        );
 
         const token = await client.post(`/users/${resp.id}/tokens`, {
             description: PERSONAL_ACCESS_TOKEN_NAME,
@@ -86,7 +88,8 @@ export class User extends BaseEntity {
         );
         let haveToken = myTokens.find(token => {
             return (
-                token.description === PERSONAL_ACCESS_TOKEN_NAME && token.is_active
+                token.description === PERSONAL_ACCESS_TOKEN_NAME &&
+                token.is_active
             );
         });
         if (haveToken) {

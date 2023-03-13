@@ -1,6 +1,6 @@
 {
   "name": "matrix-as-mm",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "",
   "repository": "https://github.com/janostgren/matrix-as-mm",
   "main": "build/Main.js",
@@ -9,7 +9,7 @@
     "node": ">=10.16"
   },
   "scripts": {
-    "package": "zip -r docker.zip docker && npm pack",
+    "package": "rm docker.zip && zip -r docker.zip docker -x  docker/matrix/data/media_store/**\\* && npm pack",
     "-preinstall": "git config core.hooksPath .githooks",
     "build": "tsc && typescript-json-schema --noExtraProps --required src/Config.ts Config -o build/config-schema.json",
     "test": "tape build{,/**}/*.test.js",
@@ -33,6 +33,7 @@
     "marked": "^4.0.0",
     "node-fetch": "^2.6.0",
     "pg": "^8.5.1",
+    "reflect-metadata": "^0.1.13",
     "turndown": "^7.0.0",
     "typeorm": "^0.3.12",
     "ws": "^8.12.0",
@@ -51,6 +52,7 @@
     "prettier": "^2.3.0",
     "sqlite3": "^5.0.0",
     "tape": "^5.0.1",
+    "ts-node": "^10.9.1",
     "typescript": "^4.5.0",
     "typescript-json-schema": "^0.50.0"
   },

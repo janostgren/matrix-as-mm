@@ -87,6 +87,33 @@ matrix-as-mm -c config.yaml -f registration.yaml
 
 The yaml files should be copied from the global npm directory _(/usr/local/lib/node_modules/matrix-as-mm)_ before you try to startup .
 
+### Updating Element configuration in a demo docker environment in AWS or similar
+
+This is not relevant in production environment.
+
+```json
+"default_server_config": {
+    "m.homeserver": {
+      "base_url": "http://ec2-54-216-207-175.eu-west-1.compute.amazonaws.com:8008",
+      "server_name": "http://ec2-54-216-207-175.eu-west-1.compute.amazonaws.com:8008"
+    },
+    "m.identity_server": {
+      "base_url": "https://vector.im"
+    }
+  },
+
+```
+
+In the example above we have deployed the bridge at ec2-54-216-207-175.eu-west-1.compute.amazonaws.com. The configuration file is named _element-config.json_.
+
+### Updating the synapse configuration file
+
+You must also update the synapse server configuration file _homeserver.yaml_
+
+```json
+public_baseurl: http://ec2-54-216-207-175.eu-west-1.compute.amazonaws.com:8008
+```
+
 ### sd_notify
 
 The bridge attempts to notify `systemd` when it has initialized.

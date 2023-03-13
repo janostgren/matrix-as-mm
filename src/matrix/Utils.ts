@@ -74,13 +74,11 @@ export async function registerAppService(
 export async function loginAppService(
     client: mxClient.MatrixClient,
     username: string,
-    setToken: boolean=true,
+    setToken: boolean = true,
 ): Promise<any> {
     const info = await client.loginAppService(username, setToken);
     return info;
 }
-
-
 
 export async function joinMatrixRoom(
     client: mxClient.MatrixClient,

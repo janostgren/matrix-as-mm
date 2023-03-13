@@ -56,7 +56,7 @@ export interface Config {
      * @default false
      */
     forbid_bridge_failure: boolean;
-   
+
     appservice: {
         /**
          * @minimum 0
