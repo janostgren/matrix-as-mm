@@ -8,6 +8,7 @@
     "strict": true,
     "incremental": true,
     "noImplicitAny": false,
+    "strictNullChecks": false,
     "experimentalDecorators": true,
     "sourceMap": true,
     "useUnknownInCatchVariables": false,

@@ -8,7 +8,7 @@ export class Mapping extends BaseEntity {
     @Column('text', { nullable: false })
     public matrix_room_id!: string;
     @Column('boolean', { nullable: false, default: true })
-    public is_private!: string;
+    public is_private!: boolean;
     @Column('boolean', { nullable: false, default: true })
-    public is_direct!: string;
+    public is_direct!: boolean;
 }

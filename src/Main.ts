@@ -30,6 +30,7 @@ import {
     loginAppService,
     registerAppService,
 } from './matrix/Utils';
+import {MatrixUnbridgedHandlers} from './matrix/MatrixHandler'
 import MattermostUserStore from './mattermost/MattermostUserStore';
 import { joinMattermostChannel } from './mattermost/Utils';
 import Channel from './Channel';
@@ -672,12 +673,23 @@ export default class Main extends EventEmitter {
         }
     }
 
+    public async redoMatrixEvent(event:MatrixEvent) {
+        await this.onMatrixEvent(event)
+    }
+
     private async onMatrixEvent(event: MatrixEvent): Promise<void> {
-        this.myLogger.debug(`Matrix event: ${JSON.stringify(event)}`);
+        this.myLogger.debug("Matrix event:\n",
+        util.inspect(event, { showHidden: false, depth: 5, colors: true }),);
         const channel = this.channelsByMatrix.get(event.room_id || '');
         if (channel !== undefined) {
             await channel.onMatrixEvent(event);
         } else {
+            const handler = MatrixUnbridgedHandlers[event.type]
+            if(handler !==undefined) {
+                await handler.bind(this)(event);
+                return
+            }
+
             /*
             event.type === 'm.room.member' &&
             event.content.membership === 'invite' &&
