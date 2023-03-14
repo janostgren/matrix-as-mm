@@ -492,7 +492,7 @@ export default class Main extends EventEmitter {
         );
 
         this.myLogger.info(
-            'Number of channels bridged successfully =%d',
+            'Number of channels bridged successfully=%d',
             this.channelsByMattermost.size,
         );
 

@@ -273,6 +273,16 @@ const MatrixHandlers = {
         this: Channel,
         event: MatrixEvent,
     ): Promise<void> {
+       
+        const findMapping = await Mapping.findOne(
+            { "where": { matrix_room_id: event.room_id } }
+        )
+        if(findMapping) {
+            const joined=await this.main.botClient.getJoinedMembers(event.room_id)
+            myLogger.info("Mapping exist to room %s. Must fix membership in room for %s",
+            event.room_id,event.state_key
+            )
+        }
         const membership: string = event.content.membership || 'not found';
         const handler = MatrixMembershipHandler[membership];
         if (handler === undefined) {
@@ -326,7 +336,7 @@ const MatrixHandlers = {
 
 };
 
-const roomInvitedMembers = new Map<string, Map<string,string>>()
+const roomInvitedMembers = new Map<string, Map<string, string>>()
 
 
 export const MatrixUnbridgedHandlers = {
@@ -337,22 +347,22 @@ export const MatrixUnbridgedHandlers = {
         const room_id = event.room_id
         const displayName: string = event.content?.displayname || ''
         const botDisplayName = config().matrix_bot?.display_name
-       
+
         let roomMembers = roomInvitedMembers.get(event.room_id)
         if (roomMembers === undefined) {
-            roomMembers = new Map<string,string>()
+            roomMembers = new Map<string, string>()
             roomInvitedMembers.set(room_id, roomMembers)
         }
 
         if (botDisplayName === displayName) {
             const info = await this.botClient.joinRoom(room_id)
-            myLogger.debug("Found bot client %s invite for room %s. Info=%s", botDisplayName, room_id,info)
+            myLogger.debug("Found bot client %s invite for room %s. Info=%s", botDisplayName, room_id, info)
             //roomMembers.push(config().matrix_bot.username)
-            roomMembers.set(config().matrix_bot.username,event.state_key)
-            
+            roomMembers.set(config().matrix_bot.username, event.state_key)
+
         } else {
             if (event.state_key) {
-                roomMembers.set(event.state_key,displayName)
+                roomMembers.set(event.state_key, displayName)
             }
         }
     },
@@ -363,6 +373,7 @@ export const MatrixUnbridgedHandlers = {
         const botUsername = config().matrix_bot?.username
         let roomMembers = roomInvitedMembers.get(event.room_id)
         const mmUsers: string[] = []
+        let localMembers:number=0
         if (roomMembers) {
             for (let member of roomMembers.keys()) {
                 if (member == botUsername) {
@@ -373,20 +384,33 @@ export const MatrixUnbridgedHandlers = {
                     )
                     if (mmUser) {
                         mmUsers.push(mmUser.mattermost_userid)
+                    } else {
+                        localMembers++;
                     }
                 }
             }
-           
+
             const user = await this.matrixUserStore.get(event.sender);
-     
+
             mmUsers.push(user.mattermost_userid)
+            if(mmUsers.length <3 || mmUsers.length >8) {
+                const message=`No mapping to Mattermost channel done. No remote users invited or to many users invited. Invited remote users=${mmUsers.length-2}.`
+                await this.botClient.sendMessage(event.room_id, "m.room.message",
+                    {
+                        msgtype: "m.text",
+                        body: message
+                    }
+                )
+                await this.botClient.leave(event.room_id)
+                return
+            }
             const channel = await user.client.post('/channels/group', mmUsers)
             const findMapping = await Mapping.findOne(
                 { "where": { "mattermost_channel_id": channel.id } }
             )
             const roomExists: boolean = findMapping ? true : false
-            myLogger.info("New direct message channel %s. Mapped to matrix room [%s]. Number of members=%d, Mapping exist=%s", 
-             channel.display_name, event.room_id, mmUsers.length,roomExists)
+            myLogger.info("New direct message channel %s. Mapped to matrix room [%s]. Number of members=%d, Mapping exist=%s",
+                channel.display_name, event.room_id, mmUsers.length, roomExists)
 
             this.doOneMapping(channel.id, event.room_id)
 
@@ -398,19 +422,23 @@ export const MatrixUnbridgedHandlers = {
             await mapping.save()
             roomInvitedMembers.delete(event.room_id)
 
-           
-            let handler = MatrixMessageHandlers[event.content.msgtype];
-            if (handler === undefined) {
-                handler = MatrixMessageHandlers['m.text'];
-            }
-            let info=undefined
             try {
-                info=await this.redoMatrixEvent(event)
+                await this.redoMatrixEvent(event)
+                if (findMapping) {
+                    const message=`Mapping to Mattermost channel ${channel.display_name} no longer valid. Use new direct chat setup.`
+                    await this.botClient.sendMessage(findMapping.matrix_room_id, "m.room.message",
+                        {
+                            msgtype: "m.text",
+                            body: message
+                        }
+                    )
+                    await this.botClient.leave(findMapping.matrix_room_id)
+                }
             }
-            catch(err) {
-                myLogger.warn("First message to %s channel %s fails",channel.display_name)
-            } 
-        
+            catch (err) {
+                myLogger.warn("First message to %s channel %s fails. Error=%s", channel.display_name, err.message)
+            }
+
         } else {
             myLogger.warn("Event %s from unknown room %s", event.type, event.room_id)
         }
